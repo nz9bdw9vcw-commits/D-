@@ -19,7 +19,6 @@
 
   .app-container { width: 100%; height: 100vh; height: 100dvh; background: #14202e; display: flex; position: relative; overflow: hidden; }
 
-  /* ============ 登入畫面 ============ */
   .overlay { position: absolute; inset: 0; background: linear-gradient(160deg, #0f1a24 0%, #1a2a3a 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; padding: 20px; overflow-y: auto; }
   .overlay.hidden { display: none; }
   .card { background: rgba(30, 45, 60, 0.95); padding: 28px 22px; border-radius: 22px; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5); width: 100%; max-width: 420px; border: 1px solid rgba(100, 180, 255, 0.3); }
@@ -35,7 +34,6 @@
   .hint-text { font-size: 0.72rem; color: #587b99; margin-top: 12px; text-align: center; line-height: 1.5; }
   .token-display { background: #0a1520; border: 1px dashed #4f9eff; padding: 10px; border-radius: 10px; color: #7bffb0; font-size: 0.78rem; word-break: break-all; text-align: center; margin-top: 10px; font-family: monospace; user-select: all; }
 
-  /* ============ 側邊欄（抽屜） ============ */
   .drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
   .drawer-backdrop.open { opacity: 1; pointer-events: auto; }
   .sidebar { position: absolute; top: 0; left: 0; bottom: 0; width: 260px; background: #0e1820; border-right: 1px solid rgba(70, 130, 200, 0.2); display: flex; flex-direction: column; z-index: 95; transform: translateX(-100%); transition: transform 0.25s ease; }
@@ -51,16 +49,12 @@
   .channel-item:active { background: rgba(45, 90, 130, 0.35); }
   .channel-item.active { background: #1e4b70; color: #fff; font-weight: 500; }
   .channel-item .del-btn { margin-left: auto; font-size: 0.75rem; color: #ff9b9b; opacity: 0.7; padding: 4px 8px; border-radius: 8px; background: transparent; border: none; cursor: pointer; }
-  .channel-item .del-btn:active { background: rgba(255, 100, 100, 0.2); }
   .sidebar-footer { padding: 12px; border-top: 1px solid rgba(70, 130, 200, 0.15); display: flex; flex-direction: column; gap: 8px; }
   .sidebar-footer button { width: 100%; padding: 11px; border-radius: 12px; border: 1px dashed #2f6d9e; background: transparent; color: #8dc9ff; font-size: 0.85rem; cursor: pointer; }
-  .sidebar-footer button:active { background: rgba(47, 109, 158, 0.2); }
 
-  /* ============ 主聊天區 ============ */
   .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100%; position: relative; }
   .chat-header { padding: calc(env(safe-area-inset-top) + 12px) 12px 12px; background: #0e1820; border-bottom: 1px solid rgba(70, 130, 200, 0.2); display: flex; align-items: center; gap: 10px; color: #c6e2ff; flex-shrink: 0; }
   .menu-btn { width: 38px; height: 38px; border-radius: 10px; background: rgba(47, 109, 158, 0.25); border: none; color: #c6e2ff; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .menu-btn:active { background: rgba(47, 109, 158, 0.5); }
   .chat-header h3 { font-weight: 500; font-size: 1rem; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .chat-header .bot-badge { background: #1e3f5a; border-radius: 16px; padding: 4px 10px; font-size: 0.68rem; color: #8dc9ff; border: 1px solid #2f6d9e; flex-shrink: 0; }
 
@@ -81,23 +75,24 @@
   .message.system .bubble { background: rgba(40, 60, 80, 0.6); color: #9dbdd8; font-size: 0.78rem; padding: 6px 12px; border-radius: 18px; }
   .message .sender { font-size: 0.68rem; color: #7f9db8; margin-bottom: 3px; padding-left: 6px; }
   .message.user .sender { text-align: right; padding-right: 6px; }
+  .message img.chat-image { max-width: 100%; border-radius: 12px; margin-top: 4px; cursor: pointer; display: block; }
 
   .hint { font-size: 0.68rem; color: #6c8ca5; text-align: center; padding: 2px 0 4px; }
-  .input-area { padding: 8px 10px calc(env(safe-area-inset-bottom) + 10px); background: #0e1820; border-top: 1px solid rgba(70, 130, 200, 0.2); display: flex; gap: 8px; flex-shrink: 0; }
-  .input-area input { flex: 1; padding: 12px 16px; border-radius: 50px; border: 1px solid #244a64; background: #14202e; color: #ecf5ff; font-size: 1rem; outline: none; min-width: 0; }
-  .input-area input:focus { border-color: #3b86c4; }
-  .input-area button { background: #1e5a86; border: none; color: white; padding: 0 20px; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: 0.95rem; flex-shrink: 0; }
+  .input-area { padding: 8px 10px calc(env(safe-area-inset-bottom) + 10px); background: #0e1820; border-top: 1px solid rgba(70, 130, 200, 0.2); display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
+  .input-area input[type="text"] { flex: 1; padding: 12px 16px; border-radius: 50px; border: 1px solid #244a64; background: #14202e; color: #ecf5ff; font-size: 1rem; outline: none; min-width: 0; }
+  .input-area input[type="text"]:focus { border-color: #3b86c4; }
+  .input-area button { background: #1e5a86; border: none; color: white; padding: 0 18px; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: 0.95rem; flex-shrink: 0; height: 44px; }
   .input-area button:active { transform: scale(0.97); }
   .input-area button:disabled { background: #2a3f4f; color: #6d8aa0; }
+  .icon-btn { background: rgba(47, 109, 158, 0.35) !important; padding: 0 14px !important; font-size: 1.2rem !important; }
+  .icon-btn:active { background: rgba(47, 109, 158, 0.6) !important; }
 
-  /* ============ Modal ============ */
   .modal-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65); display: flex; justify-content: center; align-items: center; z-index: 110; padding: 16px; }
   .modal-backdrop.hidden { display: none; }
   .modal { background: #162635; padding: 22px; border-radius: 20px; width: 100%; max-width: 440px; border: 1px solid #2f6d9e; max-height: 85vh; overflow-y: auto; }
   .modal h3 { color: #b8e2ff; font-weight: 500; margin-bottom: 14px; font-size: 1.15rem; }
   .modal label { display: block; color: #8dc9ff; font-size: 0.78rem; margin-bottom: 6px; margin-top: 12px; }
   .modal input, .modal select { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #2d4b66; background: #0f1a24; color: #e0f0ff; font-size: 1rem; outline: none; -webkit-appearance: none; }
-  .modal input:focus, .modal select:focus { border-color: #4f9eff; }
   .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
   .modal-actions button { flex: 1; padding: 12px; border-radius: 40px; border: none; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
   .modal-actions .confirm { background: #1e5a86; color: white; }
@@ -121,7 +116,9 @@
   .toast { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 80px); left: 50%; transform: translateX(-50%); background: #1e5a86; color: white; padding: 12px 22px; border-radius: 30px; font-size: 0.9rem; z-index: 200; opacity: 0; transition: opacity 0.3s; pointer-events: none; box-shadow: 0 8px 20px rgba(0,0,0,0.4); max-width: 90%; text-align: center; }
   .toast.show { opacity: 1; }
 
-  /* ============ 桌機版（>= 768px） ============ */
+  .uploading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 300; color: #b8e2ff; font-size: 1rem; }
+  .uploading-overlay.hidden { display: none; }
+
   @media (min-width: 768px) {
     .drawer-backdrop { display: none; }
     .sidebar { position: relative; transform: none; width: 260px; flex-shrink: 0; }
@@ -133,14 +130,13 @@
     .messages-area { padding: 20px 18px 10px; }
     .input-area { padding: 14px 20px 18px; }
     .toast { bottom: 30px; }
-    .app-container { max-width: 1250px; margin: auto; border-radius: 0; }
+    .app-container { max-width: 1250px; margin: auto; }
   }
 </style>
 </head>
 <body>
 <div class="app-container" id="appContainer">
 
-  <!-- 登入畫面 -->
   <div class="overlay" id="joinOverlay">
     <div class="card">
       <h2 id="joinTitle">🔒 加入聊天室</h2>
@@ -169,7 +165,6 @@
     </div>
   </div>
 
-  <!-- 側邊欄 -->
   <div class="drawer-backdrop" id="drawerBackdrop"></div>
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -189,7 +184,6 @@
     </div>
   </aside>
 
-  <!-- 主聊天區 -->
   <main class="chat-main">
     <div class="chat-header">
       <button class="menu-btn" id="openSidebarBtn">☰</button>
@@ -202,12 +196,13 @@
     </div>
     <div class="hint">輸入 /help 查看指令</div>
     <div class="input-area">
+      <button class="icon-btn" id="uploadImageBtn" title="上傳圖片" disabled>📷</button>
       <input type="text" id="messageInput" placeholder="請先加入聊天室..." autocomplete="off" disabled>
       <button id="sendBtn" disabled>傳送</button>
+      <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
     </div>
   </main>
 
-  <!-- Modals -->
   <div class="modal-backdrop hidden" id="channelModal">
     <div class="modal">
       <h3>新增頻道</h3>
@@ -276,10 +271,11 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="uploading-overlay hidden" id="uploadingOverlay">📤 圖片上傳中...</div>
 
 <script>
 (function() {
-  // ========== PWA：動態生成 manifest + service worker ==========
+  // ========== PWA ==========
   (function setupPWA() {
     const manifest = {
       name: 'MDHS|ADMIN',
@@ -298,16 +294,14 @@
       }]
     };
     const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
-    const url = URL.createObjectURL(blob);
     const link = document.createElement('link');
     link.rel = 'manifest';
-    link.href = url;
+    link.href = URL.createObjectURL(blob);
     document.head.appendChild(link);
 
-    // Service Worker
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 'mdhs-admin-v1';
+        const CACHE_NAME = 'mdhs-admin-v2';
         self.addEventListener('install', e => self.skipWaiting());
         self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
         self.addEventListener('fetch', e => {
@@ -315,9 +309,7 @@
           e.respondWith(
             caches.open(CACHE_NAME).then(cache =>
               fetch(e.request).then(res => {
-                if (res && res.status === 200 && res.type === 'basic') {
-                  cache.put(e.request, res.clone());
-                }
+                if (res && res.status === 200 && res.type === 'basic') cache.put(e.request, res.clone());
                 return res;
               }).catch(() => cache.match(e.request))
             )
@@ -325,12 +317,10 @@
         });
       `;
       const swBlob = new Blob([swCode], { type: 'application/javascript' });
-      const swUrl = URL.createObjectURL(swBlob);
-      navigator.serviceWorker.register(swUrl).catch(() => {});
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
     }
   })();
 
-  // ========== Supabase ==========
   const SB_URL = 'https://ixmkbqpdugazdxbqogxw.supabase.co';
   const SB_KEY = 'sb_publishable_LuHQhy3xbv4b0ko02AZAyA_zCf7mB59';
   const sb = window.supabase.createClient(SB_URL, SB_KEY);
@@ -373,6 +363,7 @@
   const manageCmdsBtn = $('manageCmdsBtn'), manageBtnsBtn = $('manageBtnsBtn');
   const channelTitle = $('channelTitle'), messagesArea = $('messagesArea');
   const messageInput = $('messageInput'), sendBtn = $('sendBtn'), quickButtons = $('quickButtons');
+  const uploadImageBtn = $('uploadImageBtn'), imageFileInput = $('imageFileInput'), uploadingOverlay = $('uploadingOverlay');
   const channelModal = $('channelModal'), channelNameInput = $('channelNameInput');
   const channelTypeSelect = $('channelTypeSelect'), cancelChannelBtn = $('cancelChannelBtn');
   const confirmChannelBtn = $('confirmChannelBtn'), channelError = $('channelError');
@@ -389,6 +380,7 @@
   const isAdmin = () => currentUser.role === 'admin';
   const escapeHtml = t => { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; };
   const channelIcon = type => type === 'announcement' ? '📢' : type === 'forum' ? '🗂️' : '💬';
+  const IMG_PREFIX = '[IMG]';
 
   function showToast(msg) {
     toast.textContent = msg;
@@ -396,12 +388,27 @@
     setTimeout(() => toast.classList.remove('show'), 2500);
   }
 
-  // 抽屜開關（手機）
   function openDrawer() { sidebar.classList.add('open'); drawerBackdrop.classList.add('open'); }
   function closeDrawer() { sidebar.classList.remove('open'); drawerBackdrop.classList.remove('open'); }
   openSidebarBtn.addEventListener('click', openDrawer);
   closeSidebarBtn.addEventListener('click', closeDrawer);
   drawerBackdrop.addEventListener('click', closeDrawer);
+
+  // ========== 自動清理過期聊天室（7天） ==========
+  async function cleanupExpiredRooms() {
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { data, error } = await sb.from('rooms').select('id, code').lt('last_active', sevenDaysAgo);
+    if (error || !data || !data.length) return;
+    for (const r of data) {
+      await sb.from('rooms').delete().eq('id', r.id);
+    }
+    console.log('已清理 ' + data.length + ' 個過期聊天室');
+  }
+
+  async function touchRoom() {
+    if (!currentRoom) return;
+    await sb.from('rooms').update({ last_active: new Date().toISOString() }).eq('id', currentRoom.id);
+  }
 
   // ========== 資料載入 ==========
   async function loadChannels(roomId) {
@@ -494,7 +501,14 @@
       } else {
         const cls = msg.is_bot ? 'bot' : 'user';
         const label = msg.is_bot ? '🤖 小幫手' : escapeHtml(msg.sender);
-        html += `<div class="message ${cls}"><div class="sender">${label}</div><div class="bubble">${escapeHtml(msg.text).replace(/\n/g, '<br>')}</div></div>`;
+        let contentHtml = '';
+        if (msg.text && msg.text.startsWith(IMG_PREFIX)) {
+          const imgUrl = msg.text.substring(IMG_PREFIX.length);
+          contentHtml = `<img class="chat-image" src="${escapeHtml(imgUrl)}" onclick="window.open('${escapeHtml(imgUrl)}','_blank')">`;
+        } else {
+          contentHtml = escapeHtml(msg.text).replace(/\n/g, '<br>');
+        }
+        html += `<div class="message ${cls}"><div class="sender">${label}</div><div class="bubble">${contentHtml}</div></div>`;
       }
     });
     messagesArea.innerHTML = html;
@@ -585,10 +599,7 @@
     });
   }
   function renderQuickButtons() {
-    if (!customBtns.length) {
-      quickButtons.innerHTML = '';
-      return;
-    }
+    if (!customBtns.length) { quickButtons.innerHTML = ''; return; }
     let html = '';
     customBtns.forEach(b => {
       html += `<button class="quick-btn" data-btn-id="${b.id}">${escapeHtml(b.label)}</button>`;
@@ -639,12 +650,14 @@
     const tokenValue = tokenInput.value.trim();
     if (!code) { errorMsg.textContent = '請輸入聊天室代碼'; return; }
     errorMsg.textContent = '載入中...';
+
+    await cleanupExpiredRooms();
+
     const room = await findRoomByCode(code);
     if (!room) { errorMsg.textContent = '找不到此聊天室'; return; }
 
     currentRoom = room;
     let role = 'member';
-
     const savedToken = getMyTokens()[room.id];
     if (tokenValue && tokenValue === room.admin_token) {
       role = 'admin';
@@ -659,6 +672,7 @@
     currentUser = { nickname, role };
     joinOverlay.classList.add('hidden');
     updateRoomUI();
+    await touchRoom();
     await loadChannels(room.id);
     await registerMember(room.id, nickname, role);
     await loadMembers(room.id);
@@ -674,6 +688,7 @@
     }
     messageInput.disabled = false;
     sendBtn.disabled = false;
+    uploadImageBtn.disabled = false;
     messageInput.placeholder = '輸入訊息...';
     subscribeRealtime();
     startHeartbeat();
@@ -685,6 +700,9 @@
     const nickname = newRoomNickname.value.trim() || '管理員';
     if (!name || !code) { errorMsg.textContent = '請填寫名稱與代碼'; return; }
     errorMsg.textContent = '建立中...';
+
+    await cleanupExpiredRooms();
+
     const existing = await findRoomByCode(code);
     if (existing) { errorMsg.textContent = '此代碼已被使用'; return; }
 
@@ -710,10 +728,11 @@
     await sb.from('messages').insert({ channel_id: channels[0].id, text: `聊天室「${name}」已建立！你是管理員。`, sender: 'system', is_system: true });
 
     tokenDisplay.innerHTML = `<div class="token-display">🔑 Token（請保存）：<br>${adminToken}</div>`;
-    alert('🎉 聊天室已建立！\n\n管理員 Token：\n' + adminToken + '\n\n請保存好！下次加入時貼上即可恢復管理員身分。');
+    alert('🎉 聊天室已建立！\n\n管理員 Token：\n' + adminToken + '\n\n請保存好！下次加入時貼上即可恢復管理員身分。\n\n📌 此聊天室若 7 天無人使用，將自動刪除並釋放代碼。');
 
     messageInput.disabled = false;
     sendBtn.disabled = false;
+    uploadImageBtn.disabled = false;
     messageInput.placeholder = '輸入訊息...';
     subscribeRealtime();
     startHeartbeat();
@@ -795,8 +814,54 @@
       if (!currentRoom || !currentUser.nickname) return;
       await sb.from('members').update({ last_seen: new Date().toISOString() })
         .eq('room_id', currentRoom.id).eq('user_id', USER_ID);
+      await touchRoom();
     }, 30000);
   }
+
+  // ========== 圖片上傳 ==========
+  uploadImageBtn.addEventListener('click', () => {
+    if (!currentChannel) { showToast('請先選擇頻道'); return; }
+    imageFileInput.click();
+  });
+
+  imageFileInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file || !currentChannel) return;
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('圖片不能超過 5MB');
+      imageFileInput.value = '';
+      return;
+    }
+
+    uploadingOverlay.classList.remove('hidden');
+    try {
+      const ext = file.name.split('.').pop() || 'jpg';
+      const fileName = `${USER_ID}_${Date.now()}.${ext}`;
+      const { data, error } = await sb.storage.from('chat-images').upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+      if (error) throw error;
+
+      const { data: urlData } = sb.storage.from('chat-images').getPublicUrl(fileName);
+      const publicUrl = urlData.publicUrl;
+
+      await sb.from('messages').insert({
+        channel_id: currentChannel.id,
+        text: IMG_PREFIX + publicUrl,
+        sender: currentUser.nickname,
+        is_bot: false, is_system: false
+      });
+      await touchRoom();
+      showToast('✅ 圖片已傳送');
+    } catch (err) {
+      console.error(err);
+      showToast('❌ 上傳失敗：' + (err.message || '未知錯誤'));
+    } finally {
+      uploadingOverlay.classList.add('hidden');
+      imageFileInput.value = '';
+    }
+  });
 
   // ========== 頻道 / 成員 / 指令 / 按鈕 ==========
   function openChannelModal() {
@@ -891,9 +956,7 @@
     if (c === '/help' || c === '/幫助') {
       let help = `🤖 可用指令：\n/規則 - 規則\n/help - 幫助\n/時間 - 時間\n/問候 - 打招呼\n/頻道 - 列出頻道`;
       if (isAdmin()) help += `\n\n👑 管理員指令：\n/set /指令名 回應內容\n/del /指令名`;
-      if (customCmds.length) {
-        help += `\n\n📝 自訂指令：\n` + customCmds.map(x => x.command).join(', ');
-      }
+      if (customCmds.length) help += `\n\n📝 自訂指令：\n` + customCmds.map(x => x.command).join(', ');
       return help;
     }
     if (c === '/時間' || c === '/time') return `🕒 現在時間：${new Date().toLocaleTimeString('zh-TW', { hour12: false })}`;
@@ -936,6 +999,7 @@
       sender: currentUser.nickname,
       is_bot: false, is_system: false
     });
+    await touchRoom();
     messageInput.value = '';
 
     if (text.startsWith('/')) {
