@@ -53,8 +53,9 @@
   .sidebar-footer button { width: 100%; padding: 11px; border-radius: 12px; border: 1px dashed #2f6d9e; background: transparent; color: #8dc9ff; font-size: 0.85rem; cursor: pointer; }
 
   .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100%; position: relative; }
-  .chat-header { padding: calc(env(safe-area-inset-top) + 12px) 12px 12px; background: #0e1820; border-bottom: 1px solid rgba(70, 130, 200, 0.2); display: flex; align-items: center; gap: 10px; color: #c6e2ff; flex-shrink: 0; }
+  .chat-header { padding: calc(env(safe-area-inset-top) + 12px) 12px 12px; background: #0e1820; border-bottom: 1px solid rgba(70, 130, 200, 0.2); display: flex; align-items: center; gap: 8px; color: #c6e2ff; flex-shrink: 0; }
   .menu-btn { width: 38px; height: 38px; border-radius: 10px; background: rgba(47, 109, 158, 0.25); border: none; color: #c6e2ff; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .menu-btn:active { background: rgba(47, 109, 158, 0.5); }
   .chat-header h3 { font-weight: 500; font-size: 1rem; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .chat-header .bot-badge { background: #1e3f5a; border-radius: 16px; padding: 4px 10px; font-size: 0.68rem; color: #8dc9ff; border: 1px solid #2f6d9e; flex-shrink: 0; }
 
@@ -112,6 +113,8 @@
   .cmd-item .del-btn, .btn-item .del-btn { font-size: 0.7rem; padding: 5px 10px; background: #7a2a2a; color: #ffc5c5; border: none; border-radius: 8px; cursor: pointer; }
   .btn-item .btn-label { flex: 1; color: #d4e9ff; }
   .btn-item .btn-type { font-size: 0.62rem; padding: 2px 6px; border-radius: 8px; background: #1e5a86; color: #cce8ff; }
+
+  .room-code-box { padding: 16px; background: #0a1520; border: 1px dashed #4f9eff; border-radius: 12px; color: #7bffb0; font-size: 1.5rem; font-family: monospace; text-align: center; letter-spacing: 3px; user-select: all; margin-top: 4px; }
 
   .toast { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 80px); left: 50%; transform: translateX(-50%); background: #1e5a86; color: white; padding: 12px 22px; border-radius: 30px; font-size: 0.9rem; z-index: 200; opacity: 0; transition: opacity 0.3s; pointer-events: none; box-shadow: 0 8px 20px rgba(0,0,0,0.4); max-width: 90%; text-align: center; }
   .toast.show { opacity: 1; }
@@ -181,6 +184,7 @@
       <button id="viewMembersBtn">👥 成員列表</button>
       <button id="manageCmdsBtn">🤖 管理指令</button>
       <button id="manageBtnsBtn">🔘 管理按鈕</button>
+      <button id="showCodeSideBtn">🔑 顯示代碼</button>
     </div>
   </aside>
 
@@ -188,6 +192,7 @@
     <div class="chat-header">
       <button class="menu-btn" id="openSidebarBtn">☰</button>
       <h3 id="channelTitle"># 請選擇頻道</h3>
+      <button class="menu-btn" id="showCodeBtn" title="顯示聊天室代碼" style="font-size:1rem;">🔑</button>
       <span class="bot-badge">🤖</span>
     </div>
     <div class="quick-buttons" id="quickButtons"></div>
@@ -202,6 +207,23 @@
       <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
     </div>
   </main>
+
+  <!-- 聊天室資訊 Modal -->
+  <div class="modal-backdrop hidden" id="roomCodeModal">
+    <div class="modal" style="max-width: 360px;">
+      <h3>🔑 聊天室資訊</h3>
+      <label>聊天室名稱</label>
+      <div id="roomNameDisplay" style="padding: 12px; background: rgba(15,25,35,0.6); border-radius: 10px; color: #d4e9ff; font-size: 0.95rem;"></div>
+      <label>聊天室代碼</label>
+      <div class="room-code-box" id="roomCodeDisplay"></div>
+      <p style="color:#587b99; font-size:0.72rem; margin-top:10px; text-align:center;">分享這個代碼給朋友，他們就能加入</p>
+      <div class="modal-actions">
+        <button class="cancel" id="closeCodeBtn">關閉</button>
+        <button class="confirm" id="copyCodeBtn">複製代碼</button>
+      </div>
+      <div class="error-msg" id="codeError"></div>
+    </div>
+  </div>
 
   <div class="modal-backdrop hidden" id="channelModal">
     <div class="modal">
@@ -301,7 +323,7 @@
 
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 'mdhs-admin-v2';
+        const CACHE_NAME = 'mdhs-admin-v3';
         self.addEventListener('install', e => self.skipWaiting());
         self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
         self.addEventListener('fetch', e => {
@@ -377,6 +399,16 @@
   const sidebar = $('sidebar'), drawerBackdrop = $('drawerBackdrop');
   const openSidebarBtn = $('openSidebarBtn'), closeSidebarBtn = $('closeSidebarBtn');
 
+  // 新增加的元素
+  const showCodeBtn = $('showCodeBtn');
+  const showCodeSideBtn = $('showCodeSideBtn');
+  const roomCodeModal = $('roomCodeModal');
+  const roomCodeDisplay = $('roomCodeDisplay');
+  const roomNameDisplay = $('roomNameDisplay');
+  const closeCodeBtn = $('closeCodeBtn');
+  const copyCodeBtn = $('copyCodeBtn');
+  const codeError = $('codeError');
+
   const isAdmin = () => currentUser.role === 'admin';
   const escapeHtml = t => { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; };
   const channelIcon = type => type === 'announcement' ? '📢' : type === 'forum' ? '🗂️' : '💬';
@@ -393,6 +425,39 @@
   openSidebarBtn.addEventListener('click', openDrawer);
   closeSidebarBtn.addEventListener('click', closeDrawer);
   drawerBackdrop.addEventListener('click', closeDrawer);
+
+  // ========== 顯示聊天室代碼 ==========
+  function openCodeModal() {
+    if (!currentRoom) { showToast('尚未加入聊天室'); return; }
+    roomNameDisplay.textContent = currentRoom.name;
+    roomCodeDisplay.textContent = currentRoom.code;
+    codeError.textContent = '';
+    roomCodeModal.classList.remove('hidden');
+    closeDrawer();
+  }
+  showCodeBtn.addEventListener('click', openCodeModal);
+  showCodeSideBtn.addEventListener('click', openCodeModal);
+  closeCodeBtn.addEventListener('click', () => roomCodeModal.classList.add('hidden'));
+  copyCodeBtn.addEventListener('click', async () => {
+    if (!currentRoom) return;
+    const code = currentRoom.code;
+    try {
+      await navigator.clipboard.writeText(code);
+      codeError.textContent = '✅ 已複製！';
+      codeError.style.color = '#7bffb0';
+      setTimeout(() => { codeError.textContent = ''; }, 1500);
+    } catch (e) {
+      const ta = document.createElement('textarea');
+      ta.value = code;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      codeError.textContent = '✅ 已複製！';
+      codeError.style.color = '#7bffb0';
+      setTimeout(() => { codeError.textContent = ''; }, 1500);
+    }
+  });
 
   // ========== 自動清理過期聊天室（7天） ==========
   async function cleanupExpiredRooms() {
