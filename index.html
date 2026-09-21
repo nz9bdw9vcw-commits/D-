@@ -323,7 +323,7 @@
 
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 'mdhs-admin-v3';
+        const CACHE_NAME = 'mdhs-admin-v4';
         self.addEventListener('install', e => self.skipWaiting());
         self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
         self.addEventListener('fetch', e => {
@@ -735,6 +735,9 @@
     }
 
     currentUser = { nickname, role };
+    // 記住這次登入的資訊（只記代碼和暱稱，不會自動登入）
+    localStorage.setItem('chat_last_room_code', code);
+    localStorage.setItem('chat_last_nickname', nickname);
     joinOverlay.classList.add('hidden');
     updateRoomUI();
     await touchRoom();
@@ -781,6 +784,9 @@
     currentRoom = room;
     currentUser = { nickname, role: 'admin' };
     saveToken(room.id, adminToken);
+    // 記住這次建立/登入的資訊
+    localStorage.setItem('chat_last_room_code', code);
+    localStorage.setItem('chat_last_nickname', nickname);
 
     joinOverlay.classList.add('hidden');
     updateRoomUI();
@@ -1100,6 +1106,14 @@
   manageBtnsBtn.addEventListener('click', openBtnsModal);
   closeBtnsBtn.addEventListener('click', closeBtnsModal);
   addBtnBtn.addEventListener('click', addBtn);
+
+  // ========== 自動填入上次登入資訊（不自動登入） ==========
+  (function restoreLastLogin() {
+    const lastCode = localStorage.getItem('chat_last_room_code');
+    const lastNick = localStorage.getItem('chat_last_nickname');
+    if (lastCode) roomCodeInput.value = lastCode;
+    if (lastNick) nicknameInput.value = lastNick;
+  })();
 })();
 </script>
 </body>
