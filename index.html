@@ -33,6 +33,9 @@
   .error-msg { color: #ff7b7b; font-size: 0.82rem; margin-top: 10px; min-height: 18px; text-align: center; }
   .hint-text { font-size: 0.72rem; color: #587b99; margin-top: 12px; text-align: center; line-height: 1.5; }
   .token-display { background: #0a1520; border: 1px dashed #4f9eff; padding: 10px; border-radius: 10px; color: #7bffb0; font-size: 0.78rem; word-break: break-all; text-align: center; margin-top: 10px; font-family: monospace; user-select: all; }
+  .admin-status { padding: 10px 12px; border-radius: 10px; font-size: 0.8rem; margin-top: 10px; text-align: center; }
+  .admin-status.has-admin { background: rgba(255, 200, 100, 0.1); color: #ffd98a; border: 1px solid #8a5a1e; }
+  .admin-status.no-admin { background: rgba(123, 255, 176, 0.1); color: #7bffb0; border: 1px solid #2d7a4d; }
 
   .drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
   .drawer-backdrop.open { opacity: 1; pointer-events: auto; }
@@ -51,6 +54,8 @@
   .channel-item .del-btn { margin-left: auto; font-size: 0.75rem; color: #ff9b9b; opacity: 0.7; padding: 4px 8px; border-radius: 8px; background: transparent; border: none; cursor: pointer; }
   .sidebar-footer { padding: 12px; border-top: 1px solid rgba(70, 130, 200, 0.15); display: flex; flex-direction: column; gap: 8px; }
   .sidebar-footer button { width: 100%; padding: 11px; border-radius: 12px; border: 1px dashed #2f6d9e; background: transparent; color: #8dc9ff; font-size: 0.85rem; cursor: pointer; }
+  .sidebar-footer button.danger { border-color: #7a2a2a; color: #ff9b9b; }
+  .sidebar-footer button.danger:active { background: rgba(122, 42, 42, 0.2); }
 
   .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100%; position: relative; }
   .chat-header { padding: calc(env(safe-area-inset-top) + 12px) 12px 12px; background: #0e1820; border-bottom: 1px solid rgba(70, 130, 200, 0.2); display: flex; align-items: center; gap: 8px; color: #c6e2ff; flex-shrink: 0; }
@@ -149,8 +154,11 @@
         <input type="text" id="roomCodeInput" placeholder="例如: 123456" autocomplete="off">
         <label>你的暱稱</label>
         <input type="text" id="nicknameInput" placeholder="訪客" autocomplete="off">
-        <label>管理員 Token（選填）</label>
-        <input type="text" id="tokenInput" placeholder="建立者會拿到一組 Token" autocomplete="off">
+        <div id="adminStatusBox"></div>
+        <div id="tokenFieldWrap" style="display:none;">
+          <label>管理員 Token</label>
+          <input type="text" id="tokenInput" placeholder="輸入 Token 成為管理員" autocomplete="off">
+        </div>
       </div>
       <div id="createFields" style="display:none;">
         <label>聊天室名稱</label>
@@ -185,6 +193,7 @@
       <button id="manageCmdsBtn">🤖 管理指令</button>
       <button id="manageBtnsBtn">🔘 管理按鈕</button>
       <button id="showCodeSideBtn">🔑 顯示代碼</button>
+      <button id="leaveRoomBtn" class="danger" style="display:none;">🚪 退出聊天室</button>
     </div>
   </aside>
 
@@ -208,7 +217,6 @@
     </div>
   </main>
 
-  <!-- 聊天室資訊 Modal -->
   <div class="modal-backdrop hidden" id="roomCodeModal">
     <div class="modal" style="max-width: 360px;">
       <h3>🔑 聊天室資訊</h3>
@@ -323,7 +331,7 @@
 
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 'mdhs-admin-v4';
+        const CACHE_NAME = 'mdhs-admin-v5';
         self.addEventListener('install', e => self.skipWaiting());
         self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
         self.addEventListener('fetch', e => {
@@ -377,6 +385,7 @@
   const joinOverlay = $('joinOverlay'), joinTitle = $('joinTitle'), joinSubtitle = $('joinSubtitle');
   const joinFields = $('joinFields'), createFields = $('createFields');
   const roomCodeInput = $('roomCodeInput'), nicknameInput = $('nicknameInput'), tokenInput = $('tokenInput');
+  const adminStatusBox = $('adminStatusBox'), tokenFieldWrap = $('tokenFieldWrap');
   const newRoomName = $('newRoomName'), newRoomCode = $('newRoomCode'), newRoomNickname = $('newRoomNickname');
   const joinBtn = $('joinBtn'), switchToCreateBtn = $('switchToCreateBtn'), errorMsg = $('errorMsg');
   const tokenDisplay = $('tokenDisplay');
@@ -398,16 +407,11 @@
   const toast = $('toast');
   const sidebar = $('sidebar'), drawerBackdrop = $('drawerBackdrop');
   const openSidebarBtn = $('openSidebarBtn'), closeSidebarBtn = $('closeSidebarBtn');
-
-  // 新增加的元素
-  const showCodeBtn = $('showCodeBtn');
-  const showCodeSideBtn = $('showCodeSideBtn');
-  const roomCodeModal = $('roomCodeModal');
-  const roomCodeDisplay = $('roomCodeDisplay');
-  const roomNameDisplay = $('roomNameDisplay');
-  const closeCodeBtn = $('closeCodeBtn');
-  const copyCodeBtn = $('copyCodeBtn');
-  const codeError = $('codeError');
+  const showCodeBtn = $('showCodeBtn'), showCodeSideBtn = $('showCodeSideBtn');
+  const roomCodeModal = $('roomCodeModal'), roomCodeDisplay = $('roomCodeDisplay');
+  const roomNameDisplay = $('roomNameDisplay'), closeCodeBtn = $('closeCodeBtn');
+  const copyCodeBtn = $('copyCodeBtn'), codeError = $('codeError');
+  const leaveRoomBtn = $('leaveRoomBtn');
 
   const isAdmin = () => currentUser.role === 'admin';
   const escapeHtml = t => { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; };
@@ -425,6 +429,47 @@
   openSidebarBtn.addEventListener('click', openDrawer);
   closeSidebarBtn.addEventListener('click', closeDrawer);
   drawerBackdrop.addEventListener('click', closeDrawer);
+
+  // ========== 檢查房間是否有管理員 ==========
+  async function checkRoomHasAdmin(roomId) {
+    const { data, error } = await sb.from('members')
+      .select('id, nickname, role')
+      .eq('room_id', roomId)
+      .eq('role', 'admin')
+      .limit(1);
+    if (error) { console.error(error); return null; }
+    if (data && data.length > 0) return data[0];
+    return null;
+  }
+
+  // 加入時動態檢查代碼欄位（輸入完自動檢查）
+  let checkTimer = null;
+  roomCodeInput.addEventListener('input', () => {
+    if (checkTimer) clearTimeout(checkTimer);
+    checkTimer = setTimeout(async () => {
+      const code = roomCodeInput.value.trim().toLowerCase();
+      if (!code || isCreateMode) {
+        adminStatusBox.innerHTML = '';
+        tokenFieldWrap.style.display = 'none';
+        return;
+      }
+      const room = await findRoomByCode(code);
+      if (!room) {
+        adminStatusBox.innerHTML = '';
+        tokenFieldWrap.style.display = 'none';
+        return;
+      }
+      const admin = await checkRoomHasAdmin(room.id);
+      if (admin) {
+        adminStatusBox.innerHTML = `<div class="admin-status has-admin">⚠️ 此聊天室已有管理員：${escapeHtml(admin.nickname)}<br><span style="font-size:0.7rem;opacity:0.8;">你只能以一般成員身分加入</span></div>`;
+        tokenFieldWrap.style.display = 'none';
+        tokenInput.value = '';
+      } else {
+        adminStatusBox.innerHTML = `<div class="admin-status no-admin">✅ 此聊天室目前沒有管理員<br><span style="font-size:0.7rem;opacity:0.8;">若有 Token，可輸入成為管理員</span></div>`;
+        tokenFieldWrap.style.display = 'block';
+      }
+    }, 500);
+  });
 
   // ========== 顯示聊天室代碼 ==========
   function openCodeModal() {
@@ -457,6 +502,34 @@
       codeError.style.color = '#7bffb0';
       setTimeout(() => { codeError.textContent = ''; }, 1500);
     }
+  });
+
+  // ========== 退出聊天室 ==========
+  leaveRoomBtn.addEventListener('click', async () => {
+    if (!currentRoom) return;
+    const isAdminLeaving = isAdmin();
+    const msg = isAdminLeaving
+      ? '⚠️ 你是管理員，退出後管理員位置會釋放給下一個人。\n\n確定要退出嗎？'
+      : '確定要退出聊天室嗎？';
+    if (!confirm(msg)) return;
+    try {
+      await sb.from('members').delete().eq('room_id', currentRoom.id).eq('user_id', USER_ID);
+      if (currentChannel) {
+        await sb.from('messages').insert({
+          channel_id: currentChannel.id,
+          text: `${currentUser.nickname} 退出了聊天室${isAdminLeaving ? '（管理員位置已釋放）' : ''}`,
+          sender: 'system', is_system: true
+        });
+      }
+      // 清除 Token（避免下次自動帶入）
+      const t = getMyTokens();
+      delete t[currentRoom.id];
+      localStorage.setItem('chat_tokens', JSON.stringify(t));
+    } catch (e) {
+      console.error(e);
+    }
+    alert('已退出聊天室');
+    location.reload();
   });
 
   // ========== 自動清理過期聊天室（7天） ==========
@@ -706,6 +779,8 @@
     currentRoomNameEl.textContent = currentRoom.name;
     roleBadge.textContent = isAdmin() ? '管理員' : '成員';
     roleBadge.className = 'role-badge' + (isAdmin() ? ' admin' : '');
+    // 顯示/隱藏退出按鈕
+    leaveRoomBtn.style.display = 'block';
   }
 
   // ========== 加入 / 建立 ==========
@@ -721,21 +796,38 @@
     const room = await findRoomByCode(code);
     if (!room) { errorMsg.textContent = '找不到此聊天室'; return; }
 
-    currentRoom = room;
-    let role = 'member';
+    // ★★★ 關鍵檢查：房間是否已有管理員 ★★★
+    const existingAdmin = await checkRoomHasAdmin(room.id);
     const savedToken = getMyTokens()[room.id];
-    if (tokenValue && tokenValue === room.admin_token) {
-      role = 'admin';
-      saveToken(room.id, tokenValue);
-    } else if (savedToken && savedToken === room.admin_token) {
-      role = 'admin';
-    } else if (tokenValue && tokenValue !== room.admin_token) {
-      errorMsg.textContent = 'Token 錯誤，將以一般成員身分加入';
-      await new Promise(r => setTimeout(r, 1000));
+    const hasValidToken = (tokenValue && tokenValue === room.admin_token) || (savedToken && savedToken === room.admin_token);
+
+    let role = 'member';
+
+    if (existingAdmin) {
+      // 已有管理員，且你不是那個管理員
+      const amIAdmin = existingAdmin.user_id === USER_ID;
+      if (amIAdmin) {
+        role = 'admin';
+      } else {
+        // 不能搶管理員，忽略 token
+        if (hasValidToken) {
+          showToast('此聊天室已有管理員，將以一般成員身分加入');
+        }
+        role = 'member';
+      }
+    } else {
+      // 沒有管理員，如果有 token 就能當管理員
+      if (hasValidToken) {
+        role = 'admin';
+        if (tokenValue) saveToken(room.id, tokenValue);
+      } else if (tokenValue && tokenValue !== room.admin_token) {
+        errorMsg.textContent = 'Token 錯誤，將以一般成員身分加入';
+        await new Promise(r => setTimeout(r, 1000));
+      }
     }
 
+    currentRoom = room;
     currentUser = { nickname, role };
-    // 記住這次登入的資訊（只記代碼和暱稱，不會自動登入）
     localStorage.setItem('chat_last_room_code', code);
     localStorage.setItem('chat_last_nickname', nickname);
     joinOverlay.classList.add('hidden');
@@ -784,7 +876,6 @@
     currentRoom = room;
     currentUser = { nickname, role: 'admin' };
     saveToken(room.id, adminToken);
-    // 記住這次建立/登入的資訊
     localStorage.setItem('chat_last_room_code', code);
     localStorage.setItem('chat_last_nickname', nickname);
 
@@ -829,6 +920,8 @@
     switchToCreateBtn.textContent = create ? '← 返回加入聊天室' : '＋ 建立新的聊天室';
     errorMsg.textContent = '';
     tokenDisplay.innerHTML = '';
+    adminStatusBox.innerHTML = '';
+    tokenFieldWrap.style.display = 'none';
   }
 
   // ========== Realtime ==========
@@ -1107,12 +1200,13 @@
   closeBtnsBtn.addEventListener('click', closeBtnsModal);
   addBtnBtn.addEventListener('click', addBtn);
 
-  // ========== 自動填入上次登入資訊（不自動登入） ==========
+  // ========== 自動填入上次登入資訊 ==========
   (function restoreLastLogin() {
     const lastCode = localStorage.getItem('chat_last_room_code');
     const lastNick = localStorage.getItem('chat_last_nickname');
     if (lastCode) roomCodeInput.value = lastCode;
     if (lastNick) nicknameInput.value = lastNick;
+    if (lastCode) roomCodeInput.dispatchEvent(new Event('input'));
   })();
 })();
 </script>
