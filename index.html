@@ -37,22 +37,44 @@
   .admin-status.has-admin { background: rgba(255, 200, 100, 0.1); color: #ffd98a; border: 1px solid #8a5a1e; }
   .admin-status.no-admin { background: rgba(123, 255, 176, 0.1); color: #7bffb0; border: 1px solid #2d7a4d; }
 
+  /* Loading */
+  .loading-screen { position: fixed; inset: 0; background: #0f1a24; display: flex; justify-content: center; align-items: center; z-index: 999; color: #8dc9ff; font-size: 1rem; }
+  .loading-screen.hidden { display: none; }
+
+  /* Sidebar (Discord-like) */
   .drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
   .drawer-backdrop.open { opacity: 1; pointer-events: auto; }
-  .sidebar { position: absolute; top: 0; left: 0; bottom: 0; width: 260px; background: #0e1820; border-right: 1px solid rgba(70, 130, 200, 0.2); display: flex; flex-direction: column; z-index: 95; transform: translateX(-100%); transition: transform 0.25s ease; }
+  .sidebar { position: absolute; top: 0; left: 0; bottom: 0; width: 290px; background: #0e1820; border-right: 1px solid rgba(70, 130, 200, 0.2); display: flex; flex-direction: column; z-index: 95; transform: translateX(-100%); transition: transform 0.25s ease; }
   .sidebar.open { transform: translateX(0); }
-  .sidebar-header { padding: 60px 16px 14px; border-bottom: 1px solid rgba(70, 130, 200, 0.15); color: #b8e2ff; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; position: relative; }
+  .sidebar-header { padding: 60px 16px 14px; border-bottom: 1px solid rgba(70, 130, 200, 0.15); color: #b8e2ff; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; position: relative; flex-shrink: 0; }
   .sidebar-close { position: absolute; top: 14px; right: 12px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: none; color: #b8e2ff; font-size: 1.2rem; cursor: pointer; }
   .room-name { font-size: 1rem; color: #e0f0ff; text-transform: none; letter-spacing: 0; margin-top: 4px; font-weight: 500; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .role-badge { font-size: 0.62rem; background: #1e5a86; padding: 2px 8px; border-radius: 20px; color: #cce8ff; }
   .role-badge.admin { background: #8a5a1e; color: #ffe1b0; }
+
+  /* 我的聊天室列表 (Discord-like) */
+  .my-rooms-section { border-bottom: 1px solid rgba(70, 130, 200, 0.15); flex-shrink: 0; max-height: 40%; display: flex; flex-direction: column; }
+  .my-rooms-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px 6px; font-size: 0.68rem; color: #5f87a8; letter-spacing: 1px; text-transform: uppercase; }
+  .my-rooms-header button { background: rgba(47, 109, 158, 0.4); border: none; color: #cce8ff; font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  .my-rooms-header button:active { background: rgba(47, 109, 158, 0.7); }
+  .my-rooms-list { overflow-y: auto; padding: 0 8px 10px; }
+  .my-room-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; color: #b8d4ec; cursor: pointer; font-size: 0.85rem; margin-bottom: 3px; word-break: break-all; }
+  .my-room-item:active { background: rgba(45, 90, 130, 0.35); }
+  .my-room-item.active { background: #1e4b70; color: #fff; font-weight: 500; }
+  .my-room-item .lock { flex-shrink: 0; }
+  .my-room-item .info { flex: 1; min-width: 0; }
+  .my-room-item .rname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .my-room-item .rcode { font-size: 0.7rem; color: #7fa0bd; margin-top: 1px; }
+  .my-room-item.active .rcode { color: #cce8ff; }
+  .my-rooms-empty { padding: 16px; text-align: center; color: #587b99; font-size: 0.78rem; }
+
   .channel-list { flex: 1; overflow-y: auto; padding: 10px; }
   .channel-section-title { font-size: 0.68rem; color: #5f87a8; padding: 10px 8px 6px; letter-spacing: 1px; text-transform: uppercase; }
   .channel-item { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; color: #b8d4ec; cursor: pointer; font-size: 0.92rem; margin-bottom: 2px; }
   .channel-item:active { background: rgba(45, 90, 130, 0.35); }
   .channel-item.active { background: #1e4b70; color: #fff; font-weight: 500; }
   .channel-item .del-btn { margin-left: auto; font-size: 0.75rem; color: #ff9b9b; opacity: 0.7; padding: 4px 8px; border-radius: 8px; background: transparent; border: none; cursor: pointer; }
-  .sidebar-footer { padding: 12px; border-top: 1px solid rgba(70, 130, 200, 0.15); display: flex; flex-direction: column; gap: 8px; }
+  .sidebar-footer { padding: 12px; border-top: 1px solid rgba(70, 130, 200, 0.15); display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
   .sidebar-footer button { width: 100%; padding: 11px; border-radius: 12px; border: 1px dashed #2f6d9e; background: transparent; color: #8dc9ff; font-size: 0.85rem; cursor: pointer; }
   .sidebar-footer button.danger { border-color: #7a2a2a; color: #ff9b9b; }
   .sidebar-footer button.danger:active { background: rgba(122, 42, 42, 0.2); }
@@ -81,6 +103,8 @@
   .message.system .bubble { background: rgba(40, 60, 80, 0.6); color: #9dbdd8; font-size: 0.78rem; padding: 6px 12px; border-radius: 18px; }
   .message .sender { font-size: 0.68rem; color: #7f9db8; margin-bottom: 3px; padding-left: 6px; }
   .message.user .sender { text-align: right; padding-right: 6px; }
+  .message .sender .role-tag { color: #ffd98a; }
+  .message .sender .role-tag.member { color: #8dc9ff; }
   .message img.chat-image { max-width: 100%; border-radius: 12px; margin-top: 4px; cursor: pointer; display: block; }
 
   .hint { font-size: 0.68rem; color: #6c8ca5; text-align: center; padding: 2px 0 4px; }
@@ -129,7 +153,7 @@
 
   @media (min-width: 768px) {
     .drawer-backdrop { display: none; }
-    .sidebar { position: relative; transform: none; width: 260px; flex-shrink: 0; }
+    .sidebar { position: relative; transform: none; width: 290px; flex-shrink: 0; }
     .sidebar-close { display: none; }
     .sidebar-header { padding: 18px 18px 14px; }
     .menu-btn { display: none; }
@@ -143,9 +167,13 @@
 </style>
 </head>
 <body>
+
+<div class="loading-screen" id="loadingScreen">載入中...</div>
+
 <div class="app-container" id="appContainer">
 
-  <div class="overlay" id="joinOverlay">
+  <!-- 登入 / 建立畫面 -->
+  <div class="overlay hidden" id="joinOverlay">
     <div class="card">
       <h2 id="joinTitle">🔒 加入聊天室</h2>
       <p id="joinSubtitle">輸入聊天室代碼以繼續</p>
@@ -153,7 +181,7 @@
         <label>聊天室代碼</label>
         <input type="text" id="roomCodeInput" placeholder="例如: 123456" autocomplete="off">
         <label>你的暱稱</label>
-        <input type="text" id="nicknameInput" placeholder="訪客" autocomplete="off">
+        <input type="text" id="nicknameInput" placeholder="輸入暱稱（不能用「管理員」）" autocomplete="off">
         <div id="adminStatusBox"></div>
         <div id="tokenFieldWrap" style="display:none;">
           <label>管理員 Token</label>
@@ -166,7 +194,7 @@
         <label>聊天室代碼</label>
         <input type="text" id="newRoomCode" placeholder="設定一組代碼">
         <label>你的暱稱</label>
-        <input type="text" id="newRoomNickname" placeholder="管理員" autocomplete="off">
+        <input type="text" id="newRoomNickname" placeholder="輸入暱稱（不能用「管理員」）" autocomplete="off">
         <p class="hint-text">建立後系統會給您一組管理員 Token，請務必保存！</p>
       </div>
       <button id="joinBtn">加入聊天</button>
@@ -176,6 +204,7 @@
     </div>
   </div>
 
+  <!-- 側邊欄 -->
   <div class="drawer-backdrop" id="drawerBackdrop"></div>
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -186,6 +215,18 @@
         <span class="role-badge" id="roleBadge">成員</span>
       </div>
     </div>
+
+    <!-- 我的聊天室列表 (Discord-like) -->
+    <div class="my-rooms-section">
+      <div class="my-rooms-header">
+        <span>我的聊天室</span>
+        <button id="addRoomBtn">＋ 加入 / 新增</button>
+      </div>
+      <div class="my-rooms-list" id="myRoomsList">
+        <div class="my-rooms-empty">還沒有加入任何聊天室</div>
+      </div>
+    </div>
+
     <div class="channel-list" id="channelList"></div>
     <div class="sidebar-footer">
       <button id="addChannelBtn">＋ 新增頻道</button>
@@ -197,6 +238,7 @@
     </div>
   </aside>
 
+  <!-- 主聊天區 -->
   <main class="chat-main">
     <div class="chat-header">
       <button class="menu-btn" id="openSidebarBtn">☰</button>
@@ -217,6 +259,7 @@
     </div>
   </main>
 
+  <!-- Modal: 聊天室資訊 -->
   <div class="modal-backdrop hidden" id="roomCodeModal">
     <div class="modal" style="max-width: 360px;">
       <h3>🔑 聊天室資訊</h3>
@@ -233,6 +276,7 @@
     </div>
   </div>
 
+  <!-- Modal: 新增頻道 -->
   <div class="modal-backdrop hidden" id="channelModal">
     <div class="modal">
       <h3>新增頻道</h3>
@@ -252,6 +296,7 @@
     </div>
   </div>
 
+  <!-- Modal: 成員列表 -->
   <div class="modal-backdrop hidden" id="membersModal">
     <div class="modal">
       <h3>👥 成員列表</h3>
@@ -262,6 +307,7 @@
     </div>
   </div>
 
+  <!-- Modal: 管理指令 -->
   <div class="modal-backdrop hidden" id="cmdsModal">
     <div class="modal">
       <h3>🤖 管理機器人指令</h3>
@@ -278,6 +324,7 @@
     </div>
   </div>
 
+  <!-- Modal: 管理按鈕 -->
   <div class="modal-backdrop hidden" id="btnsModal">
     <div class="modal">
       <h3>🔘 管理自訂按鈕</h3>
@@ -305,6 +352,8 @@
 
 <script>
 (function() {
+  'use strict';
+
   // ========== PWA ==========
   (function setupPWA() {
     const manifest = {
@@ -331,7 +380,7 @@
 
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 'mdhs-admin-v5';
+        const CACHE_NAME = 'mdhs-admin-v6';
         self.addEventListener('install', e => self.skipWaiting());
         self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
         self.addEventListener('fetch', e => {
@@ -351,10 +400,12 @@
     }
   })();
 
+  // ========== Supabase ==========
   const SB_URL = 'https://ixmkbqpdugazdxbqogxw.supabase.co';
   const SB_KEY = 'sb_publishable_LuHQhy3xbv4b0ko02AZAyA_zCf7mB59';
   const sb = window.supabase.createClient(SB_URL, SB_KEY);
 
+  // ========== 使用者 ID ==========
   function getUserId() {
     let uid = localStorage.getItem('chat_user_id');
     if (!uid) {
@@ -365,23 +416,52 @@
   }
   const USER_ID = getUserId();
 
+  // ========== Token 儲存 ==========
   function getMyTokens() {
-    try { return JSON.parse(localStorage.getItem('chat_tokens') || '{}'); }
-    catch(e) { return {}; }
+    try { return JSON.parse(localStorage.getItem('chat_tokens') || '{}'); } catch(e) { return {}; }
   }
   function saveToken(roomId, token) {
-    const t = getMyTokens();
-    t[roomId] = token;
+    const t = getMyTokens(); t[roomId] = token;
+    localStorage.setItem('chat_tokens', JSON.stringify(t));
+  }
+  function removeToken(roomId) {
+    const t = getMyTokens(); delete t[roomId];
     localStorage.setItem('chat_tokens', JSON.stringify(t));
   }
 
+  // ========== 我的聊天室列表 (localStorage) ==========
+  function getMyRooms() {
+    try { return JSON.parse(localStorage.getItem('chat_my_rooms') || '[]'); } catch(e) { return []; }
+  }
+  function addMyRoom(room) {
+    const rooms = getMyRooms();
+    if (!rooms.find(r => r.id === room.id)) {
+      rooms.push({ id: room.id, name: room.name, code: room.code });
+      localStorage.setItem('chat_my_rooms', JSON.stringify(rooms));
+    } else {
+      // 更新名稱
+      const idx = rooms.findIndex(r => r.id === room.id);
+      rooms[idx].name = room.name;
+      rooms[idx].code = room.code;
+      localStorage.setItem('chat_my_rooms', JSON.stringify(rooms));
+    }
+  }
+  function removeMyRoom(roomId) {
+    const rooms = getMyRooms().filter(r => r.id !== roomId);
+    localStorage.setItem('chat_my_rooms', JSON.stringify(rooms));
+  }
+
+  // ========== 狀態 ==========
   let currentRoom = null, currentChannel = null;
   let currentUser = { nickname: '訪客', role: 'member' };
   let channels = [], messages = [], members = [], customCmds = [], customBtns = [];
   let rtMessages = null, rtMembers = null, rtCmds = null, rtBtns = null, heartbeatTimer = null;
   let isCreateMode = false;
+  let isJoining = false; // 防止重複點擊
 
+  // ========== DOM ==========
   const $ = id => document.getElementById(id);
+  const loadingScreen = $('loadingScreen');
   const joinOverlay = $('joinOverlay'), joinTitle = $('joinTitle'), joinSubtitle = $('joinSubtitle');
   const joinFields = $('joinFields'), createFields = $('createFields');
   const roomCodeInput = $('roomCodeInput'), nicknameInput = $('nicknameInput'), tokenInput = $('tokenInput');
@@ -390,6 +470,7 @@
   const joinBtn = $('joinBtn'), switchToCreateBtn = $('switchToCreateBtn'), errorMsg = $('errorMsg');
   const tokenDisplay = $('tokenDisplay');
   const currentRoomNameEl = $('currentRoomName'), roleBadge = $('roleBadge');
+  const myRoomsListEl = $('myRoomsList'), addRoomBtn = $('addRoomBtn');
   const channelListEl = $('channelList'), addChannelBtn = $('addChannelBtn'), viewMembersBtn = $('viewMembersBtn');
   const manageCmdsBtn = $('manageCmdsBtn'), manageBtnsBtn = $('manageBtnsBtn');
   const channelTitle = $('channelTitle'), messagesArea = $('messagesArea');
@@ -430,46 +511,27 @@
   closeSidebarBtn.addEventListener('click', closeDrawer);
   drawerBackdrop.addEventListener('click', closeDrawer);
 
-  // ========== 檢查房間是否有管理員 ==========
+  // ========== 暱稱驗證 ==========
+  function validateNickname(name) {
+    const n = (name || '').trim();
+    if (!n) return { ok: false, msg: '請輸入暱稱' };
+    if (n === '管理員') return { ok: false, msg: '暱稱不能叫「管理員」' };
+    if (n.length > 12) return { ok: false, msg: '暱稱不能超過 12 個字' };
+    return { ok: true, name: n };
+  }
+
+  // ========== 檢查房間是否有「其他」管理員 ==========
   async function checkRoomHasAdmin(roomId) {
     const { data, error } = await sb.from('members')
-      .select('id, nickname, role')
+      .select('id, nickname, role, user_id')
       .eq('room_id', roomId)
       .eq('role', 'admin')
+      .neq('user_id', USER_ID)
       .limit(1);
-    if (error) { console.error(error); return null; }
+    if (error) { console.error('checkRoomHasAdmin:', error); return null; }
     if (data && data.length > 0) return data[0];
     return null;
   }
-
-  // 加入時動態檢查代碼欄位（輸入完自動檢查）
-  let checkTimer = null;
-  roomCodeInput.addEventListener('input', () => {
-    if (checkTimer) clearTimeout(checkTimer);
-    checkTimer = setTimeout(async () => {
-      const code = roomCodeInput.value.trim().toLowerCase();
-      if (!code || isCreateMode) {
-        adminStatusBox.innerHTML = '';
-        tokenFieldWrap.style.display = 'none';
-        return;
-      }
-      const room = await findRoomByCode(code);
-      if (!room) {
-        adminStatusBox.innerHTML = '';
-        tokenFieldWrap.style.display = 'none';
-        return;
-      }
-      const admin = await checkRoomHasAdmin(room.id);
-      if (admin) {
-        adminStatusBox.innerHTML = `<div class="admin-status has-admin">⚠️ 此聊天室已有管理員：${escapeHtml(admin.nickname)}<br><span style="font-size:0.7rem;opacity:0.8;">你只能以一般成員身分加入</span></div>`;
-        tokenFieldWrap.style.display = 'none';
-        tokenInput.value = '';
-      } else {
-        adminStatusBox.innerHTML = `<div class="admin-status no-admin">✅ 此聊天室目前沒有管理員<br><span style="font-size:0.7rem;opacity:0.8;">若有 Token，可輸入成為管理員</span></div>`;
-        tokenFieldWrap.style.display = 'block';
-      }
-    }, 500);
-  });
 
   // ========== 顯示聊天室代碼 ==========
   function openCodeModal() {
@@ -512,19 +574,19 @@
       ? '⚠️ 你是管理員，退出後管理員位置會釋放給下一個人。\n\n確定要退出嗎？'
       : '確定要退出聊天室嗎？';
     if (!confirm(msg)) return;
+
     try {
+      // 發送系統訊息到「加入」頻道
+      await sendSystemMessage(`${currentUser.nickname} 退出了聊天室${isAdminLeaving ? '（管理員位置已釋放）' : ''}`);
+      // 從 members 移除自己
       await sb.from('members').delete().eq('room_id', currentRoom.id).eq('user_id', USER_ID);
-      if (currentChannel) {
-        await sb.from('messages').insert({
-          channel_id: currentChannel.id,
-          text: `${currentUser.nickname} 退出了聊天室${isAdminLeaving ? '（管理員位置已釋放）' : ''}`,
-          sender: 'system', is_system: true
-        });
-      }
-      // 清除 Token（避免下次自動帶入）
-      const t = getMyTokens();
-      delete t[currentRoom.id];
-      localStorage.setItem('chat_tokens', JSON.stringify(t));
+      // 從列表移除
+      removeMyRoom(currentRoom.id);
+      // 清除 Token
+      removeToken(currentRoom.id);
+      // 清除自動登入
+      localStorage.removeItem('chat_last_room_code');
+      localStorage.removeItem('chat_last_nickname');
     } catch (e) {
       console.error(e);
     }
@@ -532,10 +594,25 @@
     location.reload();
   });
 
-  // ========== 自動清理過期聊天室（7天） ==========
+  // ========== 發送系統訊息到「加入」頻道 ==========
+  async function sendSystemMessage(text) {
+    if (!currentRoom) return;
+    // 找「加入」頻道，找不到就用第一個頻道
+    let joinChannel = channels.find(c => c.name === '加入');
+    if (!joinChannel) joinChannel = channels[0];
+    if (!joinChannel) return;
+    await sb.from('messages').insert({
+      channel_id: joinChannel.id,
+      text: text,
+      sender: 'system',
+      is_system: true
+    });
+  }
+
+  // ========== 自動清理過期聊天室 ==========
   async function cleanupExpiredRooms() {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const { data, error } = await sb.from('rooms').select('id, code').lt('last_active', sevenDaysAgo);
+    const { data, error } = await sb.from('rooms').select('id').lt('last_active', sevenDaysAgo);
     if (error || !data || !data.length) return;
     for (const r of data) {
       await sb.from('rooms').delete().eq('id', r.id);
@@ -580,7 +657,41 @@
     return data;
   }
 
-  // ========== 渲染 ==========
+  // ========== 渲染：我的聊天室列表 ==========
+  function renderMyRooms() {
+    const rooms = getMyRooms();
+    if (!rooms.length) {
+      myRoomsListEl.innerHTML = '<div class="my-rooms-empty">還沒有加入任何聊天室</div>';
+      return;
+    }
+    let html = '';
+    rooms.forEach(r => {
+      const active = currentRoom && currentRoom.id === r.id ? 'active' : '';
+      html += `<div class="my-room-item ${active}" data-room-id="${r.id}">
+        <span class="lock">🔒</span>
+        <div class="info">
+          <div class="rname">${escapeHtml(r.name)}</div>
+          <div class="rcode">#${escapeHtml(r.code)}</div>
+        </div>
+      </div>`;
+    });
+    myRoomsListEl.innerHTML = html;
+    myRoomsListEl.querySelectorAll('.my-room-item').forEach(el => {
+      el.addEventListener('click', () => switchToRoom(el.dataset.roomId));
+    });
+  }
+
+  async function switchToRoom(roomId) {
+    if (currentRoom && currentRoom.id === roomId) { closeDrawer(); return; }
+    const rooms = getMyRooms();
+    const target = rooms.find(r => r.id === roomId);
+    if (!target) return;
+    closeDrawer();
+    // 重置並加入新房間
+    await joinRoomByCode(target.code, currentUser.nickname, true);
+  }
+
+  // ========== 渲染：頻道列表 ==========
   function renderChannelList() {
     if (!channels.length) { channelListEl.innerHTML = ''; return; }
     let html = '';
@@ -606,6 +717,7 @@
       btn.addEventListener('click', async e => {
         e.stopPropagation();
         if (!isAdmin()) { alert('只有管理員可以刪除頻道'); return; }
+        if (ch.name === '加入') { alert('「加入」頻道無法刪除'); return; }
         if (!confirm('確定要刪除此頻道嗎？')) return;
         await sb.from('channels').delete().eq('id', btn.dataset.channelId);
         await loadChannels(currentRoom.id);
@@ -618,10 +730,18 @@
   }
   function channelItemHtml(ch) {
     const active = ch.id === currentChannel?.id ? 'active' : '';
-    const delBtn = isAdmin() ? `<button class="del-btn" data-channel-id="${ch.id}">✕</button>` : '';
+    // 「加入」頻道不能被刪除
+    const canDelete = isAdmin() && ch.name !== '加入';
+    const delBtn = canDelete ? `<button class="del-btn" data-channel-id="${ch.id}">✕</button>` : '';
     return `<div class="channel-item ${active}" data-channel-id="${ch.id}">
       <span>${channelIcon(ch.type)}</span><span>${escapeHtml(ch.name)}</span>${delBtn}
     </div>`;
+  }
+
+  // ========== 渲染：訊息 ==========
+  function getRoleOfSender(senderName) {
+    const m = members.find(x => x.nickname === senderName);
+    return m ? m.role : 'member';
   }
   function renderMessages() {
     if (!currentChannel) {
@@ -638,7 +758,16 @@
         html += `<div class="message system"><div class="bubble">${escapeHtml(msg.text)}</div></div>`;
       } else {
         const cls = msg.is_bot ? 'bot' : 'user';
-        const label = msg.is_bot ? '🤖 小幫手' : escapeHtml(msg.sender);
+        let label = '';
+        if (msg.is_bot) {
+          label = '🤖 小幫手';
+        } else {
+          const role = getRoleOfSender(msg.sender);
+          const roleTag = role === 'admin'
+            ? '<span class="role-tag">[管理員]</span>'
+            : '<span class="role-tag member">[成員]</span>';
+          label = `${escapeHtml(msg.sender)} ${roleTag}`;
+        }
         let contentHtml = '';
         if (msg.text && msg.text.startsWith(IMG_PREFIX)) {
           const imgUrl = msg.text.substring(IMG_PREFIX.length);
@@ -652,6 +781,8 @@
     messagesArea.innerHTML = html;
     messagesArea.scrollTop = messagesArea.scrollHeight;
   }
+
+  // ========== 渲染：成員 ==========
   function renderMembers() {
     if (!members.length) {
       memberList.innerHTML = '<div style="color:#7f9db8;text-align:center;padding:20px;">目前沒有成員</div>';
@@ -676,18 +807,14 @@
         const uid = btn.dataset.userId;
         if (!confirm('確定要踢出這位成員嗎？')) return;
         await sb.from('members').delete().eq('room_id', currentRoom.id).eq('user_id', uid);
-        if (currentChannel) {
-          await sb.from('messages').insert({
-            channel_id: currentChannel.id,
-            text: '一位成員被管理員踢出聊天室',
-            sender: 'system', is_system: true
-          });
-        }
+        await sendSystemMessage('一位成員被管理員踢出聊天室');
         await loadMembers(currentRoom.id);
         showToast('已踢出成員');
       });
     });
   }
+
+  // ========== 渲染：指令 ==========
   function renderCmds() {
     if (!customCmds.length) {
       cmdList.innerHTML = '<div style="color:#7f9db8;text-align:center;padding:20px;">尚未設定任何指令</div>';
@@ -711,6 +838,8 @@
       });
     });
   }
+
+  // ========== 渲染：按鈕 ==========
   function renderBtns() {
     if (!btnList) return;
     if (!customBtns.length) {
@@ -779,88 +908,125 @@
     currentRoomNameEl.textContent = currentRoom.name;
     roleBadge.textContent = isAdmin() ? '管理員' : '成員';
     roleBadge.className = 'role-badge' + (isAdmin() ? ' admin' : '');
-    // 顯示/隱藏退出按鈕
     leaveRoomBtn.style.display = 'block';
   }
 
-  // ========== 加入 / 建立 ==========
-  async function tryJoinRoom() {
-    const code = roomCodeInput.value.trim().toLowerCase();
-    const nickname = nicknameInput.value.trim() || '訪客';
-    const tokenValue = tokenInput.value.trim();
-    if (!code) { errorMsg.textContent = '請輸入聊天室代碼'; return; }
-    errorMsg.textContent = '載入中...';
+  // ========== 核心：加入房間（依代碼） ==========
+  async function joinRoomByCode(code, nickname, skipValidation) {
+    if (isJoining) return;
+    isJoining = true;
+    try {
+      code = (code || '').trim().toLowerCase();
+      if (!code) { errorMsg.textContent = '請輸入聊天室代碼'; return; }
 
-    await cleanupExpiredRooms();
+      if (!skipValidation) {
+        const v = validateNickname(nickname);
+        if (!v.ok) { errorMsg.textContent = v.msg; return; }
+        nickname = v.name;
+      }
 
-    const room = await findRoomByCode(code);
-    if (!room) { errorMsg.textContent = '找不到此聊天室'; return; }
+      errorMsg.textContent = '載入中...';
+      await cleanupExpiredRooms();
 
-    // ★★★ 關鍵檢查：房間是否已有管理員 ★★★
-    const existingAdmin = await checkRoomHasAdmin(room.id);
-    const savedToken = getMyTokens()[room.id];
-    const hasValidToken = (tokenValue && tokenValue === room.admin_token) || (savedToken && savedToken === room.admin_token);
+      const room = await findRoomByCode(code);
+      if (!room) {
+        errorMsg.textContent = '找不到此聊天室';
+        return;
+      }
 
-    let role = 'member';
+      // 檢查是否有「其他」管理員
+      const otherAdmin = await checkRoomHasAdmin(room.id);
+      const savedToken = getMyTokens()[room.id];
+      const tokenValue = tokenInput.value.trim();
+      const hasValidToken = (tokenValue && tokenValue === room.admin_token) || (savedToken && savedToken === room.admin_token);
 
-    if (existingAdmin) {
-      // 已有管理員，且你不是那個管理員
-      const amIAdmin = existingAdmin.user_id === USER_ID;
-      if (amIAdmin) {
-        role = 'admin';
-      } else {
-        // 不能搶管理員，忽略 token
-        if (hasValidToken) {
-          showToast('此聊天室已有管理員，將以一般成員身分加入');
-        }
+      // 查自己是否已經在 members 裡（保留原本角色）
+      const { data: myMembership } = await sb.from('members')
+        .select('*').eq('room_id', room.id).eq('user_id', USER_ID).maybeSingle();
+
+      let role = 'member';
+
+      if (myMembership) {
+        // 我本來就在，保留原本角色
+        role = myMembership.role;
+      } else if (otherAdmin) {
+        // 有其他管理員，不能搶
         role = 'member';
+        if (hasValidToken) showToast('此聊天室已有管理員，將以一般成員身分加入');
+      } else {
+        // 沒有其他管理員
+        if (hasValidToken) {
+          role = 'admin';
+          if (tokenValue) saveToken(room.id, tokenValue);
+        } else if (tokenValue && tokenValue !== room.admin_token) {
+          errorMsg.textContent = 'Token 錯誤，將以一般成員身分加入';
+          await new Promise(r => setTimeout(r, 800));
+        }
       }
-    } else {
-      // 沒有管理員，如果有 token 就能當管理員
-      if (hasValidToken) {
-        role = 'admin';
-        if (tokenValue) saveToken(room.id, tokenValue);
-      } else if (tokenValue && tokenValue !== room.admin_token) {
-        errorMsg.textContent = 'Token 錯誤，將以一般成員身分加入';
-        await new Promise(r => setTimeout(r, 1000));
+
+      currentRoom = room;
+      currentUser = { nickname, role };
+
+      // 儲存自動登入資訊
+      localStorage.setItem('chat_last_room_code', code);
+      localStorage.setItem('chat_last_nickname', nickname);
+
+      // 加入我的聊天室列表
+      addMyRoom(room);
+
+      joinOverlay.classList.add('hidden');
+      updateRoomUI();
+      renderMyRooms();
+
+      await touchRoom();
+      await loadChannels(room.id);
+      await loadMembers(room.id);
+      await loadCmds(room.id);
+      await loadBtns(room.id);
+
+      // 註冊成員（upsert）
+      await sb.from('members').upsert({
+        room_id: room.id,
+        user_id: USER_ID,
+        nickname: nickname,
+        role: role,
+        last_seen: new Date().toISOString()
+      }, { onConflict: 'room_id,user_id' });
+
+      if (channels.length) {
+        switchChannel(channels[0].id);
+        // 系統訊息到「加入」頻道
+        await sendSystemMessage(`${nickname} 加入了聊天室`);
+      } else {
+        const { data } = await sb.from('channels').insert({ room_id: room.id, name: '一般', type: 'text' }).select().single();
+        if (data) { await loadChannels(room.id); switchChannel(data.id); }
       }
-    }
 
-    currentRoom = room;
-    currentUser = { nickname, role };
-    localStorage.setItem('chat_last_room_code', code);
-    localStorage.setItem('chat_last_nickname', nickname);
-    joinOverlay.classList.add('hidden');
-    updateRoomUI();
-    await touchRoom();
-    await loadChannels(room.id);
-    await registerMember(room.id, nickname, role);
-    await loadMembers(room.id);
-    await loadCmds(room.id);
-    await loadBtns(room.id);
-
-    if (channels.length) {
-      switchChannel(channels[0].id);
-      await sb.from('messages').insert({ channel_id: channels[0].id, text: `${nickname} 加入了聊天室`, sender: 'system', is_system: true });
-    } else {
-      const { data } = await sb.from('channels').insert({ room_id: room.id, name: '一般', type: 'text' }).select().single();
-      if (data) { await loadChannels(room.id); switchChannel(data.id); }
+      messageInput.disabled = false;
+      sendBtn.disabled = false;
+      uploadImageBtn.disabled = false;
+      messageInput.placeholder = '輸入訊息...';
+      subscribeRealtime();
+      startHeartbeat();
+    } catch (err) {
+      console.error(err);
+      errorMsg.textContent = '載入失敗：' + (err.message || '未知錯誤');
+    } finally {
+      isJoining = false;
     }
-    messageInput.disabled = false;
-    sendBtn.disabled = false;
-    uploadImageBtn.disabled = false;
-    messageInput.placeholder = '輸入訊息...';
-    subscribeRealtime();
-    startHeartbeat();
   }
 
+  // ========== 建立房間 ==========
   async function tryCreateRoom() {
     const name = newRoomName.value.trim();
     const code = newRoomCode.value.trim().toLowerCase();
-    const nickname = newRoomNickname.value.trim() || '管理員';
-    if (!name || !code) { errorMsg.textContent = '請填寫名稱與代碼'; return; }
-    errorMsg.textContent = '建立中...';
+    const nickname = newRoomNickname.value.trim();
 
+    if (!name || !code) { errorMsg.textContent = '請填寫名稱與代碼'; return; }
+    const v = validateNickname(nickname);
+    if (!v.ok) { errorMsg.textContent = v.msg; return; }
+
+    errorMsg.textContent = '建立中...';
     await cleanupExpiredRooms();
 
     const existing = await findRoomByCode(code);
@@ -869,25 +1035,35 @@
     const adminToken = 'adm_' + Math.random().toString(36).slice(2, 12) + Math.random().toString(36).slice(2, 8);
     const { data: room, error } = await sb.from('rooms').insert({ name, code, admin_token: adminToken }).select().single();
     if (error || !room) { errorMsg.textContent = '建立失敗：' + (error?.message || ''); return; }
+
+    // 建立預設頻道（包含「加入」頻道）
     await sb.from('channels').insert([
+      { room_id: room.id, name: '加入', type: 'announcement' },
       { room_id: room.id, name: '一般', type: 'text' },
       { room_id: room.id, name: '討論區', type: 'forum' }
     ]);
+
     currentRoom = room;
-    currentUser = { nickname, role: 'admin' };
+    currentUser = { nickname: v.name, role: 'admin' };
     saveToken(room.id, adminToken);
     localStorage.setItem('chat_last_room_code', code);
-    localStorage.setItem('chat_last_nickname', nickname);
+    localStorage.setItem('chat_last_nickname', v.name);
+    addMyRoom(room);
 
     joinOverlay.classList.add('hidden');
     updateRoomUI();
+    renderMyRooms();
     await loadChannels(room.id);
-    await registerMember(room.id, nickname, 'admin');
     await loadMembers(room.id);
     await loadCmds(room.id);
     await loadBtns(room.id);
+    await sb.from('members').upsert({
+      room_id: room.id, user_id: USER_ID, nickname: v.name,
+      role: 'admin', last_seen: new Date().toISOString()
+    }, { onConflict: 'room_id,user_id' });
+
     switchChannel(channels[0].id);
-    await sb.from('messages').insert({ channel_id: channels[0].id, text: `聊天室「${name}」已建立！你是管理員。`, sender: 'system', is_system: true });
+    await sendSystemMessage(`聊天室「${name}」已建立！${v.name} 是管理員。`);
 
     tokenDisplay.innerHTML = `<div class="token-display">🔑 Token（請保存）：<br>${adminToken}</div>`;
     alert('🎉 聊天室已建立！\n\n管理員 Token：\n' + adminToken + '\n\n請保存好！下次加入時貼上即可恢復管理員身分。\n\n📌 此聊天室若 7 天無人使用，將自動刪除並釋放代碼。');
@@ -898,16 +1074,6 @@
     messageInput.placeholder = '輸入訊息...';
     subscribeRealtime();
     startHeartbeat();
-  }
-
-  async function registerMember(roomId, nickname, role) {
-    await sb.from('members').upsert({
-      room_id: roomId,
-      user_id: USER_ID,
-      nickname: nickname,
-      role: role,
-      last_seen: new Date().toISOString()
-    }, { onConflict: 'room_id,user_id' });
   }
 
   function setCreateMode(create) {
@@ -924,6 +1090,44 @@
     tokenFieldWrap.style.display = 'none';
   }
 
+  // ========== 動態檢查代碼欄位 ==========
+  let checkTimer = null;
+  roomCodeInput.addEventListener('input', () => {
+    if (checkTimer) clearTimeout(checkTimer);
+    checkTimer = setTimeout(async () => {
+      const code = roomCodeInput.value.trim().toLowerCase();
+      if (!code || isCreateMode) {
+        adminStatusBox.innerHTML = '';
+        tokenFieldWrap.style.display = 'none';
+        return;
+      }
+      const room = await findRoomByCode(code);
+      if (!room) {
+        adminStatusBox.innerHTML = '';
+        tokenFieldWrap.style.display = 'none';
+        return;
+      }
+      // 檢查是否有其他管理員（排除自己）
+      const otherAdmin = await checkRoomHasAdmin(room.id);
+      // 檢查自己是否已在房間
+      const { data: myMembership } = await sb.from('members')
+        .select('role').eq('room_id', room.id).eq('user_id', USER_ID).maybeSingle();
+
+      if (otherAdmin) {
+        adminStatusBox.innerHTML = `<div class="admin-status has-admin">⚠️ 此聊天室已有管理員：${escapeHtml(otherAdmin.nickname)}<br><span style="font-size:0.7rem;opacity:0.8;">你只能以一般成員身分加入</span></div>`;
+        tokenFieldWrap.style.display = 'none';
+        tokenInput.value = '';
+      } else if (myMembership && myMembership.role === 'admin') {
+        // 我是原本的管理員
+        adminStatusBox.innerHTML = `<div class="admin-status no-admin">✅ 你是此聊天室的管理員，將以管理員身分加入</div>`;
+        tokenFieldWrap.style.display = 'block';
+      } else {
+        adminStatusBox.innerHTML = `<div class="admin-status no-admin">✅ 此聊天室目前沒有管理員<br><span style="font-size:0.7rem;opacity:0.8;">若有 Token，可輸入成為管理員</span></div>`;
+        tokenFieldWrap.style.display = 'block';
+      }
+    }, 500);
+  });
+
   // ========== Realtime ==========
   function subscribeRealtime() {
     if (rtMessages) sb.removeChannel(rtMessages);
@@ -931,7 +1135,7 @@
     if (rtCmds) sb.removeChannel(rtCmds);
     if (rtBtns) sb.removeChannel(rtBtns);
 
-    rtMessages = sb.channel('rt-messages')
+    rtMessages = sb.channel('rt-messages-' + currentRoom.id)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
         const m = payload.new;
         if (currentChannel && m.channel_id === currentChannel.id) {
@@ -948,10 +1152,13 @@
       })
       .subscribe();
 
-    rtMembers = sb.channel('rt-members')
+    rtMembers = sb.channel('rt-members-' + currentRoom.id)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'members' }, async payload => {
         if (payload.eventType === 'DELETE' && payload.old && payload.old.user_id === USER_ID) {
           alert('您已被管理員踢出此聊天室');
+          removeMyRoom(currentRoom.id);
+          localStorage.removeItem('chat_last_room_code');
+          localStorage.removeItem('chat_last_nickname');
           location.reload();
           return;
         }
@@ -959,13 +1166,13 @@
       })
       .subscribe();
 
-    rtCmds = sb.channel('rt-cmds')
+    rtCmds = sb.channel('rt-cmds-' + currentRoom.id)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'custom_commands' }, async () => {
         if (currentRoom) await loadCmds(currentRoom.id);
       })
       .subscribe();
 
-    rtBtns = sb.channel('rt-btns')
+    rtBtns = sb.channel('rt-btns-' + currentRoom.id)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'custom_buttons' }, async () => {
         if (currentRoom) await loadBtns(currentRoom.id);
       })
@@ -987,7 +1194,6 @@
     if (!currentChannel) { showToast('請先選擇頻道'); return; }
     imageFileInput.click();
   });
-
   imageFileInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file || !currentChannel) return;
@@ -996,20 +1202,16 @@
       imageFileInput.value = '';
       return;
     }
-
     uploadingOverlay.classList.remove('hidden');
     try {
       const ext = file.name.split('.').pop() || 'jpg';
       const fileName = `${USER_ID}_${Date.now()}.${ext}`;
-      const { data, error } = await sb.storage.from('chat-images').upload(fileName, file, {
-        cacheControl: '3600',
-        upsert: false
+      const { error } = await sb.storage.from('chat-images').upload(fileName, file, {
+        cacheControl: '3600', upsert: false
       });
       if (error) throw error;
-
       const { data: urlData } = sb.storage.from('chat-images').getPublicUrl(fileName);
       const publicUrl = urlData.publicUrl;
-
       await sb.from('messages').insert({
         channel_id: currentChannel.id,
         text: IMG_PREFIX + publicUrl,
@@ -1027,7 +1229,7 @@
     }
   });
 
-  // ========== 頻道 / 成員 / 指令 / 按鈕 ==========
+  // ========== 頻道 / 成員 / 指令 / 按鈕 Modal ==========
   function openChannelModal() {
     if (!isAdmin()) { alert('只有管理員可以新增頻道'); return; }
     channelNameInput.value = '';
@@ -1181,13 +1383,23 @@
   }
 
   // ========== 事件綁定 ==========
-  joinBtn.addEventListener('click', () => { isCreateMode ? tryCreateRoom() : tryJoinRoom(); });
-  switchToCreateBtn.addEventListener('click', () => setCreateMode(!isCreateMode));
-  [roomCodeInput, nicknameInput, tokenInput, newRoomName, newRoomCode, newRoomNickname].forEach(inp => {
-    if (inp) inp.addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); joinBtn.click(); } });
+  joinBtn.addEventListener('click', () => {
+    if (isCreateMode) tryCreateRoom();
+    else joinRoomByCode(roomCodeInput.value, nicknameInput.value);
   });
+  switchToCreateBtn.addEventListener('click', () => setCreateMode(!isCreateMode));
+
+  [roomCodeInput, nicknameInput, tokenInput, newRoomName, newRoomCode, newRoomNickname].forEach(inp => {
+    if (inp) inp.addEventListener('keypress', e => {
+      if (e.key === 'Enter') { e.preventDefault(); joinBtn.click(); }
+    });
+  });
+
   sendBtn.addEventListener('click', sendUserMessage);
-  messageInput.addEventListener('keypress', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendUserMessage(); } });
+  messageInput.addEventListener('keypress', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendUserMessage(); }
+  });
+
   addChannelBtn.addEventListener('click', openChannelModal);
   cancelChannelBtn.addEventListener('click', closeChannelModal);
   confirmChannelBtn.addEventListener('click', confirmAddChannel);
@@ -1200,14 +1412,59 @@
   closeBtnsBtn.addEventListener('click', closeBtnsModal);
   addBtnBtn.addEventListener('click', addBtn);
 
-  // ========== 自動填入上次登入資訊 ==========
-  (function restoreLastLogin() {
+  // 側邊欄「＋ 加入 / 新增」按鈕
+  addRoomBtn.addEventListener('click', () => {
+    closeDrawer();
+    joinOverlay.classList.remove('hidden');
+    setCreateMode(false);
+    roomCodeInput.value = '';
+    roomCodeInput.focus();
+  });
+
+  // ========== 初始化 / 自動登入 ==========
+  async function init() {
+    renderMyRooms();
+
+    // 嘗試自動登入
     const lastCode = localStorage.getItem('chat_last_room_code');
     const lastNick = localStorage.getItem('chat_last_nickname');
-    if (lastCode) roomCodeInput.value = lastCode;
-    if (lastNick) nicknameInput.value = lastNick;
-    if (lastCode) roomCodeInput.dispatchEvent(new Event('input'));
-  })();
+
+    if (lastCode && lastNick) {
+      try {
+        const room = await findRoomByCode(lastCode);
+        if (room) {
+          // 檢查我是否還是成員
+          const { data: myMembership } = await sb.from('members')
+            .select('*').eq('room_id', room.id).eq('user_id', USER_ID).maybeSingle();
+
+          if (myMembership) {
+            // 自動登入
+            currentUser.nickname = myMembership.nickname || lastNick;
+            await joinRoomByCode(lastCode, currentUser.nickname, true);
+            loadingScreen.classList.add('hidden');
+            return;
+          } else {
+            // 已退出，清除
+            localStorage.removeItem('chat_last_room_code');
+            localStorage.removeItem('chat_last_nickname');
+          }
+        } else {
+          // 房間不存在，清除
+          localStorage.removeItem('chat_last_room_code');
+          localStorage.removeItem('chat_last_nickname');
+        }
+      } catch (err) {
+        console.error('自動登入失敗:', err);
+      }
+    }
+
+    // 沒有自動登入成功，顯示登入畫面
+    loadingScreen.classList.add('hidden');
+    joinOverlay.classList.remove('hidden');
+    roomCodeInput.focus();
+  }
+
+  init();
 })();
 </script>
 </body>
