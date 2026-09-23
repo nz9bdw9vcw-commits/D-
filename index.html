@@ -56,7 +56,7 @@
   .admin-status.has-admin { background: rgba(255, 200, 100, 0.1); color: #ffd98a; border: 1px solid #8a5a1e; }
   .admin-status.no-admin { background: rgba(123, 255, 176, 0.1); color: #7bffb0; border: 1px solid #2d7a4d; }
 
-  .loading-screen { position: fixed; inset: 0; background: #0f1a24; display: flex; justify-content: center; align-items: center; z-index: 999; color: #8dc9ff; font-size: 1rem; }
+  .loading-screen { position: fixed; inset: 0; background: #0f1a24; display: flex; justify-content: center; align-items: center; z-index: 999; color: #8dc9ff; font-size: 1rem; text-align: center; padding: 20px; }
   .loading-screen.hidden { display: none; }
 
   .drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
@@ -586,7 +586,7 @@
 
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 'mdhs-admin-v10';
+        const CACHE_NAME = 'mdhs-admin-v11';
         self.addEventListener('install', e => self.skipWaiting());
         self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
         self.addEventListener('fetch', e => {
@@ -609,6 +609,30 @@
   const SB_URL = 'https://ixmkbqpdugazdxbqogxw.supabase.co';
   const SB_KEY = 'sb_publishable_LuHQhy3xbv4b0ko02AZAyA_zCf7mB59';
   const sb = window.supabase.createClient(SB_URL, SB_KEY);
+
+  // ========== 匿名登入 ==========
+  let AUTH_UID = null;
+  async function ensureAuth() {
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session && session.user) {
+        AUTH_UID = session.user.id;
+        console.log('已登入，uid =', AUTH_UID);
+        return AUTH_UID;
+      }
+      const { data, error } = await sb.auth.signInAnonymously();
+      if (error) {
+        console.error('匿名登入失敗：', error);
+        return null;
+      }
+      AUTH_UID = data.user.id;
+      console.log('匿名登入成功，uid =', AUTH_UID);
+      return AUTH_UID;
+    } catch (err) {
+      console.error('ensureAuth 錯誤：', err);
+      return null;
+    }
+  }
 
   function getUserId() {
     let uid = localStorage.getItem('chat_user_id');
@@ -1092,6 +1116,7 @@
       channel_id: joinChannel.id,
       text: text,
       sender: 'system',
+      sender_id: AUTH_UID,
       is_system: true
     });
   }
@@ -1120,8 +1145,8 @@
     messages = data || [];
     renderMessages();
   }
-  async function loadMembers(roomId) {
-    const { data } = await sb.from('members').select('*').eq('room_id', roomId).order('created_at');
+  async function loadMembers(.coderoomId) {
+    const { data } = await, sb.from('members'). currentselect('*').eq('room_id', roomId).order('created_at');
     members = data || [];
     renderMembers();
   }
@@ -1170,7 +1195,7 @@
     const target = rooms.find(r => r.id === roomId);
     if (!target) return;
     closeDrawer();
-    await joinRoomByCode(target.code, currentUser.nickname, true);
+    await joinRoomByCode(targetUser.nickname, true);
   }
 
   function renderChannelList() {
@@ -1473,6 +1498,7 @@
       await sb.from('members').upsert({
         room_id: room.id,
         user_id: USER_ID,
+        auth_id: AUTH_UID,
         nickname: nickname,
         role: role,
         last_seen: new Date().toISOString()
@@ -1540,8 +1566,8 @@
     await loadCmds(room.id);
     await loadBtns(room.id);
     await sb.from('members').upsert({
-      room_id: room.id, user_id: USER_ID, nickname: v.name,
-      role: 'admin', last_seen: new Date().toISOString()
+      room_id: room.id, user_id: USER_ID, auth_id: AUTH_UID,
+      nickname: v.name, role: 'admin', last_seen: new Date().toISOString()
     }, { onConflict: 'room_id,user_id' });
 
     switchChannel(channels[0].id);
@@ -1696,6 +1722,7 @@
         channel_id: currentChannel.id,
         text: IMG_PREFIX + publicUrl,
         sender: currentUser.nickname,
+        sender_id: AUTH_UID,
         is_bot: false, is_system: false
       });
       await touchRoom();
@@ -1841,6 +1868,7 @@
       channel_id: currentChannel.id,
       text: escapeHtml(text),
       sender: currentUser.nickname,
+      sender_id: AUTH_UID,
       is_bot: false, is_system: false
     });
     await touchRoom();
@@ -1898,6 +1926,7 @@
   });
 
   async function init() {
+    await ensureAuth();
     renderMyRooms();
     const lastCode = localStorage.getItem('chat_last_room_code');
     const lastNick = localStorage.getItem('chat_last_nickname');
