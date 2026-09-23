@@ -37,11 +37,9 @@
   .admin-status.has-admin { background: rgba(255, 200, 100, 0.1); color: #ffd98a; border: 1px solid #8a5a1e; }
   .admin-status.no-admin { background: rgba(123, 255, 176, 0.1); color: #7bffb0; border: 1px solid #2d7a4d; }
 
-  /* Loading */
   .loading-screen { position: fixed; inset: 0; background: #0f1a24; display: flex; justify-content: center; align-items: center; z-index: 999; color: #8dc9ff; font-size: 1rem; }
   .loading-screen.hidden { display: none; }
 
-  /* Sidebar (Discord-like) */
   .drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
   .drawer-backdrop.open { opacity: 1; pointer-events: auto; }
   .sidebar { position: absolute; top: 0; left: 0; bottom: 0; width: 290px; background: #0e1820; border-right: 1px solid rgba(70, 130, 200, 0.2); display: flex; flex-direction: column; z-index: 95; transform: translateX(-100%); transition: transform 0.25s ease; }
@@ -52,7 +50,6 @@
   .role-badge { font-size: 0.62rem; background: #1e5a86; padding: 2px 8px; border-radius: 20px; color: #cce8ff; }
   .role-badge.admin { background: #8a5a1e; color: #ffe1b0; }
 
-  /* 我的聊天室列表 (Discord-like) */
   .my-rooms-section { border-bottom: 1px solid rgba(70, 130, 200, 0.15); flex-shrink: 0; max-height: 40%; display: flex; flex-direction: column; }
   .my-rooms-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px 6px; font-size: 0.68rem; color: #5f87a8; letter-spacing: 1px; text-transform: uppercase; }
   .my-rooms-header button { background: rgba(47, 109, 158, 0.4); border: none; color: #cce8ff; font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: 600; }
@@ -145,11 +142,69 @@
 
   .room-code-box { padding: 16px; background: #0a1520; border: 1px dashed #4f9eff; border-radius: 12px; color: #7bffb0; font-size: 1.5rem; font-family: monospace; text-align: center; letter-spacing: 3px; user-select: all; margin-top: 4px; }
 
-  .toast { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 80px); left: 50%; transform: translateX(-50%); background: #1e5a86; color: white; padding: 12px 22px; border-radius: 30px; font-size: 0.9rem; z-index: 200; opacity: 0; transition: opacity 0.3s; pointer-events: none; box-shadow: 0 8px 20px rgba(0,0,0,0.4); max-width: 90%; text-align: center; }
+  .toast { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 80px); left: 50%; transform: translateX(-50%); background: #1e5a86; color: white; padding: 12px 22px; border-radius: 30px; font-size: 0.9rem; z-index: 800; opacity: 0; transition: opacity 0.3s; pointer-events: none; box-shadow: 0 8px 20px rgba(0,0,0,0.4); max-width: 90%; text-align: center; }
   .toast.show { opacity: 1; }
 
   .uploading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 300; color: #b8e2ff; font-size: 1rem; }
   .uploading-overlay.hidden { display: none; }
+
+  /* ============ 工具箱 ============ */
+  .toolbox-overlay { position: fixed; inset: 0; background: linear-gradient(160deg, #0f1a24 0%, #1a2a3a 100%); z-index: 500; display: none; flex-direction: column; }
+  .toolbox-overlay.open { display: flex; }
+  .toolbox-header { padding: calc(env(safe-area-inset-top) + 14px) 16px 14px; background: #0e1820; border-bottom: 1px solid rgba(70, 130, 200, 0.2); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .toolbox-header h2 { flex: 1; color: #b8e2ff; font-weight: 500; font-size: 1.15rem; }
+  .toolbox-close { width: 38px; height: 38px; border-radius: 10px; background: rgba(47, 109, 158, 0.25); border: none; color: #c6e2ff; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .toolbox-close:active { background: rgba(47, 109, 158, 0.5); }
+  .toolbox-tabs { display: flex; gap: 6px; padding: 10px 12px; background: rgba(15, 25, 35, 0.5); overflow-x: auto; flex-shrink: 0; border-bottom: 1px solid rgba(70, 130, 200, 0.15); }
+  .toolbox-tab { padding: 8px 14px; border-radius: 20px; background: rgba(47, 109, 158, 0.2); color: #b8d4ec; border: 1px solid transparent; font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
+  .toolbox-tab.active { background: #1e4b70; color: #fff; border-color: #3d8fd9; }
+  .toolbox-content { flex: 1; overflow-y: auto; padding: 16px; }
+  .toolbox-panel { display: none; }
+  .toolbox-panel.active { display: block; }
+
+  /* 計時器 */
+  .timer-display { font-size: 3rem; font-family: monospace; text-align: center; color: #e0f0ff; padding: 20px; letter-spacing: 2px; }
+  .timer-switch { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
+  .timer-switch button { padding: 8px 16px; border-radius: 20px; border: 1px solid #2d4b66; background: transparent; color: #8dc9ff; cursor: pointer; font-size: 0.9rem; }
+  .timer-switch button.active { background: #1e5a86; color: white; border-color: #1e5a86; }
+  .timer-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .timer-input-row input { flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid #2d4b66; background: #0f1a24; color: #e0f0ff; font-size: 1rem; outline: none; }
+  .timer-actions { display: flex; gap: 8px; }
+  .timer-actions button { flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
+  .timer-actions .primary { background: #1e5a86; color: white; }
+  .timer-actions .secondary { background: rgba(47, 109, 158, 0.3); color: #cce8ff; border: 1px solid #2f6d9e; }
+  .timer-actions .danger { background: #7a2a2a; color: #ffc5c5; }
+
+  /* 新聞 */
+  .news-list { display: flex; flex-direction: column; gap: 10px; }
+  .news-item { display: block; padding: 12px 14px; background: rgba(15, 25, 35, 0.7); border-radius: 12px; border-left: 3px solid #3d8fd9; color: #d4e9ff; text-decoration: none; font-size: 0.9rem; line-height: 1.4; }
+  .news-item:hover { background: rgba(30, 75, 112, 0.5); }
+  .news-item .news-date { display: block; font-size: 0.7rem; color: #7f9db8; margin-top: 4px; }
+  .news-loading { text-align: center; padding: 30px; color: #7f9db8; }
+  .news-refresh { display: block; width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #2f6d9e; background: transparent; color: #8dc9ff; cursor: pointer; margin-bottom: 12px; font-size: 0.9rem; }
+  .news-refresh:active { background: rgba(47, 109, 158, 0.2); }
+
+  /* 筆記 */
+  .notes-area { width: 100%; min-height: 60vh; padding: 14px; border-radius: 12px; border: 1px solid #2d4b66; background: #0f1a24; color: #e0f0ff; font-size: 1rem; font-family: inherit; outline: none; resize: vertical; line-height: 1.5; }
+  .notes-area:focus { border-color: #4f9eff; }
+  .notes-info { font-size: 0.75rem; color: #587b99; text-align: right; margin-top: 6px; }
+
+  /* 計算機 */
+  .calc-display { padding: 16px; background: #0a1520; border-radius: 12px; text-align: right; font-size: 2rem; font-family: monospace; color: #e0f0ff; margin-bottom: 12px; word-break: break-all; min-height: 70px; display: flex; align-items: center; justify-content: flex-end; }
+  .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .calc-grid button { padding: 18px 0; border-radius: 14px; border: none; background: rgba(47, 109, 158, 0.3); color: #e0f0ff; font-size: 1.2rem; cursor: pointer; font-weight: 500; }
+  .calc-grid button:active { background: rgba(47, 109, 158, 0.6); }
+  .calc-grid .op { background: rgba(138, 90, 30, 0.5); color: #ffe1b0; }
+  .calc-grid .eq { background: #1e5a86; color: white; }
+  .calc-grid .clear { background: rgba(122, 42, 42, 0.5); color: #ffc5c5; }
+
+  /* 倒數日 */
+  .countdown-input { display: flex; gap: 8px; margin-bottom: 14px; }
+  .countdown-input input { flex: 1; padding: 12px 14px; border-radius: 10px; border: 1px solid #2d4b66; background: #0f1a24; color: #e0f0ff; font-size: 1rem; outline: none; }
+  .countdown-result { text-align: center; padding: 24px; background: rgba(15, 25, 35, 0.7); border-radius: 16px; margin-bottom: 12px; }
+  .countdown-result .days { font-size: 3rem; font-weight: 600; color: #7bffb0; font-family: monospace; }
+  .countdown-result .label { color: #9ab8d4; font-size: 0.9rem; margin-top: 6px; }
+  .countdown-result .target-date { color: #587b99; font-size: 0.8rem; margin-top: 8px; }
 
   @media (min-width: 768px) {
     .drawer-backdrop { display: none; }
@@ -172,7 +227,6 @@
 
 <div class="app-container" id="appContainer">
 
-  <!-- 登入 / 建立畫面 -->
   <div class="overlay hidden" id="joinOverlay">
     <div class="card">
       <h2 id="joinTitle">🔒 加入聊天室</h2>
@@ -204,7 +258,6 @@
     </div>
   </div>
 
-  <!-- 側邊欄 -->
   <div class="drawer-backdrop" id="drawerBackdrop"></div>
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -216,7 +269,6 @@
       </div>
     </div>
 
-    <!-- 我的聊天室列表 (Discord-like) -->
     <div class="my-rooms-section">
       <div class="my-rooms-header">
         <span>我的聊天室</span>
@@ -234,11 +286,11 @@
       <button id="manageCmdsBtn">🤖 管理指令</button>
       <button id="manageBtnsBtn">🔘 管理按鈕</button>
       <button id="showCodeSideBtn">🔑 顯示代碼</button>
+      <button id="toolboxBtn">🧰 工具箱</button>
       <button id="leaveRoomBtn" class="danger" style="display:none;">🚪 退出聊天室</button>
     </div>
   </aside>
 
-  <!-- 主聊天區 -->
   <main class="chat-main">
     <div class="chat-header">
       <button class="menu-btn" id="openSidebarBtn">☰</button>
@@ -350,6 +402,89 @@
 <div class="toast" id="toast"></div>
 <div class="uploading-overlay hidden" id="uploadingOverlay">📤 圖片上傳中...</div>
 
+<!-- 工具箱 -->
+<div class="toolbox-overlay" id="toolboxOverlay">
+  <div class="toolbox-header">
+    <h2>🧰 工具箱</h2>
+    <button class="toolbox-close" id="closeToolboxBtn">✕</button>
+  </div>
+  <div class="toolbox-tabs">
+    <button class="toolbox-tab active" data-tab="timer">⏱️ 計時器</button>
+    <button class="toolbox-tab" data-tab="news">📰 新聞</button>
+    <button class="toolbox-tab" data-tab="notes">📝 筆記</button>
+    <button class="toolbox-tab" data-tab="calc">🧮 計算機</button>
+    <button class="toolbox-tab" data-tab="countdown">📅 倒數日</button>
+  </div>
+  <div class="toolbox-content">
+
+    <div class="toolbox-panel active" id="panel-timer">
+      <div class="timer-switch">
+        <button id="timerModeCountdown" class="active">倒數計時</button>
+        <button id="timerModeStopwatch">碼錶</button>
+      </div>
+      <div class="timer-display" id="timerDisplay">00:00:00</div>
+      <div class="timer-input-row" id="countdownInputRow">
+        <input type="number" id="countdownMin" placeholder="分鐘" min="0" max="999">
+        <input type="number" id="countdownSec" placeholder="秒" min="0" max="59">
+      </div>
+      <div class="timer-actions">
+        <button class="primary" id="timerStartBtn">▶ 開始</button>
+        <button class="secondary" id="timerPauseBtn">⏸ 暫停</button>
+        <button class="danger" id="timerResetBtn">↺ 重置</button>
+      </div>
+    </div>
+
+    <div class="toolbox-panel" id="panel-news">
+      <button class="news-refresh" id="newsRefreshBtn">🔄 載入 / 重新整理新聞</button>
+      <div class="news-list" id="newsList">
+        <div class="news-loading">點擊上方按鈕載入新聞</div>
+      </div>
+    </div>
+
+    <div class="toolbox-panel" id="panel-notes">
+      <textarea class="notes-area" id="notesArea" placeholder="在這裡寫筆記...（自動儲存）"></textarea>
+      <div class="notes-info" id="notesInfo">已自動儲存</div>
+    </div>
+
+    <div class="toolbox-panel" id="panel-calc">
+      <div class="calc-display" id="calcDisplay">0</div>
+      <div class="calc-grid">
+        <button class="clear" data-calc="C">C</button>
+        <button class="clear" data-calc="⌫">⌫</button>
+        <button class="op" data-calc="%">%</button>
+        <button class="op" data-calc="/">÷</button>
+        <button data-calc="7">7</button>
+        <button data-calc="8">8</button>
+        <button data-calc="9">9</button>
+        <button class="op" data-calc="*">×</button>
+        <button data-calc="4">4</button>
+        <button data-calc="5">5</button>
+        <button data-calc="6">6</button>
+        <button class="op" data-calc="-">−</button>
+        <button data-calc="1">1</button>
+        <button data-calc="2">2</button>
+        <button data-calc="3">3</button>
+        <button class="op" data-calc="+">+</button>
+        <button data-calc="0">0</button>
+        <button data-calc=".">.</button>
+        <button class="eq" data-calc="=" style="grid-column: span 2;">=</button>
+      </div>
+    </div>
+
+    <div class="toolbox-panel" id="panel-countdown">
+      <div class="countdown-input">
+        <input type="date" id="countdownDate">
+      </div>
+      <div class="countdown-result">
+        <div class="days" id="countdownDays">--</div>
+        <div class="label">天</div>
+        <div class="target-date" id="countdownTarget">請選擇日期</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <script>
 (function() {
   'use strict';
@@ -380,7 +515,7 @@
 
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 'mdhs-admin-v6';
+        const CACHE_NAME = 'mdhs-admin-v7';
         self.addEventListener('install', e => self.skipWaiting());
         self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
         self.addEventListener('fetch', e => {
@@ -400,12 +535,10 @@
     }
   })();
 
-  // ========== Supabase ==========
   const SB_URL = 'https://ixmkbqpdugazdxbqogxw.supabase.co';
   const SB_KEY = 'sb_publishable_LuHQhy3xbv4b0ko02AZAyA_zCf7mB59';
   const sb = window.supabase.createClient(SB_URL, SB_KEY);
 
-  // ========== 使用者 ID ==========
   function getUserId() {
     let uid = localStorage.getItem('chat_user_id');
     if (!uid) {
@@ -416,7 +549,6 @@
   }
   const USER_ID = getUserId();
 
-  // ========== Token 儲存 ==========
   function getMyTokens() {
     try { return JSON.parse(localStorage.getItem('chat_tokens') || '{}'); } catch(e) { return {}; }
   }
@@ -429,7 +561,6 @@
     localStorage.setItem('chat_tokens', JSON.stringify(t));
   }
 
-  // ========== 我的聊天室列表 (localStorage) ==========
   function getMyRooms() {
     try { return JSON.parse(localStorage.getItem('chat_my_rooms') || '[]'); } catch(e) { return []; }
   }
@@ -437,29 +568,25 @@
     const rooms = getMyRooms();
     if (!rooms.find(r => r.id === room.id)) {
       rooms.push({ id: room.id, name: room.name, code: room.code });
-      localStorage.setItem('chat_my_rooms', JSON.stringify(rooms));
     } else {
-      // 更新名稱
       const idx = rooms.findIndex(r => r.id === room.id);
       rooms[idx].name = room.name;
       rooms[idx].code = room.code;
-      localStorage.setItem('chat_my_rooms', JSON.stringify(rooms));
     }
+    localStorage.setItem('chat_my_rooms', JSON.stringify(rooms));
   }
   function removeMyRoom(roomId) {
     const rooms = getMyRooms().filter(r => r.id !== roomId);
     localStorage.setItem('chat_my_rooms', JSON.stringify(rooms));
   }
 
-  // ========== 狀態 ==========
   let currentRoom = null, currentChannel = null;
   let currentUser = { nickname: '訪客', role: 'member' };
   let channels = [], messages = [], members = [], customCmds = [], customBtns = [];
   let rtMessages = null, rtMembers = null, rtCmds = null, rtBtns = null, heartbeatTimer = null;
   let isCreateMode = false;
-  let isJoining = false; // 防止重複點擊
+  let isJoining = false;
 
-  // ========== DOM ==========
   const $ = id => document.getElementById(id);
   const loadingScreen = $('loadingScreen');
   const joinOverlay = $('joinOverlay'), joinTitle = $('joinTitle'), joinSubtitle = $('joinSubtitle');
@@ -493,6 +620,7 @@
   const roomNameDisplay = $('roomNameDisplay'), closeCodeBtn = $('closeCodeBtn');
   const copyCodeBtn = $('copyCodeBtn'), codeError = $('codeError');
   const leaveRoomBtn = $('leaveRoomBtn');
+  const toolboxBtn = $('toolboxBtn');
 
   const isAdmin = () => currentUser.role === 'admin';
   const escapeHtml = t => { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; };
@@ -511,6 +639,237 @@
   closeSidebarBtn.addEventListener('click', closeDrawer);
   drawerBackdrop.addEventListener('click', closeDrawer);
 
+  // ========== 工具箱 ==========
+  const toolboxOverlay = $('toolboxOverlay');
+  const closeToolboxBtn = $('closeToolboxBtn');
+  const toolboxTabs = document.querySelectorAll('.toolbox-tab');
+  const toolboxPanels = document.querySelectorAll('.toolbox-panel');
+
+  function openToolbox() { toolboxOverlay.classList.add('open'); }
+  function closeToolbox() { toolboxOverlay.classList.remove('open'); }
+  toolboxBtn.addEventListener('click', () => { closeDrawer(); openToolbox(); });
+  closeToolboxBtn.addEventListener('click', closeToolbox);
+
+  toolboxTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      toolboxTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      toolboxPanels.forEach(p => p.classList.remove('active'));
+      const panel = $('panel-' + tab.dataset.tab);
+      if (panel) panel.classList.add('active');
+      if (tab.dataset.tab === 'news' && !newsLoaded) loadNews();
+    });
+  });
+
+  // ----- 計時器 -----
+  let timerMode = 'countdown';
+  let timerInterval = null;
+  let timerRemaining = 0;
+  let stopwatchElapsed = 0;
+  const timerDisplay = $('timerDisplay');
+  const timerStartBtn = $('timerStartBtn');
+  const timerPauseBtn = $('timerPauseBtn');
+  const timerResetBtn = $('timerResetBtn');
+  const countdownInputRow = $('countdownInputRow');
+  const timerModeCountdown = $('timerModeCountdown');
+  const timerModeStopwatch = $('timerModeStopwatch');
+  const countdownMin = $('countdownMin');
+  const countdownSec = $('countdownSec');
+
+  function formatTime(ms) {
+    if (ms < 0) ms = 0;
+    const totalSec = Math.floor(ms / 1000);
+    const h = String(Math.floor(totalSec / 3600)).padStart(2, '0');
+    const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+    const s = String(totalSec % 60).padStart(2, '0');
+    return `${h}:${m}:${s}`;
+  }
+  function renderTimer() {
+    if (timerMode === 'countdown') timerDisplay.textContent = formatTime(timerRemaining);
+    else timerDisplay.textContent = formatTime(stopwatchElapsed);
+  }
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  timerModeCountdown.addEventListener('click', () => {
+    timerMode = 'countdown';
+    timerModeCountdown.classList.add('active');
+    timerModeStopwatch.classList.remove('active');
+    countdownInputRow.style.display = 'flex';
+    stopTimer();
+    timerRemaining = 0;
+    renderTimer();
+  });
+  timerModeStopwatch.addEventListener('click', () => {
+    timerMode = 'stopwatch';
+    timerModeStopwatch.classList.add('active');
+    timerModeCountdown.classList.remove('active');
+    countdownInputRow.style.display = 'none';
+    stopTimer();
+    stopwatchElapsed = 0;
+    renderTimer();
+  });
+
+  timerStartBtn.addEventListener('click', () => {
+    if (timerMode === 'countdown') {
+      if (timerRemaining <= 0) {
+        const m = parseInt(countdownMin.value) || 0;
+        const s = parseInt(countdownSec.value) || 0;
+        timerRemaining = (m * 60 + s) * 1000;
+        if (timerRemaining <= 0) { alert('請輸入時間'); return; }
+      }
+      if (timerInterval) return;
+      const startTime = Date.now();
+      const initialRemaining = timerRemaining;
+      timerInterval = setInterval(() => {
+        timerRemaining = initialRemaining - (Date.now() - startTime);
+        if (timerRemaining <= 0) {
+          timerRemaining = 0;
+          stopTimer();
+          renderTimer();
+          try { if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 300]); } catch(e) {}
+          alert('⏰ 時間到！');
+        } else {
+          renderTimer();
+        }
+      }, 100);
+    } else {
+      if (timerInterval) return;
+      const startTime = Date.now() - stopwatchElapsed;
+      timerInterval = setInterval(() => {
+        stopwatchElapsed = Date.now() - startTime;
+        renderTimer();
+      }, 50);
+    }
+  });
+  timerPauseBtn.addEventListener('click', stopTimer);
+  timerResetBtn.addEventListener('click', () => {
+    stopTimer();
+    timerRemaining = 0;
+    stopwatchElapsed = 0;
+    countdownMin.value = '';
+    countdownSec.value = '';
+    renderTimer();
+  });
+  renderTimer();
+
+  // ----- 新聞 -----
+  let newsLoaded = false;
+  async function loadNews() {
+    const list = $('newsList');
+    list.innerHTML = '<div class="news-loading">📡 載入新聞中...</div>';
+    try {
+      const rssUrl = 'https://feeds.feedburner.com/rsscna/mainnews';
+      const proxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(rssUrl);
+      const res = await fetch(proxy);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(text, 'text/xml');
+      const items = xml.querySelectorAll('item');
+      if (!items.length) {
+        list.innerHTML = '<div class="news-loading">目前沒有新聞</div>';
+        return;
+      }
+      let html = '';
+      items.forEach((item, i) => {
+        if (i >= 20) return;
+        const title = item.querySelector('title')?.textContent || '';
+        const link = item.querySelector('link')?.textContent || '';
+        const date = item.querySelector('pubDate')?.textContent || '';
+        let dateStr = '';
+        if (date) {
+          try { dateStr = new Date(date).toLocaleString('zh-TW', { hour12: false }); }
+          catch(e) { dateStr = date; }
+        }
+        html += `<a class="news-item" href="${escapeHtml(link)}" target="_blank" rel="noopener">
+          ${escapeHtml(title)}
+          ${dateStr ? `<span class="news-date">${escapeHtml(dateStr)}</span>` : ''}
+        </a>`;
+      });
+      list.innerHTML = html;
+      newsLoaded = true;
+    } catch (err) {
+      console.error(err);
+      list.innerHTML = '<div class="news-loading">❌ 載入失敗，請稍後再試</div>';
+    }
+  }
+  $('newsRefreshBtn').addEventListener('click', () => { newsLoaded = false; loadNews(); });
+
+  // ----- 筆記 -----
+  const notesArea = $('notesArea');
+  const notesInfo = $('notesInfo');
+  notesArea.value = localStorage.getItem('toolbox_notes') || '';
+  let notesTimer = null;
+  notesArea.addEventListener('input', () => {
+    notesInfo.textContent = '儲存中...';
+    if (notesTimer) clearTimeout(notesTimer);
+    notesTimer = setTimeout(() => {
+      localStorage.setItem('toolbox_notes', notesArea.value);
+      const t = new Date();
+      notesInfo.textContent = '✅ 已自動儲存（' +
+        String(t.getHours()).padStart(2,'0') + ':' +
+        String(t.getMinutes()).padStart(2,'0') + ':' +
+        String(t.getSeconds()).padStart(2,'0') + '）';
+    }, 500);
+  });
+
+  // ----- 計算機 -----
+  let calcExpr = '';
+  const calcDisplay = $('calcDisplay');
+  document.querySelectorAll('.calc-grid button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const v = btn.dataset.calc;
+      if (v === 'C') {
+        calcExpr = '';
+      } else if (v === '⌫') {
+        calcExpr = calcExpr.slice(0, -1);
+      } else if (v === '=') {
+        try {
+          if (!calcExpr) return;
+          if (!/^[\d+\-*/.%() ]+$/.test(calcExpr)) throw new Error('invalid');
+          let expr = calcExpr.replace(/%/g, '/100');
+          const result = Function('"use strict";return (' + expr + ')')();
+          if (!isFinite(result)) throw new Error('nan');
+          calcExpr = String(result);
+        } catch (e) {
+          calcExpr = '錯誤';
+        }
+      } else {
+        if (calcExpr === '錯誤') calcExpr = '';
+        calcExpr += v;
+      }
+      calcDisplay.textContent = calcExpr || '0';
+    });
+  });
+
+  // ----- 倒數日 -----
+  const countdownDate = $('countdownDate');
+  const countdownDays = $('countdownDays');
+  const countdownTarget = $('countdownTarget');
+
+  function updateCountdown() {
+    if (!countdownDate.value) {
+      countdownDays.textContent = '--';
+      countdownTarget.textContent = '請選擇日期';
+      return;
+    }
+    const target = new Date(countdownDate.value + 'T00:00:00');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diff = Math.round((target - today) / (24 * 60 * 60 * 1000));
+    countdownDays.textContent = diff;
+    countdownTarget.textContent = '目標日期：' + countdownDate.value;
+  }
+  const savedDate = localStorage.getItem('toolbox_countdown_date');
+  if (savedDate) { countdownDate.value = savedDate; }
+  updateCountdown();
+  countdownDate.addEventListener('change', () => {
+    localStorage.setItem('toolbox_countdown_date', countdownDate.value);
+    updateCountdown();
+  });
+
   // ========== 暱稱驗證 ==========
   function validateNickname(name) {
     const n = (name || '').trim();
@@ -520,7 +879,6 @@
     return { ok: true, name: n };
   }
 
-  // ========== 檢查房間是否有「其他」管理員 ==========
   async function checkRoomHasAdmin(roomId) {
     const { data, error } = await sb.from('members')
       .select('id, nickname, role, user_id')
@@ -533,7 +891,6 @@
     return null;
   }
 
-  // ========== 顯示聊天室代碼 ==========
   function openCodeModal() {
     if (!currentRoom) { showToast('尚未加入聊天室'); return; }
     roomNameDisplay.textContent = currentRoom.name;
@@ -566,7 +923,6 @@
     }
   });
 
-  // ========== 退出聊天室 ==========
   leaveRoomBtn.addEventListener('click', async () => {
     if (!currentRoom) return;
     const isAdminLeaving = isAdmin();
@@ -574,30 +930,20 @@
       ? '⚠️ 你是管理員，退出後管理員位置會釋放給下一個人。\n\n確定要退出嗎？'
       : '確定要退出聊天室嗎？';
     if (!confirm(msg)) return;
-
     try {
-      // 發送系統訊息到「加入」頻道
       await sendSystemMessage(`${currentUser.nickname} 退出了聊天室${isAdminLeaving ? '（管理員位置已釋放）' : ''}`);
-      // 從 members 移除自己
       await sb.from('members').delete().eq('room_id', currentRoom.id).eq('user_id', USER_ID);
-      // 從列表移除
       removeMyRoom(currentRoom.id);
-      // 清除 Token
       removeToken(currentRoom.id);
-      // 清除自動登入
       localStorage.removeItem('chat_last_room_code');
       localStorage.removeItem('chat_last_nickname');
-    } catch (e) {
-      console.error(e);
-    }
+    } catch (e) { console.error(e); }
     alert('已退出聊天室');
     location.reload();
   });
 
-  // ========== 發送系統訊息到「加入」頻道 ==========
   async function sendSystemMessage(text) {
     if (!currentRoom) return;
-    // 找「加入」頻道，找不到就用第一個頻道
     let joinChannel = channels.find(c => c.name === '加入');
     if (!joinChannel) joinChannel = channels[0];
     if (!joinChannel) return;
@@ -609,7 +955,6 @@
     });
   }
 
-  // ========== 自動清理過期聊天室 ==========
   async function cleanupExpiredRooms() {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const { data, error } = await sb.from('rooms').select('id').lt('last_active', sevenDaysAgo);
@@ -617,7 +962,6 @@
     for (const r of data) {
       await sb.from('rooms').delete().eq('id', r.id);
     }
-    console.log('已清理 ' + data.length + ' 個過期聊天室');
   }
 
   async function touchRoom() {
@@ -625,7 +969,6 @@
     await sb.from('rooms').update({ last_active: new Date().toISOString() }).eq('id', currentRoom.id);
   }
 
-  // ========== 資料載入 ==========
   async function loadChannels(roomId) {
     const { data } = await sb.from('channels').select('*').eq('room_id', roomId).order('created_at');
     channels = data || [];
@@ -657,7 +1000,6 @@
     return data;
   }
 
-  // ========== 渲染：我的聊天室列表 ==========
   function renderMyRooms() {
     const rooms = getMyRooms();
     if (!rooms.length) {
@@ -687,11 +1029,9 @@
     const target = rooms.find(r => r.id === roomId);
     if (!target) return;
     closeDrawer();
-    // 重置並加入新房間
     await joinRoomByCode(target.code, currentUser.nickname, true);
   }
 
-  // ========== 渲染：頻道列表 ==========
   function renderChannelList() {
     if (!channels.length) { channelListEl.innerHTML = ''; return; }
     let html = '';
@@ -716,10 +1056,13 @@
     channelListEl.querySelectorAll('.del-btn').forEach(btn => {
       btn.addEventListener('click', async e => {
         e.stopPropagation();
+        const chId = btn.dataset.channelId;
+        const ch = channels.find(c => c.id === chId);
+        if (!ch) return;
         if (!isAdmin()) { alert('只有管理員可以刪除頻道'); return; }
         if (ch.name === '加入') { alert('「加入」頻道無法刪除'); return; }
         if (!confirm('確定要刪除此頻道嗎？')) return;
-        await sb.from('channels').delete().eq('id', btn.dataset.channelId);
+        await sb.from('channels').delete().eq('id', chId);
         await loadChannels(currentRoom.id);
         if (!channels.find(c => c.id === currentChannel?.id)) {
           if (channels.length) switchChannel(channels[0].id);
@@ -730,7 +1073,6 @@
   }
   function channelItemHtml(ch) {
     const active = ch.id === currentChannel?.id ? 'active' : '';
-    // 「加入」頻道不能被刪除
     const canDelete = isAdmin() && ch.name !== '加入';
     const delBtn = canDelete ? `<button class="del-btn" data-channel-id="${ch.id}">✕</button>` : '';
     return `<div class="channel-item ${active}" data-channel-id="${ch.id}">
@@ -738,7 +1080,6 @@
     </div>`;
   }
 
-  // ========== 渲染：訊息 ==========
   function getRoleOfSender(senderName) {
     const m = members.find(x => x.nickname === senderName);
     return m ? m.role : 'member';
@@ -782,7 +1123,6 @@
     messagesArea.scrollTop = messagesArea.scrollHeight;
   }
 
-  // ========== 渲染：成員 ==========
   function renderMembers() {
     if (!members.length) {
       memberList.innerHTML = '<div style="color:#7f9db8;text-align:center;padding:20px;">目前沒有成員</div>';
@@ -814,7 +1154,6 @@
     });
   }
 
-  // ========== 渲染：指令 ==========
   function renderCmds() {
     if (!customCmds.length) {
       cmdList.innerHTML = '<div style="color:#7f9db8;text-align:center;padding:20px;">尚未設定任何指令</div>';
@@ -839,7 +1178,6 @@
     });
   }
 
-  // ========== 渲染：按鈕 ==========
   function renderBtns() {
     if (!btnList) return;
     if (!customBtns.length) {
@@ -911,7 +1249,6 @@
     leaveRoomBtn.style.display = 'block';
   }
 
-  // ========== 核心：加入房間（依代碼） ==========
   async function joinRoomByCode(code, nickname, skipValidation) {
     if (isJoining) return;
     isJoining = true;
@@ -929,32 +1266,24 @@
       await cleanupExpiredRooms();
 
       const room = await findRoomByCode(code);
-      if (!room) {
-        errorMsg.textContent = '找不到此聊天室';
-        return;
-      }
+      if (!room) { errorMsg.textContent = '找不到此聊天室'; return; }
 
-      // 檢查是否有「其他」管理員
       const otherAdmin = await checkRoomHasAdmin(room.id);
       const savedToken = getMyTokens()[room.id];
       const tokenValue = tokenInput.value.trim();
       const hasValidToken = (tokenValue && tokenValue === room.admin_token) || (savedToken && savedToken === room.admin_token);
 
-      // 查自己是否已經在 members 裡（保留原本角色）
       const { data: myMembership } = await sb.from('members')
         .select('*').eq('room_id', room.id).eq('user_id', USER_ID).maybeSingle();
 
       let role = 'member';
 
       if (myMembership) {
-        // 我本來就在，保留原本角色
         role = myMembership.role;
       } else if (otherAdmin) {
-        // 有其他管理員，不能搶
         role = 'member';
         if (hasValidToken) showToast('此聊天室已有管理員，將以一般成員身分加入');
       } else {
-        // 沒有其他管理員
         if (hasValidToken) {
           role = 'admin';
           if (tokenValue) saveToken(room.id, tokenValue);
@@ -966,12 +1295,8 @@
 
       currentRoom = room;
       currentUser = { nickname, role };
-
-      // 儲存自動登入資訊
       localStorage.setItem('chat_last_room_code', code);
       localStorage.setItem('chat_last_nickname', nickname);
-
-      // 加入我的聊天室列表
       addMyRoom(room);
 
       joinOverlay.classList.add('hidden');
@@ -984,7 +1309,6 @@
       await loadCmds(room.id);
       await loadBtns(room.id);
 
-      // 註冊成員（upsert）
       await sb.from('members').upsert({
         room_id: room.id,
         user_id: USER_ID,
@@ -995,7 +1319,6 @@
 
       if (channels.length) {
         switchChannel(channels[0].id);
-        // 系統訊息到「加入」頻道
         await sendSystemMessage(`${nickname} 加入了聊天室`);
       } else {
         const { data } = await sb.from('channels').insert({ room_id: room.id, name: '一般', type: 'text' }).select().single();
@@ -1016,7 +1339,6 @@
     }
   }
 
-  // ========== 建立房間 ==========
   async function tryCreateRoom() {
     const name = newRoomName.value.trim();
     const code = newRoomCode.value.trim().toLowerCase();
@@ -1036,7 +1358,6 @@
     const { data: room, error } = await sb.from('rooms').insert({ name, code, admin_token: adminToken }).select().single();
     if (error || !room) { errorMsg.textContent = '建立失敗：' + (error?.message || ''); return; }
 
-    // 建立預設頻道（包含「加入」頻道）
     await sb.from('channels').insert([
       { room_id: room.id, name: '加入', type: 'announcement' },
       { room_id: room.id, name: '一般', type: 'text' },
@@ -1090,7 +1411,6 @@
     tokenFieldWrap.style.display = 'none';
   }
 
-  // ========== 動態檢查代碼欄位 ==========
   let checkTimer = null;
   roomCodeInput.addEventListener('input', () => {
     if (checkTimer) clearTimeout(checkTimer);
@@ -1107,9 +1427,7 @@
         tokenFieldWrap.style.display = 'none';
         return;
       }
-      // 檢查是否有其他管理員（排除自己）
       const otherAdmin = await checkRoomHasAdmin(room.id);
-      // 檢查自己是否已在房間
       const { data: myMembership } = await sb.from('members')
         .select('role').eq('room_id', room.id).eq('user_id', USER_ID).maybeSingle();
 
@@ -1118,7 +1436,6 @@
         tokenFieldWrap.style.display = 'none';
         tokenInput.value = '';
       } else if (myMembership && myMembership.role === 'admin') {
-        // 我是原本的管理員
         adminStatusBox.innerHTML = `<div class="admin-status no-admin">✅ 你是此聊天室的管理員，將以管理員身分加入</div>`;
         tokenFieldWrap.style.display = 'block';
       } else {
@@ -1128,7 +1445,6 @@
     }, 500);
   });
 
-  // ========== Realtime ==========
   function subscribeRealtime() {
     if (rtMessages) sb.removeChannel(rtMessages);
     if (rtMembers) sb.removeChannel(rtMembers);
@@ -1189,7 +1505,6 @@
     }, 30000);
   }
 
-  // ========== 圖片上傳 ==========
   uploadImageBtn.addEventListener('click', () => {
     if (!currentChannel) { showToast('請先選擇頻道'); return; }
     imageFileInput.click();
@@ -1229,7 +1544,6 @@
     }
   });
 
-  // ========== 頻道 / 成員 / 指令 / 按鈕 Modal ==========
   function openChannelModal() {
     if (!isAdmin()) { alert('只有管理員可以新增頻道'); return; }
     channelNameInput.value = '';
@@ -1312,7 +1626,6 @@
     await loadBtns(currentRoom.id);
   }
 
-  // ========== 機器人 ==========
   function handleBotCommand(cmd, full) {
     const c = cmd.trim().toLowerCase();
     const custom = customCmds.find(x => x.command.toLowerCase() === c);
@@ -1382,7 +1695,6 @@
     }
   }
 
-  // ========== 事件綁定 ==========
   joinBtn.addEventListener('click', () => {
     if (isCreateMode) tryCreateRoom();
     else joinRoomByCode(roomCodeInput.value, nicknameInput.value);
@@ -1412,7 +1724,6 @@
   closeBtnsBtn.addEventListener('click', closeBtnsModal);
   addBtnBtn.addEventListener('click', addBtn);
 
-  // 側邊欄「＋ 加入 / 新增」按鈕
   addRoomBtn.addEventListener('click', () => {
     closeDrawer();
     joinOverlay.classList.remove('hidden');
@@ -1421,44 +1732,31 @@
     roomCodeInput.focus();
   });
 
-  // ========== 初始化 / 自動登入 ==========
   async function init() {
     renderMyRooms();
-
-    // 嘗試自動登入
     const lastCode = localStorage.getItem('chat_last_room_code');
     const lastNick = localStorage.getItem('chat_last_nickname');
-
     if (lastCode && lastNick) {
       try {
         const room = await findRoomByCode(lastCode);
         if (room) {
-          // 檢查我是否還是成員
           const { data: myMembership } = await sb.from('members')
             .select('*').eq('room_id', room.id).eq('user_id', USER_ID).maybeSingle();
-
           if (myMembership) {
-            // 自動登入
             currentUser.nickname = myMembership.nickname || lastNick;
             await joinRoomByCode(lastCode, currentUser.nickname, true);
             loadingScreen.classList.add('hidden');
             return;
           } else {
-            // 已退出，清除
             localStorage.removeItem('chat_last_room_code');
             localStorage.removeItem('chat_last_nickname');
           }
         } else {
-          // 房間不存在，清除
           localStorage.removeItem('chat_last_room_code');
           localStorage.removeItem('chat_last_nickname');
         }
-      } catch (err) {
-        console.error('自動登入失敗:', err);
-      }
+      } catch (err) { console.error('自動登入失敗:', err); }
     }
-
-    // 沒有自動登入成功，顯示登入畫面
     loadingScreen.classList.add('hidden');
     joinOverlay.classList.remove('hidden');
     roomCodeInput.focus();
