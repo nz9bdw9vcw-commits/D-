@@ -148,7 +148,6 @@
   .uploading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 300; color: #b8e2ff; font-size: 1rem; }
   .uploading-overlay.hidden { display: none; }
 
-  /* ============ 工具箱 ============ */
   .toolbox-overlay { position: fixed; inset: 0; background: linear-gradient(160deg, #0f1a24 0%, #1a2a3a 100%); z-index: 500; display: none; flex-direction: column; }
   .toolbox-overlay.open { display: flex; }
   .toolbox-header { padding: calc(env(safe-area-inset-top) + 14px) 16px 14px; background: #0e1820; border-bottom: 1px solid rgba(70, 130, 200, 0.2); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
@@ -162,7 +161,6 @@
   .toolbox-panel { display: none; }
   .toolbox-panel.active { display: block; }
 
-  /* 計時器 */
   .timer-display { font-size: 3rem; font-family: monospace; text-align: center; color: #e0f0ff; padding: 20px; letter-spacing: 2px; }
   .timer-switch { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
   .timer-switch button { padding: 8px 16px; border-radius: 20px; border: 1px solid #2d4b66; background: transparent; color: #8dc9ff; cursor: pointer; font-size: 0.9rem; }
@@ -175,7 +173,6 @@
   .timer-actions .secondary { background: rgba(47, 109, 158, 0.3); color: #cce8ff; border: 1px solid #2f6d9e; }
   .timer-actions .danger { background: #7a2a2a; color: #ffc5c5; }
 
-  /* 新聞 */
   .news-list { display: flex; flex-direction: column; gap: 10px; }
   .news-item { display: block; padding: 12px 14px; background: rgba(15, 25, 35, 0.7); border-radius: 12px; border-left: 3px solid #3d8fd9; color: #d4e9ff; text-decoration: none; font-size: 0.9rem; line-height: 1.4; }
   .news-item:hover { background: rgba(30, 75, 112, 0.5); }
@@ -184,12 +181,10 @@
   .news-refresh { display: block; width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #2f6d9e; background: transparent; color: #8dc9ff; cursor: pointer; margin-bottom: 12px; font-size: 0.9rem; }
   .news-refresh:active { background: rgba(47, 109, 158, 0.2); }
 
-  /* 筆記 */
   .notes-area { width: 100%; min-height: 60vh; padding: 14px; border-radius: 12px; border: 1px solid #2d4b66; background: #0f1a24; color: #e0f0ff; font-size: 1rem; font-family: inherit; outline: none; resize: vertical; line-height: 1.5; }
   .notes-area:focus { border-color: #4f9eff; }
   .notes-info { font-size: 0.75rem; color: #587b99; text-align: right; margin-top: 6px; }
 
-  /* 計算機 */
   .calc-display { padding: 16px; background: #0a1520; border-radius: 12px; text-align: right; font-size: 2rem; font-family: monospace; color: #e0f0ff; margin-bottom: 12px; word-break: break-all; min-height: 70px; display: flex; align-items: center; justify-content: flex-end; }
   .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .calc-grid button { padding: 18px 0; border-radius: 14px; border: none; background: rgba(47, 109, 158, 0.3); color: #e0f0ff; font-size: 1.2rem; cursor: pointer; font-weight: 500; }
@@ -198,7 +193,6 @@
   .calc-grid .eq { background: #1e5a86; color: white; }
   .calc-grid .clear { background: rgba(122, 42, 42, 0.5); color: #ffc5c5; }
 
-  /* 倒數日 */
   .countdown-input { display: flex; gap: 8px; margin-bottom: 14px; }
   .countdown-input input { flex: 1; padding: 12px 14px; border-radius: 10px; border: 1px solid #2d4b66; background: #0f1a24; color: #e0f0ff; font-size: 1rem; outline: none; }
   .countdown-result { text-align: center; padding: 24px; background: rgba(15, 25, 35, 0.7); border-radius: 16px; margin-bottom: 12px; }
@@ -237,9 +231,9 @@
         <label>你的暱稱</label>
         <input type="text" id="nicknameInput" placeholder="輸入暱稱（不能用「管理員」）" autocomplete="off">
         <div id="adminStatusBox"></div>
-        <div id="tokenFieldWrap" style="display:none;">
-          <label>管理員 Token</label>
-          <input type="text" id="tokenInput" placeholder="輸入 Token 成為管理員" autocomplete="off">
+        <div id="tokenFieldWrap">
+          <label>管理員 Token（選填）</label>
+          <input type="text" id="tokenInput" placeholder="若你是管理員，請輸入 Token" autocomplete="off">
         </div>
       </div>
       <div id="createFields" style="display:none;">
@@ -311,7 +305,6 @@
     </div>
   </main>
 
-  <!-- Modal: 聊天室資訊 -->
   <div class="modal-backdrop hidden" id="roomCodeModal">
     <div class="modal" style="max-width: 360px;">
       <h3>🔑 聊天室資訊</h3>
@@ -328,7 +321,6 @@
     </div>
   </div>
 
-  <!-- Modal: 新增頻道 -->
   <div class="modal-backdrop hidden" id="channelModal">
     <div class="modal">
       <h3>新增頻道</h3>
@@ -348,7 +340,6 @@
     </div>
   </div>
 
-  <!-- Modal: 成員列表 -->
   <div class="modal-backdrop hidden" id="membersModal">
     <div class="modal">
       <h3>👥 成員列表</h3>
@@ -359,7 +350,6 @@
     </div>
   </div>
 
-  <!-- Modal: 管理指令 -->
   <div class="modal-backdrop hidden" id="cmdsModal">
     <div class="modal">
       <h3>🤖 管理機器人指令</h3>
@@ -376,7 +366,6 @@
     </div>
   </div>
 
-  <!-- Modal: 管理按鈕 -->
   <div class="modal-backdrop hidden" id="btnsModal">
     <div class="modal">
       <h3>🔘 管理自訂按鈕</h3>
@@ -402,7 +391,6 @@
 <div class="toast" id="toast"></div>
 <div class="uploading-overlay hidden" id="uploadingOverlay">📤 圖片上傳中...</div>
 
-<!-- 工具箱 -->
 <div class="toolbox-overlay" id="toolboxOverlay">
   <div class="toolbox-header">
     <h2>🧰 工具箱</h2>
@@ -515,7 +503,7 @@
 
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE_NAME = 'mdhs-admin-v7';
+        const CACHE_NAME = 'mdhs-admin-v8';
         self.addEventListener('install', e => self.skipWaiting());
         self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
         self.addEventListener('fetch', e => {
@@ -754,46 +742,63 @@
   });
   renderTimer();
 
-  // ----- 新聞 -----
+  // ----- 新聞（多代理重試） -----
   let newsLoaded = false;
   async function loadNews() {
     const list = $('newsList');
     list.innerHTML = '<div class="news-loading">📡 載入新聞中...</div>';
-    try {
-      const rssUrl = 'https://feeds.feedburner.com/rsscna/mainnews';
-      const proxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(rssUrl);
-      const res = await fetch(proxy);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const text = await res.text();
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(text, 'text/xml');
-      const items = xml.querySelectorAll('item');
-      if (!items.length) {
-        list.innerHTML = '<div class="news-loading">目前沒有新聞</div>';
+    const rssUrl = 'https://feeds.feedburner.com/rsscna/mainnews';
+
+    const proxies = [
+      url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
+      url => 'https://corsproxy.io/?url=' + encodeURIComponent(url),
+      url => 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(url),
+      url => 'https://thingproxy.freeboard.io/fetch/' + url,
+      url => 'https://cors.eu.org/' + url
+    ];
+
+    let lastError = null;
+    for (let i = 0; i < proxies.length; i++) {
+      try {
+        list.innerHTML = `<div class="news-loading">📡 載入新聞中...（嘗試 ${i + 1}/${proxies.length}）</div>`;
+        const proxyUrl = proxies[i](rssUrl);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000);
+        const res = await fetch(proxyUrl, { signal: controller.signal });
+        clearTimeout(timeout);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(text, 'text/xml');
+        const items = xml.querySelectorAll('item');
+        if (!items.length) throw new Error('沒有新聞項目');
+
+        let html = '';
+        items.forEach((item, idx) => {
+          if (idx >= 20) return;
+          const title = item.querySelector('title')?.textContent || '';
+          const link = item.querySelector('link')?.textContent || '';
+          const date = item.querySelector('pubDate')?.textContent || '';
+          let dateStr = '';
+          if (date) {
+            try { dateStr = new Date(date).toLocaleString('zh-TW', { hour12: false }); }
+            catch(e) { dateStr = date; }
+          }
+          html += `<a class="news-item" href="${escapeHtml(link)}" target="_blank" rel="noopener">
+            ${escapeHtml(title)}
+            ${dateStr ? `<span class="news-date">${escapeHtml(dateStr)}</span>` : ''}
+          </a>`;
+        });
+        list.innerHTML = html;
+        newsLoaded = true;
         return;
+      } catch (err) {
+        console.warn('代理 ' + (i + 1) + ' 失敗：', err.message);
+        lastError = err;
       }
-      let html = '';
-      items.forEach((item, i) => {
-        if (i >= 20) return;
-        const title = item.querySelector('title')?.textContent || '';
-        const link = item.querySelector('link')?.textContent || '';
-        const date = item.querySelector('pubDate')?.textContent || '';
-        let dateStr = '';
-        if (date) {
-          try { dateStr = new Date(date).toLocaleString('zh-TW', { hour12: false }); }
-          catch(e) { dateStr = date; }
-        }
-        html += `<a class="news-item" href="${escapeHtml(link)}" target="_blank" rel="noopener">
-          ${escapeHtml(title)}
-          ${dateStr ? `<span class="news-date">${escapeHtml(dateStr)}</span>` : ''}
-        </a>`;
-      });
-      list.innerHTML = html;
-      newsLoaded = true;
-    } catch (err) {
-      console.error(err);
-      list.innerHTML = '<div class="news-loading">❌ 載入失敗，請稍後再試</div>';
     }
+    list.innerHTML = `<div class="news-loading">❌ 全部代理都失敗<br><span style="font-size:0.75rem;">可能網路問題，請稍後再試</span></div>`;
+    console.error('全部新聞代理失敗：', lastError);
   }
   $('newsRefreshBtn').addEventListener('click', () => { newsLoaded = false; loadNews(); });
 
@@ -887,6 +892,17 @@
       .neq('user_id', USER_ID)
       .limit(1);
     if (error) { console.error('checkRoomHasAdmin:', error); return null; }
+    if (data && data.length > 0) return data[0];
+    return null;
+  }
+
+  async function findOtherAdminIncludingSelf(roomId) {
+    const { data, error } = await sb.from('members')
+      .select('id, nickname, role, user_id')
+      .eq('room_id', roomId)
+      .eq('role', 'admin')
+      .limit(1);
+    if (error) { console.error(error); return null; }
     if (data && data.length > 0) return data[0];
     return null;
   }
@@ -1268,9 +1284,8 @@
       const room = await findRoomByCode(code);
       if (!room) { errorMsg.textContent = '找不到此聊天室'; return; }
 
-      const otherAdmin = await checkRoomHasAdmin(room.id);
-      const savedToken = getMyTokens()[room.id];
       const tokenValue = tokenInput.value.trim();
+      const savedToken = getMyTokens()[room.id];
       const hasValidToken = (tokenValue && tokenValue === room.admin_token) || (savedToken && savedToken === room.admin_token);
 
       const { data: myMembership } = await sb.from('members')
@@ -1278,18 +1293,32 @@
 
       let role = 'member';
 
-      if (myMembership) {
+      if (myMembership && !hasValidToken) {
+        // 我本來就在這個房間，且沒有輸入 Token → 保留原本角色
         role = myMembership.role;
-      } else if (otherAdmin) {
-        role = 'member';
-        if (hasValidToken) showToast('此聊天室已有管理員，將以一般成員身分加入');
+      } else if (hasValidToken) {
+        // 我有正確 Token → 強制成為管理員（移除舊管理員紀錄）
+        const otherAdmin = await findOtherAdminIncludingSelf(room.id);
+        if (otherAdmin && otherAdmin.user_id !== USER_ID) {
+          console.log('移除舊管理員記錄：', otherAdmin.nickname);
+          await sb.from('members').delete()
+            .eq('room_id', room.id)
+            .eq('user_id', otherAdmin.user_id);
+        }
+        role = 'admin';
+        if (tokenValue) saveToken(room.id, tokenValue);
+        showToast('✅ 已用 Token 恢復管理員身分');
       } else {
-        if (hasValidToken) {
-          role = 'admin';
-          if (tokenValue) saveToken(room.id, tokenValue);
-        } else if (tokenValue && tokenValue !== room.admin_token) {
-          errorMsg.textContent = 'Token 錯誤，將以一般成員身分加入';
-          await new Promise(r => setTimeout(r, 800));
+        // 沒有 Token，也沒有原本紀錄
+        const otherAdmin = await checkRoomHasAdmin(room.id);
+        if (otherAdmin) {
+          role = 'member';
+        } else {
+          role = 'member';
+          if (tokenValue && tokenValue !== room.admin_token) {
+            errorMsg.textContent = 'Token 錯誤，將以一般成員身分加入';
+            await new Promise(r => setTimeout(r, 800));
+          }
         }
       }
 
@@ -1418,13 +1447,13 @@
       const code = roomCodeInput.value.trim().toLowerCase();
       if (!code || isCreateMode) {
         adminStatusBox.innerHTML = '';
-        tokenFieldWrap.style.display = 'none';
+        tokenFieldWrap.style.display = 'block';
         return;
       }
       const room = await findRoomByCode(code);
       if (!room) {
         adminStatusBox.innerHTML = '';
-        tokenFieldWrap.style.display = 'none';
+        tokenFieldWrap.style.display = 'block';
         return;
       }
       const otherAdmin = await checkRoomHasAdmin(room.id);
@@ -1432,16 +1461,13 @@
         .select('role').eq('room_id', room.id).eq('user_id', USER_ID).maybeSingle();
 
       if (otherAdmin) {
-        adminStatusBox.innerHTML = `<div class="admin-status has-admin">⚠️ 此聊天室已有管理員：${escapeHtml(otherAdmin.nickname)}<br><span style="font-size:0.7rem;opacity:0.8;">你只能以一般成員身分加入</span></div>`;
-        tokenFieldWrap.style.display = 'none';
-        tokenInput.value = '';
+        adminStatusBox.innerHTML = `<div class="admin-status has-admin">⚠️ 此聊天室已有管理員：${escapeHtml(otherAdmin.nickname)}<br><span style="font-size:0.7rem;opacity:0.8;">若你是原本的管理員，可輸入 Token 恢復身分</span></div>`;
       } else if (myMembership && myMembership.role === 'admin') {
         adminStatusBox.innerHTML = `<div class="admin-status no-admin">✅ 你是此聊天室的管理員，將以管理員身分加入</div>`;
-        tokenFieldWrap.style.display = 'block';
       } else {
         adminStatusBox.innerHTML = `<div class="admin-status no-admin">✅ 此聊天室目前沒有管理員<br><span style="font-size:0.7rem;opacity:0.8;">若有 Token，可輸入成為管理員</span></div>`;
-        tokenFieldWrap.style.display = 'block';
       }
+      tokenFieldWrap.style.display = 'block';
     }, 500);
   });
 
