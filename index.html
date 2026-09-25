@@ -9,1931 +9,603 @@
 <meta name="apple-mobile-web-app-title" content="MDHS|ADMIN">
 <meta name="mobile-web-app-capable" content="yes">
 <title>MDHS|ADMIN</title>
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%231a2a3a'/%3E%3Cpath d='M50 60h92a10 10 0 0 1 10 10v50a10 10 0 0 1-10 10h-50l-25 22v-22h-17a10 10 0 0 1-10-10V70a10 10 0 0 1 10-10z' fill='%234f9eff'/%3E%3Ccircle cx='75' cy='95' r='6' fill='white'/%3E%3Ccircle cx='96' cy='95' r='6' fill='white'/%3E%3Ccircle cx='117' cy='95' r='6' fill='white'/%3E%3C/svg%3E">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%231a2a3a'/%3E%3Cpath d='M50 60h92a10 10 0 0 1 10 10v50a10 10 0 0 1-10 10h-50l-25 22v-22h-17a10 10 0 0 1-10-10V70a10 10 0 0 1 10-10z' fill='%234f9eff'/%3E%3Ccircle cx='75' cy='95' r='6' fill='white'/%3E%3Ccircle cx='96' cy='95' r='6' fill='white'/%3E%3Ccircle cx='117' cy='95' r='6' fill='white'/%3E%3C/svg%3E">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; overflow: hidden; }
-  body { font-family: -apple-system, 'Segoe UI', Roboto, system-ui, sans-serif; background: #0f1a24; color: #e0f0ff; overscroll-behavior: none; }
-
-  body { --accent: #1e5a86; --accent-hover: #2872a6; --bubble-user: #1f5a87; --border-accent: #3d8fd9; }
-  body.theme-purple { --accent: #7a4dbf; --accent-hover: #9261d4; --bubble-user: #6a3fb0; --border-accent: #a06be0; }
-  body.theme-green { --accent: #2d8a5c; --accent-hover: #36a06d; --bubble-user: #257a4f; --border-accent: #4ac088; }
-  body.theme-red { --accent: #c0392b; --accent-hover: #d94b3d; --bubble-user: #a5301f; --border-accent: #e05a4a; }
-  body.theme-pink { --accent: #c94b8c; --accent-hover: #d9609d; --bubble-user: #b03d7a; --border-accent: #e075a5; }
-
-  body.font-small .message .bubble { font-size: 0.82rem; }
-  body.font-medium .message .bubble { font-size: 0.92rem; }
-  body.font-large .message .bubble { font-size: 1.05rem; }
-  body.font-xlarge .message .bubble { font-size: 1.2rem; }
-  body.font-large .message .sender,
-  body.font-xlarge .message .sender { font-size: 0.78rem; }
-  body.font-large .input-area input[type="text"],
-  body.font-xlarge .input-area input[type="text"] { font-size: 1.1rem; }
-
-  body.font-jhenghei { font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif; }
-  body.font-pingfang { font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; }
-  body.font-noto { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; }
-
-  .app-container { width: 100%; height: 100vh; height: 100dvh; background: #14202e; display: flex; position: relative; overflow: hidden; }
-
-  .overlay { position: absolute; inset: 0; background: linear-gradient(160deg, #0f1a24 0%, #1a2a3a 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; padding: 20px; overflow-y: auto; }
-  .overlay.hidden { display: none; }
-  .card { background: rgba(30, 45, 60, 0.95); padding: 28px 22px; border-radius: 22px; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5); width: 100%; max-width: 420px; border: 1px solid rgba(100, 180, 255, 0.3); }
-  .card h2 { color: #b8e2ff; font-weight: 500; margin-bottom: 6px; font-size: 1.5rem; text-align: center; }
-  .card p { color: #9ab8d4; margin-bottom: 18px; font-size: 0.85rem; text-align: center; }
-  .card label { display: block; color: #8dc9ff; font-size: 0.8rem; margin-bottom: 6px; margin-top: 12px; }
-  .card input, .card select { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #2d4b66; background: #0f1a24; color: #e0f0ff; font-size: 1rem; outline: none; -webkit-appearance: none; }
-  .card input:focus, .card select:focus { border-color: #4f9eff; box-shadow: 0 0 0 3px rgba(79, 158, 255, 0.25); }
-  .card button { width: 100%; padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg, #2b6c9e, #1e4b70); color: white; font-weight: 600; font-size: 1rem; cursor: pointer; margin-top: 20px; }
-  .card button:active { transform: scale(0.98); }
-  .card button.secondary { background: transparent; border: 1px solid #2f6d9e; color: #8dc9ff; margin-top: 10px; padding: 12px; font-size: 0.9rem; }
-  .error-msg { color: #ff7b7b; font-size: 0.82rem; margin-top: 10px; min-height: 18px; text-align: center; }
-  .hint-text { font-size: 0.72rem; color: #587b99; margin-top: 12px; text-align: center; line-height: 1.5; }
-  .token-display { background: #0a1520; border: 1px dashed #4f9eff; padding: 10px; border-radius: 10px; color: #7bffb0; font-size: 0.78rem; word-break: break-all; text-align: center; margin-top: 10px; font-family: monospace; user-select: all; }
-  .admin-status { padding: 10px 12px; border-radius: 10px; font-size: 0.8rem; margin-top: 10px; text-align: center; }
-  .admin-status.has-admin { background: rgba(255, 200, 100, 0.1); color: #ffd98a; border: 1px solid #8a5a1e; }
-  .admin-status.no-admin { background: rgba(123, 255, 176, 0.1); color: #7bffb0; border: 1px solid #2d7a4d; }
-
-  .loading-screen { position: fixed; inset: 0; background: #0f1a24; display: flex; justify-content: center; align-items: center; z-index: 999; color: #8dc9ff; font-size: 1rem; text-align: center; padding: 20px; }
-  .loading-screen.hidden { display: none; }
-
-  .drawer-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
-  .drawer-backdrop.open { opacity: 1; pointer-events: auto; }
-  .sidebar { position: absolute; top: 0; left: 0; bottom: 0; width: 290px; background: #0e1820; border-right: 1px solid rgba(70, 130, 200, 0.2); display: flex; flex-direction: column; z-index: 95; transform: translateX(-100%); transition: transform 0.25s ease; }
-  .sidebar.open { transform: translateX(0); }
-  .sidebar-header { padding: 60px 16px 14px; border-bottom: 1px solid rgba(70, 130, 200, 0.15); color: #b8e2ff; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; position: relative; flex-shrink: 0; }
-  .sidebar-close { position: absolute; top: 14px; right: 12px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: none; color: #b8e2ff; font-size: 1.2rem; cursor: pointer; }
-  .room-name { font-size: 1rem; color: #e0f0ff; text-transform: none; letter-spacing: 0; margin-top: 4px; font-weight: 500; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .role-badge { font-size: 0.62rem; background: var(--accent); padding: 2px 8px; border-radius: 20px; color: #cce8ff; }
-  .role-badge.admin { background: #8a5a1e; color: #ffe1b0; }
-
-  .my-rooms-section { border-bottom: 1px solid rgba(70, 130, 200, 0.15); flex-shrink: 0; max-height: 40%; display: flex; flex-direction: column; }
-  .my-rooms-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px 6px; font-size: 0.68rem; color: #5f87a8; letter-spacing: 1px; text-transform: uppercase; }
-  .my-rooms-header button { background: var(--accent); border: none; color: #cce8ff; font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: 600; }
-  .my-rooms-header button:active { background: var(--accent-hover); }
-  .my-rooms-list { overflow-y: auto; padding: 0 8px 10px; }
-  .my-room-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; color: #b8d4ec; cursor: pointer; font-size: 0.85rem; margin-bottom: 3px; word-break: break-all; }
-  .my-room-item:active { background: rgba(45, 90, 130, 0.35); }
-  .my-room-item.active { background: var(--accent); color: #fff; font-weight: 500; }
-  .my-room-item .lock { flex-shrink: 0; }
-  .my-room-item .info { flex: 1; min-width: 0; }
-  .my-room-item .rname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .my-room-item .rcode { font-size: 0.7rem; color: #7fa0bd; margin-top: 1px; }
-  .my-room-item.active .rcode { color: #cce8ff; }
-  .my-rooms-empty { padding: 16px; text-align: center; color: #587b99; font-size: 0.78rem; }
-
-  .channel-list { flex: 1; overflow-y: auto; padding: 10px; }
-  .channel-section-title { font-size: 0.68rem; color: #5f87a8; padding: 10px 8px 6px; letter-spacing: 1px; text-transform: uppercase; }
-  .channel-item { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; color: #b8d4ec; cursor: pointer; font-size: 0.92rem; margin-bottom: 2px; }
-  .channel-item:active { background: rgba(45, 90, 130, 0.35); }
-  .channel-item.active { background: var(--accent); color: #fff; font-weight: 500; }
-  .channel-item .del-btn { margin-left: auto; font-size: 0.75rem; color: #ff9b9b; opacity: 0.7; padding: 4px 8px; border-radius: 8px; background: transparent; border: none; cursor: pointer; }
-  .sidebar-footer { padding: 12px; border-top: 1px solid rgba(70, 130, 200, 0.15); display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-  .sidebar-footer button { width: 100%; padding: 11px; border-radius: 12px; border: 1px dashed #2f6d9e; background: transparent; color: #8dc9ff; font-size: 0.85rem; cursor: pointer; }
-  .sidebar-footer button.danger { border-color: #7a2a2a; color: #ff9b9b; }
-  .sidebar-footer button.danger:active { background: rgba(122, 42, 42, 0.2); }
-
-  .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100%; position: relative; }
-  .chat-header { padding: calc(env(safe-area-inset-top) + 12px) 12px 12px; background: #0e1820; border-bottom: 1px solid rgba(70, 130, 200, 0.2); display: flex; align-items: center; gap: 8px; color: #c6e2ff; flex-shrink: 0; }
-  .menu-btn { width: 38px; height: 38px; border-radius: 10px; background: rgba(47, 109, 158, 0.25); border: none; color: #c6e2ff; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .menu-btn:active { background: rgba(47, 109, 158, 0.5); }
-  .chat-header h3 { font-weight: 500; font-size: 1rem; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .chat-header .bot-badge { background: #1e3f5a; border-radius: 16px; padding: 4px 10px; font-size: 0.68rem; color: #8dc9ff; border: 1px solid #2f6d9e; flex-shrink: 0; }
-
-  .quick-buttons { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; background: rgba(15, 25, 35, 0.5); border-bottom: 1px solid rgba(70, 130, 200, 0.15); }
-  .quick-buttons:empty { display: none; }
-  .quick-btn { padding: 7px 12px; border-radius: 20px; background: var(--accent); color: #e0f0ff; border: 1px solid var(--border-accent); font-size: 0.8rem; cursor: pointer; }
-  .quick-btn:active { background: var(--accent-hover); }
-
-  .messages-area { flex: 1; overflow-y: auto; padding: 14px 12px 8px; display: flex; flex-direction: column; gap: 10px; -webkit-overflow-scrolling: touch; }
-  .message { display: flex; flex-direction: column; max-width: 85%; animation: fadeIn 0.18s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-  .message.user { align-self: flex-end; }
-  .message.bot { align-self: flex-start; }
-  .message.system { align-self: center; max-width: 92%; }
-  .message .bubble { padding: 9px 14px; border-radius: 18px; font-size: 0.92rem; line-height: 1.45; word-break: break-word; }
-  .message.user .bubble { background: var(--bubble-user); color: #e7f3ff; border-bottom-right-radius: 4px; }
-  .message.bot .bubble { background: #142e40; color: #d4e9ff; border: 1px solid #2a4b62; border-left: 3px solid #3d8fd9; border-bottom-left-radius: 4px; }
-  .message.system .bubble { background: rgba(40, 60, 80, 0.6); color: #9dbdd8; font-size: 0.78rem; padding: 6px 12px; border-radius: 18px; }
-  .message .sender { font-size: 0.68rem; color: #7f9db8; margin-bottom: 3px; padding-left: 6px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-  .message.user .sender { justify-content: flex-end; padding-right: 6px; padding-left: 0; }
-  .message .sender .role-tag { color: #ffd98a; }
-  .message .sender .role-tag.member { color: #8dc9ff; }
-  .message .sender .edit-btn {
-    background: transparent;
-    border: none;
-    color: #7fa0bd;
-    font-size: 0.7rem;
-    padding: 0 4px;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  .message .sender .edit-btn:active { color: #b8e2ff; }
-  .message .sender .edited-tag { font-size: 0.62rem; color: #7fa0bd; margin-left: 2px; }
-  .message img.chat-image { max-width: 100%; border-radius: 12px; margin-top: 4px; cursor: pointer; display: block; }
-
-  .hint { font-size: 0.68rem; color: #6c8ca5; text-align: center; padding: 2px 0 4px; }
-  .input-area { padding: 8px 10px calc(env(safe-area-inset-bottom) + 10px); background: #0e1820; border-top: 1px solid rgba(70, 130, 200, 0.2); display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
-  .input-area input[type="text"] { flex: 1; padding: 12px 16px; border-radius: 50px; border: 1px solid #244a64; background: #14202e; color: #ecf5ff; font-size: 1rem; outline: none; min-width: 0; }
-  .input-area input[type="text"]:focus { border-color: var(--border-accent); }
-  .input-area button { background: var(--accent); border: none; color: white; padding: 0 18px; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: 0.95rem; flex-shrink: 0; height: 44px; }
-  .input-area button:active { transform: scale(0.97); }
-  .input-area button:disabled { background: #2a3f4f; color: #6d8aa0; }
-  .icon-btn { background: rgba(47, 109, 158, 0.35) !important; padding: 0 14px !important; font-size: 1.2rem !important; }
-  .icon-btn:active { background: rgba(47, 109, 158, 0.6) !important; }
-
-  .modal-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65); display: flex; justify-content: center; align-items: center; z-index: 110; padding: 16px; }
-  .modal-backdrop.hidden { display: none; }
-  .modal { background: #162635; padding: 22px; border-radius: 20px; width: 100%; max-width: 440px; border: 1px solid #2f6d9e; max-height: 85vh; overflow-y: auto; }
-  .modal h3 { color: #b8e2ff; font-weight: 500; margin-bottom: 14px; font-size: 1.15rem; }
-  .modal label { display: block; color: #8dc9ff; font-size: 0.78rem; margin-bottom: 6px; margin-top: 12px; }
-  .modal input, .modal select, .modal textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #2d4b66; background: #0f1a24; color: #e0f0ff; font-size: 1rem; outline: none; -webkit-appearance: none; font-family: inherit; }
-  .modal textarea { min-height: 80px; resize: vertical; }
-  .modal input:focus, .modal select:focus, .modal textarea:focus { border-color: #4f9eff; }
-  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-  .modal-actions button { flex: 1; padding: 12px; border-radius: 40px; border: none; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
-  .modal-actions .confirm { background: var(--accent); color: white; }
-  .modal-actions .confirm:hover { background: var(--accent-hover); }
-  .modal-actions .cancel { background: transparent; border: 1px solid #3d5f7a; color: #9dbdd8; }
-
-  .empty-state { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #5f87a8; gap: 10px; font-size: 0.9rem; padding: 40px 20px; text-align: center; }
-  .empty-state .big { font-size: 2.5rem; opacity: 0.5; }
-
-  .member-item, .cmd-item, .btn-item { display: flex; align-items: center; gap: 8px; padding: 9px 10px; background: rgba(15, 25, 35, 0.6); border-radius: 10px; font-size: 0.85rem; margin-bottom: 6px; }
-  .member-item .name { flex: 1; color: #d4e9ff; }
-  .member-item .badge { font-size: 0.62rem; padding: 2px 6px; border-radius: 8px; background: var(--accent); color: #cce8ff; }
-  .member-item .badge.admin { background: #8a5a1e; color: #ffe1b0; }
-  .member-item .kick-btn { font-size: 0.7rem; padding: 5px 10px; background: #7a2a2a; color: #ffc5c5; border: none; border-radius: 8px; cursor: pointer; }
-  .member-item.self { background: rgba(31, 90, 135, 0.4); }
-  .cmd-item .cmd-name { color: #7bffb0; font-family: monospace; min-width: 70px; }
-  .cmd-item .cmd-resp { flex: 1; color: #d4e9ff; font-size: 0.8rem; word-break: break-all; }
-  .cmd-item .del-btn, .btn-item .del-btn { font-size: 0.7rem; padding: 5px 10px; background: #7a2a2a; color: #ffc5c5; border: none; border-radius: 8px; cursor: pointer; }
-  .btn-item .btn-label { flex: 1; color: #d4e9ff; }
-  .btn-item .btn-type { font-size: 0.62rem; padding: 2px 6px; border-radius: 8px; background: var(--accent); color: #cce8ff; }
-
-  .room-code-box { padding: 16px; background: #0a1520; border: 1px dashed var(--border-accent); border-radius: 12px; color: #7bffb0; font-size: 1.5rem; font-family: monospace; text-align: center; letter-spacing: 3px; user-select: all; margin-top: 4px; }
-
-  .toast { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 80px); left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 12px 22px; border-radius: 30px; font-size: 0.9rem; z-index: 800; opacity: 0; transition: opacity 0.3s; pointer-events: none; box-shadow: 0 8px 20px rgba(0,0,0,0.4); max-width: 90%; text-align: center; }
-  .toast.show { opacity: 1; }
-
-  .uploading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 300; color: #b8e2ff; font-size: 1rem; }
-  .uploading-overlay.hidden { display: none; }
-
-  .toolbox-overlay { position: fixed; inset: 0; background: linear-gradient(160deg, #0f1a24 0%, #1a2a3a 100%); z-index: 500; display: none; flex-direction: column; }
-  .toolbox-overlay.open { display: flex; }
-  .toolbox-header { padding: calc(env(safe-area-inset-top) + 14px) 16px 14px; background: #0e1820; border-bottom: 1px solid rgba(70, 130, 200, 0.2); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-  .toolbox-header h2 { flex: 1; color: #b8e2ff; font-weight: 500; font-size: 1.15rem; }
-  .toolbox-close { width: 38px; height: 38px; border-radius: 10px; background: rgba(47, 109, 158, 0.25); border: none; color: #c6e2ff; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .toolbox-close:active { background: rgba(47, 109, 158, 0.5); }
-  .toolbox-tabs { display: flex; gap: 6px; padding: 10px 12px; background: rgba(15, 25, 35, 0.5); overflow-x: auto; flex-shrink: 0; border-bottom: 1px solid rgba(70, 130, 200, 0.15); }
-  .toolbox-tab { padding: 8px 14px; border-radius: 20px; background: rgba(47, 109, 158, 0.2); color: #b8d4ec; border: 1px solid transparent; font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
-  .toolbox-tab.active { background: var(--accent); color: #fff; border-color: var(--border-accent); }
-  .toolbox-content { flex: 1; overflow-y: auto; padding: 16px; }
-  .toolbox-panel { display: none; }
-  .toolbox-panel.active { display: block; }
-
-  .timer-display { font-size: 3rem; font-family: monospace; text-align: center; color: #e0f0ff; padding: 20px; letter-spacing: 2px; }
-  .timer-switch { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
-  .timer-switch button { padding: 8px 16px; border-radius: 20px; border: 1px solid #2d4b66; background: transparent; color: #8dc9ff; cursor: pointer; font-size: 0.9rem; }
-  .timer-switch button.active { background: var(--accent); color: white; border-color: var(--accent); }
-  .timer-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
-  .timer-input-row input { flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid #2d4b66; background: #0f1a24; color: #e0f0ff; font-size: 1rem; outline: none; }
-  .timer-actions { display: flex; gap: 8px; }
-  .timer-actions button { flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
-  .timer-actions .primary { background: var(--accent); color: white; }
-  .timer-actions .secondary { background: rgba(47, 109, 158, 0.3); color: #cce8ff; border: 1px solid #2f6d9e; }
-  .timer-actions .danger { background: #7a2a2a; color: #ffc5c5; }
-
-  .notes-area { width: 100%; min-height: 60vh; padding: 14px; border-radius: 12px; border: 1px solid #2d4b66; background: #0f1a24; color: #e0f0ff; font-size: 1rem; font-family: inherit; outline: none; resize: vertical; line-height: 1.5; }
-  .notes-area:focus { border-color: var(--border-accent); }
-  .notes-info { font-size: 0.75rem; color: #587b99; text-align: right; margin-top: 6px; }
-
-  .calc-display { padding: 16px; background: #0a1520; border-radius: 12px; text-align: right; font-size: 2rem; font-family: monospace; color: #e0f0ff; margin-bottom: 12px; word-break: break-all; min-height: 70px; display: flex; align-items: center; justify-content: flex-end; }
-  .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-  .calc-grid button { padding: 18px 0; border-radius: 14px; border: none; background: rgba(47, 109, 158, 0.3); color: #e0f0ff; font-size: 1.2rem; cursor: pointer; font-weight: 500; }
-  .calc-grid button:active { background: rgba(47, 109, 158, 0.6); }
-  .calc-grid .op { background: rgba(138, 90, 30, 0.5); color: #ffe1b0; }
-  .calc-grid .eq { background: var(--accent); color: white; }
-  .calc-grid .clear { background: rgba(122, 42, 42, 0.5); color: #ffc5c5; }
-
-  .countdown-input { display: flex; gap: 8px; margin-bottom: 14px; }
-  .countdown-input input { flex: 1; padding: 12px 14px; border-radius: 10px; border: 1px solid #2d4b66; background: #0f1a24; color: #e0f0ff; font-size: 1rem; outline: none; }
-  .countdown-result { text-align: center; padding: 24px; background: rgba(15, 25, 35, 0.7); border-radius: 16px; margin-bottom: 12px; }
-  .countdown-result .days { font-size: 3rem; font-weight: 600; color: #7bffb0; font-family: monospace; }
-  .countdown-result .label { color: #9ab8d4; font-size: 0.9rem; margin-top: 6px; }
-  .countdown-result .target-date { color: #587b99; font-size: 0.8rem; margin-top: 8px; }
-
-  .theme-picker { display: flex; gap: 10px; margin-top: 8px; justify-content: space-between; }
-  .theme-swatch {
-    width: 44px; height: 44px; border-radius: 12px;
-    cursor: pointer; border: 3px solid transparent;
-    transition: transform 0.15s, border-color 0.15s;
-    flex-shrink: 0;
-  }
-  .theme-swatch:active { transform: scale(0.92); }
-  .theme-swatch.active { border-color: #fff; box-shadow: 0 0 0 2px #4f9eff; }
-  .option-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-  .option-btn {
-    flex: 1; min-width: 60px; padding: 10px 8px;
-    border-radius: 10px; border: 1px solid #2d4b66;
-    background: transparent; color: #8dc9ff;
-    font-size: 0.85rem; cursor: pointer;
-  }
-  .option-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-
-  @media (min-width: 768px) {
-    .drawer-backdrop { display: none; }
-    .sidebar { position: relative; transform: none; width: 290px; flex-shrink: 0; }
-    .sidebar-close { display: none; }
-    .sidebar-header { padding: 18px 18px 14px; }
-    .menu-btn { display: none; }
-    .chat-header { padding: 16px 22px; }
-    .chat-header h3 { font-size: 1.1rem; }
-    .messages-area { padding: 20px 18px 10px; }
-    .input-area { padding: 14px 20px 18px; }
-    .toast { bottom: 30px; }
-    .app-container { max-width: 1250px; margin: auto; }
-  }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:#0f1a24;color:#e0f0ff;--accent:#1e5a86;--accent-hover:#2872a6;--bubble-user:#1f5a87;--border-accent:#3d8fd9}
+body.theme-purple{--accent:#7a4dbf;--accent-hover:#9261d4;--bubble-user:#6a3fb0;--border-accent:#a06be0}
+body.theme-green{--accent:#2d8a5c;--accent-hover:#36a06d;--bubble-user:#257a4f;--border-accent:#4ac088}
+body.theme-red{--accent:#c0392b;--accent-hover:#d94b3d;--bubble-user:#a5301f;--border-accent:#e05a4a}
+body.theme-pink{--accent:#c94b8c;--accent-hover:#d9609d;--bubble-user:#b03d7a;--border-accent:#e075a5}
+body.font-small .message .bubble{font-size:.82rem}
+body.font-medium .message .bubble{font-size:.92rem}
+body.font-large .message .bubble{font-size:1.05rem}
+body.font-xlarge .message .bubble{font-size:1.2rem}
+body.font-jhenghei{font-family:'Microsoft JhengHei','PingFang TC',sans-serif}
+body.font-pingfang{font-family:'PingFang TC','Microsoft JhengHei',sans-serif}
+body.font-noto{font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif}
+.app-container{width:100%;height:100vh;height:100dvh;background:#14202e;display:flex;position:relative;overflow:hidden}
+.overlay{position:absolute;inset:0;background:linear-gradient(160deg,#0f1a24,#1a2a3a);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:100;padding:20px;overflow-y:auto}
+.overlay.hidden{display:none}
+.card{background:rgba(30,45,60,.95);padding:28px 22px;border-radius:22px;box-shadow:0 15px 30px rgba(0,0,0,.5);width:100%;max-width:420px;border:1px solid rgba(100,180,255,.3)}
+.card h2{color:#b8e2ff;font-weight:500;margin-bottom:6px;font-size:1.5rem;text-align:center}
+.card p{color:#9ab8d4;margin-bottom:18px;font-size:.85rem;text-align:center}
+.card label{display:block;color:#8dc9ff;font-size:.8rem;margin-bottom:6px;margin-top:12px}
+.card input,.card select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #2d4b66;background:#0f1a24;color:#e0f0ff;font-size:1rem;outline:none}
+.card button{width:100%;padding:14px;border-radius:50px;border:none;background:linear-gradient(135deg,#2b6c9e,#1e4b70);color:#fff;font-weight:600;font-size:1rem;cursor:pointer;margin-top:20px}
+.card button.secondary{background:transparent;border:1px solid #2f6d9e;color:#8dc9ff;margin-top:10px;padding:12px;font-size:.9rem}
+.error-msg{color:#ff7b7b;font-size:.82rem;margin-top:10px;min-height:18px;text-align:center}
+.hint-text{font-size:.72rem;color:#587b99;margin-top:12px;text-align:center;line-height:1.5}
+.token-display{background:#0a1520;border:1px dashed #4f9eff;padding:10px;border-radius:10px;color:#7bffb0;font-size:.78rem;word-break:break-all;text-align:center;margin-top:10px;font-family:monospace;user-select:all}
+.admin-status{padding:10px 12px;border-radius:10px;font-size:.8rem;margin-top:10px;text-align:center}
+.admin-status.has-admin{background:rgba(255,200,100,.1);color:#ffd98a;border:1px solid #8a5a1e}
+.admin-status.no-admin{background:rgba(123,255,176,.1);color:#7bffb0;border:1px solid #2d7a4d}
+.loading-screen{position:fixed;inset:0;background:#0f1a24;display:flex;justify-content:center;align-items:center;z-index:999;color:#8dc9ff;text-align:center;padding:20px}
+.loading-screen.hidden{display:none}
+.drawer-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:90;opacity:0;pointer-events:none;transition:opacity .25s}
+.drawer-backdrop.open{opacity:1;pointer-events:auto}
+.sidebar{position:absolute;top:0;left:0;bottom:0;width:290px;background:#0e1820;border-right:1px solid rgba(70,130,200,.2);display:flex;flex-direction:column;z-index:95;transform:translateX(-100%);transition:transform .25s ease}
+.sidebar.open{transform:translateX(0)}
+.sidebar-header{padding:60px 16px 14px;border-bottom:1px solid rgba(70,130,200,.15);color:#b8e2ff;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;position:relative;flex-shrink:0}
+.sidebar-close{position:absolute;top:14px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:#b8e2ff;font-size:1.2rem;cursor:pointer}
+.room-name{font-size:1rem;color:#e0f0ff;text-transform:none;letter-spacing:0;margin-top:4px;font-weight:500;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.role-badge{font-size:.62rem;background:var(--accent);padding:2px 8px;border-radius:20px;color:#cce8ff}
+.role-badge.admin{background:#8a5a1e;color:#ffe1b0}
+.my-rooms-section{border-bottom:1px solid rgba(70,130,200,.15);flex-shrink:0;max-height:40%;display:flex;flex-direction:column}
+.my-rooms-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 6px;font-size:.68rem;color:#5f87a8;letter-spacing:1px;text-transform:uppercase}
+.my-rooms-header button{background:var(--accent);border:none;color:#cce8ff;font-size:.75rem;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:600}
+.my-rooms-list{overflow-y:auto;padding:0 8px 10px}
+.my-room-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;color:#b8d4ec;cursor:pointer;font-size:.85rem;margin-bottom:3px;word-break:break-all}
+.my-room-item.active{background:var(--accent);color:#fff;font-weight:500}
+.my-room-item .info{flex:1;min-width:0}
+.my-room-item .rname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.my-room-item .rcode{font-size:.7rem;color:#7fa0bd;margin-top:1px}
+.my-rooms-empty{padding:16px;text-align:center;color:#587b99;font-size:.78rem}
+.channel-list{flex:1;overflow-y:auto;padding:10px}
+.channel-section-title{font-size:.68rem;color:#5f87a8;padding:10px 8px 6px;letter-spacing:1px;text-transform:uppercase}
+.channel-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;color:#b8d4ec;cursor:pointer;font-size:.92rem;margin-bottom:2px}
+.channel-item.active{background:var(--accent);color:#fff;font-weight:500}
+.channel-item .del-btn{margin-left:auto;font-size:.75rem;color:#ff9b9b;opacity:.7;padding:4px 8px;border-radius:8px;background:transparent;border:none;cursor:pointer}
+.sidebar-footer{padding:12px;border-top:1px solid rgba(70,130,200,.15);display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.sidebar-footer button{width:100%;padding:11px;border-radius:12px;border:1px dashed #2f6d9e;background:transparent;color:#8dc9ff;font-size:.85rem;cursor:pointer}
+.sidebar-footer button.danger{border-color:#7a2a2a;color:#ff9b9b}
+.chat-main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;position:relative}
+.chat-header{padding:calc(env(safe-area-inset-top) + 12px) 12px 12px;background:#0e1820;border-bottom:1px solid rgba(70,130,200,.2);display:flex;align-items:center;gap:8px;color:#c6e2ff;flex-shrink:0}
+.menu-btn{width:38px;height:38px;border-radius:10px;background:rgba(47,109,158,.25);border:none;color:#c6e2ff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chat-header h3{font-weight:500;font-size:1rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chat-header .bot-badge{background:#1e3f5a;border-radius:16px;padding:4px 10px;font-size:.68rem;color:#8dc9ff;border:1px solid #2f6d9e;flex-shrink:0}
+.quick-buttons{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;background:rgba(15,25,35,.5);border-bottom:1px solid rgba(70,130,200,.15)}
+.quick-buttons:empty{display:none}
+.quick-btn{padding:7px 12px;border-radius:20px;background:var(--accent);color:#e0f0ff;border:1px solid var(--border-accent);font-size:.8rem;cursor:pointer}
+.messages-area{flex:1;overflow-y:auto;padding:14px 12px 8px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
+.message{display:flex;flex-direction:column;max-width:85%}
+.message.user{align-self:flex-end}
+.message.bot{align-self:flex-start}
+.message.system{align-self:center;max-width:92%}
+.message .bubble{padding:9px 14px;border-radius:18px;font-size:.92rem;line-height:1.45;word-break:break-word}
+.message.user .bubble{background:var(--bubble-user);color:#e7f3ff;border-bottom-right-radius:4px}
+.message.bot .bubble{background:#142e40;color:#d4e9ff;border:1px solid #2a4b62;border-left:3px solid #3d8fd9;border-bottom-left-radius:4px}
+.message.system .bubble{background:rgba(40,60,80,.6);color:#9dbdd8;font-size:.78rem;padding:6px 12px;border-radius:18px}
+.message .sender{font-size:.68rem;color:#7f9db8;margin-bottom:3px;padding-left:6px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.message.user .sender{justify-content:flex-end;padding-right:6px;padding-left:0}
+.message .sender .role-tag{color:#ffd98a}
+.message .sender .role-tag.member{color:#8dc9ff}
+.message .sender .edit-btn{background:transparent;border:none;color:#7fa0bd;font-size:.7rem;padding:0 4px;cursor:pointer;text-decoration:underline}
+.message .sender .edited-tag{font-size:.62rem;color:#7fa0bd;margin-left:2px}
+.message img.chat-image{max-width:100%;border-radius:12px;margin-top:4px;cursor:pointer;display:block}
+.hint{font-size:.68rem;color:#6c8ca5;text-align:center;padding:2px 0 4px}
+.input-area{padding:8px 10px calc(env(safe-area-inset-bottom) + 10px);background:#0e1820;border-top:1px solid rgba(70,130,200,.2);display:flex;gap:6px;flex-shrink:0;align-items:center}
+.input-area input[type="text"]{flex:1;padding:12px 16px;border-radius:50px;border:1px solid #244a64;background:#14202e;color:#ecf5ff;font-size:1rem;outline:none;min-width:0}
+.input-area button{background:var(--accent);border:none;color:#fff;padding:0 18px;border-radius:50px;font-weight:600;cursor:pointer;font-size:.95rem;flex-shrink:0;height:44px}
+.input-area button:disabled{background:#2a3f4f;color:#6d8aa0}
+.icon-btn{background:rgba(47,109,158,.35) !important;padding:0 14px !important;font-size:1.2rem !important}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;justify-content:center;align-items:center;z-index:110;padding:16px}
+.modal-backdrop.hidden{display:none}
+.modal{background:#162635;padding:22px;border-radius:20px;width:100%;max-width:440px;border:1px solid #2f6d9e;max-height:85vh;overflow-y:auto}
+.modal h3{color:#b8e2ff;font-weight:500;margin-bottom:14px;font-size:1.15rem}
+.modal label{display:block;color:#8dc9ff;font-size:.78rem;margin-bottom:6px;margin-top:12px}
+.modal input,.modal select,.modal textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #2d4b66;background:#0f1a24;color:#e0f0ff;font-size:1rem;outline:none;font-family:inherit}
+.modal textarea{min-height:80px;resize:vertical}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.modal-actions button{flex:1;padding:12px;border-radius:40px;border:none;font-weight:600;cursor:pointer;font-size:.9rem}
+.modal-actions .confirm{background:var(--accent);color:#fff}
+.modal-actions .cancel{background:transparent;border:1px solid #3d5f7a;color:#9dbdd8}
+.empty-state{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#5f87a8;gap:10px;font-size:.9rem;padding:40px 20px;text-align:center}
+.empty-state .big{font-size:2.5rem;opacity:.5}
+.member-item,.cmd-item,.btn-item{display:flex;align-items:center;gap:8px;padding:9px 10px;background:rgba(15,25,35,.6);border-radius:10px;font-size:.85rem;margin-bottom:6px}
+.member-item .name{flex:1;color:#d4e9ff}
+.member-item .badge{font-size:.62rem;padding:2px 6px;border-radius:8px;background:var(--accent);color:#cce8ff}
+.member-item .badge.admin{background:#8a5a1e;color:#ffe1b0}
+.member-item .kick-btn{font-size:.7rem;padding:5px 10px;background:#7a2a2a;color:#ffc5c5;border:none;border-radius:8px;cursor:pointer}
+.member-item.self{background:rgba(31,90,135,.4)}
+.cmd-item .cmd-name{color:#7bffb0;font-family:monospace;min-width:70px}
+.cmd-item .cmd-resp{flex:1;color:#d4e9ff;font-size:.8rem;word-break:break-all}
+.cmd-item .del-btn,.btn-item .del-btn{font-size:.7rem;padding:5px 10px;background:#7a2a2a;color:#ffc5c5;border:none;border-radius:8px;cursor:pointer}
+.btn-item .btn-label{flex:1;color:#d4e9ff}
+.btn-item .btn-type{font-size:.62rem;padding:2px 6px;border-radius:8px;background:var(--accent);color:#cce8ff}
+.room-code-box{padding:16px;background:#0a1520;border:1px dashed var(--border-accent);border-radius:12px;color:#7bffb0;font-size:1.5rem;font-family:monospace;text-align:center;letter-spacing:3px;user-select:all;margin-top:4px}
+.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 80px);left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:12px 22px;border-radius:30px;font-size:.9rem;z-index:800;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90%;text-align:center}
+.toast.show{opacity:1}
+.uploading-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;justify-content:center;align-items:center;z-index:300;color:#b8e2ff}
+.uploading-overlay.hidden{display:none}
+.toolbox-overlay{position:fixed;inset:0;background:linear-gradient(160deg,#0f1a24,#1a2a3a);z-index:500;display:none;flex-direction:column}
+.toolbox-overlay.open{display:flex}
+.toolbox-header{padding:calc(env(safe-area-inset-top) + 14px) 16px 14px;background:#0e1820;border-bottom:1px solid rgba(70,130,200,.2);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.toolbox-header h2{flex:1;color:#b8e2ff;font-weight:500;font-size:1.15rem}
+.toolbox-close{width:38px;height:38px;border-radius:10px;background:rgba(47,109,158,.25);border:none;color:#c6e2ff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.toolbox-tabs{display:flex;gap:6px;padding:10px 12px;background:rgba(15,25,35,.5);overflow-x:auto;flex-shrink:0;border-bottom:1px solid rgba(70,130,200,.15)}
+.toolbox-tab{padding:8px 14px;border-radius:20px;background:rgba(47,109,158,.2);color:#b8d4ec;border:1px solid transparent;font-size:.85rem;cursor:pointer;white-space:nowrap}
+.toolbox-tab.active{background:var(--accent);color:#fff;border-color:var(--border-accent)}
+.toolbox-content{flex:1;overflow-y:auto;padding:16px}
+.toolbox-panel{display:none}
+.toolbox-panel.active{display:block}
+.timer-display{font-size:3rem;font-family:monospace;text-align:center;color:#e0f0ff;padding:20px;letter-spacing:2px}
+.timer-switch{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.timer-switch button{padding:8px 16px;border-radius:20px;border:1px solid #2d4b66;background:transparent;color:#8dc9ff;cursor:pointer;font-size:.9rem}
+.timer-switch button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.timer-input-row{display:flex;gap:8px;margin-bottom:12px}
+.timer-input-row input{flex:1;padding:10px 14px;border-radius:10px;border:1px solid #2d4b66;background:#0f1a24;color:#e0f0ff;font-size:1rem;outline:none}
+.timer-actions{display:flex;gap:8px}
+.timer-actions button{flex:1;padding:12px;border-radius:12px;border:none;font-weight:600;cursor:pointer;font-size:.9rem}
+.timer-actions .primary{background:var(--accent);color:#fff}
+.timer-actions .secondary{background:rgba(47,109,158,.3);color:#cce8ff;border:1px solid #2f6d9e}
+.timer-actions .danger{background:#7a2a2a;color:#ffc5c5}
+.notes-area{width:100%;min-height:60vh;padding:14px;border-radius:12px;border:1px solid #2d4b66;background:#0f1a24;color:#e0f0ff;font-size:1rem;font-family:inherit;outline:none;resize:vertical;line-height:1.5}
+.notes-info{font-size:.75rem;color:#587b99;text-align:right;margin-top:6px}
+.calc-display{padding:16px;background:#0a1520;border-radius:12px;text-align:right;font-size:2rem;font-family:monospace;color:#e0f0ff;margin-bottom:12px;word-break:break-all;min-height:70px;display:flex;align-items:center;justify-content:flex-end}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.calc-grid button{padding:18px 0;border-radius:14px;border:none;background:rgba(47,109,158,.3);color:#e0f0ff;font-size:1.2rem;cursor:pointer;font-weight:500}
+.calc-grid .op{background:rgba(138,90,30,.5);color:#ffe1b0}
+.calc-grid .eq{background:var(--accent);color:#fff}
+.calc-grid .clear{background:rgba(122,42,42,.5);color:#ffc5c5}
+.countdown-input{display:flex;gap:8px;margin-bottom:14px}
+.countdown-input input{flex:1;padding:12px 14px;border-radius:10px;border:1px solid #2d4b66;background:#0f1a24;color:#e0f0ff;font-size:1rem;outline:none}
+.countdown-result{text-align:center;padding:24px;background:rgba(15,25,35,.7);border-radius:16px;margin-bottom:12px}
+.countdown-result .days{font-size:3rem;font-weight:600;color:#7bffb0;font-family:monospace}
+.countdown-result .label{color:#9ab8d4;font-size:.9rem;margin-top:6px}
+.countdown-result .target-date{color:#587b99;font-size:.8rem;margin-top:8px}
+.theme-picker{display:flex;gap:10px;margin-top:8px;justify-content:space-between}
+.theme-swatch{width:44px;height:44px;border-radius:12px;cursor:pointer;border:3px solid transparent;flex-shrink:0}
+.theme-swatch.active{border-color:#fff;box-shadow:0 0 0 2px #4f9eff}
+.option-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.option-btn{flex:1;min-width:60px;padding:10px 8px;border-radius:10px;border:1px solid #2d4b66;background:transparent;color:#8dc9ff;font-size:.85rem;cursor:pointer}
+.option-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+@media(min-width:768px){.drawer-backdrop{display:none}.sidebar{position:relative;transform:none;width:290px;flex-shrink:0}.sidebar-close{display:none}.sidebar-header{padding:18px}.menu-btn{display:none}.chat-header{padding:16px 22px}.messages-area{padding:20px 18px 10px}.input-area{padding:14px 20px 18px}.toast{bottom:30px}.app-container{max-width:1250px;margin:auto}}
 </style>
 </head>
 <body>
-
 <div class="loading-screen" id="loadingScreen">載入中...</div>
-
-<div class="app-container" id="appContainer">
-
-  <div class="overlay hidden" id="joinOverlay">
-    <div class="card">
-      <h2 id="joinTitle">🔒 加入聊天室</h2>
-      <p id="joinSubtitle">輸入聊天室代碼以繼續</p>
-      <div id="joinFields">
-        <label>聊天室代碼</label>
-        <input type="text" id="roomCodeInput" placeholder="例如: 123456" autocomplete="off">
-        <label>你的暱稱</label>
-        <input type="text" id="nicknameInput" placeholder="輸入暱稱（不能用「管理員」）" autocomplete="off">
-        <div id="adminStatusBox"></div>
-        <div id="tokenFieldWrap">
-          <label>管理員 Token（選填）</label>
-          <input type="text" id="tokenInput" placeholder="若你是管理員，請輸入 Token" autocomplete="off">
-        </div>
-      </div>
-      <div id="createFields" style="display:none;">
-        <label>聊天室名稱</label>
-        <input type="text" id="newRoomName" placeholder="例如: 我的討論區">
-        <label>聊天室代碼</label>
-        <input type="text" id="newRoomCode" placeholder="設定一組代碼">
-        <label>你的暱稱</label>
-        <input type="text" id="newRoomNickname" placeholder="輸入暱稱（不能用「管理員」）" autocomplete="off">
-        <p class="hint-text">建立後系統會給您一組管理員 Token，請務必保存！</p>
-      </div>
-      <button id="joinBtn">加入聊天</button>
-      <button class="secondary" id="switchToCreateBtn">＋ 建立新的聊天室</button>
-      <div class="error-msg" id="errorMsg"></div>
-      <div id="tokenDisplay"></div>
-    </div>
-  </div>
-
-  <div class="drawer-backdrop" id="drawerBackdrop"></div>
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <button class="sidebar-close" id="closeSidebarBtn">✕</button>
-      目前聊天室
-      <div class="room-name">
-        <span id="currentRoomName">未加入</span>
-        <span class="role-badge" id="roleBadge">成員</span>
-      </div>
-    </div>
-
-    <div class="my-rooms-section">
-      <div class="my-rooms-header">
-        <span>我的聊天室</span>
-        <button id="addRoomBtn">＋ 加入 / 新增</button>
-      </div>
-      <div class="my-rooms-list" id="myRoomsList">
-        <div class="my-rooms-empty">還沒有加入任何聊天室</div>
-      </div>
-    </div>
-
-    <div class="channel-list" id="channelList"></div>
-    <div class="sidebar-footer">
-      <button id="addChannelBtn">＋ 新增頻道</button>
-      <button id="viewMembersBtn">👥 成員列表</button>
-      <button id="manageCmdsBtn">🤖 管理指令</button>
-      <button id="manageBtnsBtn">🔘 管理按鈕</button>
-      <button id="showCodeSideBtn">🔑 顯示代碼</button>
-      <button id="toolboxBtn">🧰 工具箱</button>
-      <button id="settingsBtn">⚙️ 設定</button>
-      <button id="leaveRoomBtn" class="danger" style="display:none;">🚪 退出聊天室</button>
-    </div>
-  </aside>
-
-  <main class="chat-main">
-    <div class="chat-header">
-      <button class="menu-btn" id="openSidebarBtn">☰</button>
-      <h3 id="channelTitle"># 請選擇頻道</h3>
-      <button class="menu-btn" id="showCodeBtn" title="顯示聊天室代碼" style="font-size:1rem;">🔑</button>
-      <span class="bot-badge">🤖</span>
-    </div>
-    <div class="quick-buttons" id="quickButtons"></div>
-    <div class="messages-area" id="messagesArea">
-      <div class="empty-state"><div class="big">💬</div><div>加入聊天室後即可開始對話</div></div>
-    </div>
-    <div class="hint">輸入 /help 查看指令</div>
-    <div class="input-area">
-      <button class="icon-btn" id="uploadImageBtn" title="上傳圖片" disabled>📷</button>
-      <input type="text" id="messageInput" placeholder="請先加入聊天室..." autocomplete="off" disabled>
-      <button id="sendBtn" disabled>傳送</button>
-      <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
-    </div>
-  </main>
-
-  <div class="modal-backdrop hidden" id="roomCodeModal">
-    <div class="modal" style="max-width: 360px;">
-      <h3>🔑 聊天室資訊</h3>
-      <label>聊天室名稱</label>
-      <div id="roomNameDisplay" style="padding: 12px; background: rgba(15,25,35,0.6); border-radius: 10px; color: #d4e9ff; font-size: 0.95rem;"></div>
-      <label>聊天室代碼</label>
-      <div class="room-code-box" id="roomCodeDisplay"></div>
-      <p style="color:#587b99; font-size:0.72rem; margin-top:10px; text-align:center;">分享這個代碼給朋友，他們就能加入</p>
-      <div class="modal-actions">
-        <button class="cancel" id="closeCodeBtn">關閉</button>
-        <button class="confirm" id="copyCodeBtn">複製代碼</button>
-      </div>
-      <div class="error-msg" id="codeError"></div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop hidden" id="channelModal">
-    <div class="modal">
-      <h3>新增頻道</h3>
-      <label>頻道名稱</label>
-      <input type="text" id="channelNameInput" placeholder="例如: 討論區">
-      <label>頻道類型</label>
-      <select id="channelTypeSelect">
-        <option value="text">💬 文字頻道</option>
-        <option value="announcement">📢 公告頻道</option>
-        <option value="forum">🗂️ 討論區</option>
-      </select>
-      <div class="modal-actions">
-        <button class="cancel" id="cancelChannelBtn">取消</button>
-        <button class="confirm" id="confirmChannelBtn">建立</button>
-      </div>
-      <div class="error-msg" id="channelError"></div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop hidden" id="membersModal">
-    <div class="modal">
-      <h3>👥 成員列表</h3>
-      <div id="memberList"></div>
-      <div class="modal-actions">
-        <button class="cancel" id="closeMembersBtn">關閉</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop hidden" id="cmdsModal">
-    <div class="modal">
-      <h3>🤖 管理機器人指令</h3>
-      <div id="cmdList"></div>
-      <label>新增指令（例如 /抽獎）</label>
-      <input type="text" id="newCmdName" placeholder="/抽獎">
-      <label>回應內容</label>
-      <input type="text" id="newCmdResp" placeholder="恭喜中獎！">
-      <div class="modal-actions">
-        <button class="cancel" id="closeCmdsBtn">關閉</button>
-        <button class="confirm" id="addCmdBtn">新增指令</button>
-      </div>
-      <div class="error-msg" id="cmdError"></div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop hidden" id="btnsModal">
-    <div class="modal">
-      <h3>🔘 管理自訂按鈕</h3>
-      <div id="btnList"></div>
-      <label>按鈕文字</label>
-      <input type="text" id="newBtnLabel" placeholder="例如: 官方網站">
-      <label>動作類型</label>
-      <select id="newBtnType">
-        <option value="link">🔗 連結（點擊開啟網站）</option>
-        <option value="copy">📋 複製文字</option>
-      </select>
-      <label>動作內容（網址或要複製的文字）</label>
-      <input type="text" id="newBtnValue" placeholder="https://... 或要複製的文字">
-      <div class="modal-actions">
-        <button class="cancel" id="closeBtnsBtn">關閉</button>
-        <button class="confirm" id="addBtnBtn">新增按鈕</button>
-      </div>
-      <div class="error-msg" id="btnError"></div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop hidden" id="editMsgModal">
-    <div class="modal">
-      <h3>📝 編輯訊息</h3>
-      <textarea id="editMsgInput" placeholder="修改訊息內容..."></textarea>
-      <div class="modal-actions">
-        <button class="cancel" id="cancelEditMsgBtn">取消</button>
-        <button class="confirm" id="saveEditMsgBtn">儲存</button>
-      </div>
-      <div class="error-msg" id="editMsgError"></div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop hidden" id="settingsModal">
-    <div class="modal">
-      <h3>⚙️ 設定</h3>
-
-      <label>🎨 主題顏色</label>
-      <div class="theme-picker" id="themePicker">
-        <div class="theme-swatch" data-theme="default" style="background:#1e5a86;" title="深藍"></div>
-        <div class="theme-swatch" data-theme="purple" style="background:#7a4dbf;" title="紫色"></div>
-        <div class="theme-swatch" data-theme="green" style="background:#2d8a5c;" title="綠色"></div>
-        <div class="theme-swatch" data-theme="red" style="background:#c0392b;" title="紅色"></div>
-        <div class="theme-swatch" data-theme="pink" style="background:#c94b8c;" title="粉色"></div>
-      </div>
-
-      <label>🔤 字體大小</label>
-      <div class="option-row" id="fontSizeRow">
-        <button class="option-btn" data-size="small">小</button>
-        <button class="option-btn" data-size="medium">中</button>
-        <button class="option-btn" data-size="large">大</button>
-        <button class="option-btn" data-size="xlarge">特大</button>
-      </div>
-
-      <label>📝 字體</label>
-      <div class="option-row" id="fontFamilyRow">
-        <button class="option-btn" data-font="system">系統</button>
-        <button class="option-btn" data-font="jhenghei">正黑體</button>
-        <button class="option-btn" data-font="pingfang">蘋方</button>
-        <button class="option-btn" data-font="noto">思源</button>
-      </div>
-
-      <div class="modal-actions">
-        <button class="cancel" id="closeSettingsBtn">關閉</button>
-      </div>
-    </div>
-  </div>
+<div class="app-container">
+<div class="overlay hidden" id="joinOverlay">
+<div class="card">
+<h2 id="joinTitle">🔒 加入聊天室</h2>
+<p id="joinSubtitle">輸入聊天室代碼以繼續</p>
+<div id="joinFields">
+<label>聊天室代碼</label>
+<input type="text" id="roomCodeInput" placeholder="例如: 123456" autocomplete="off">
+<label>你的暱稱</label>
+<input type="text" id="nicknameInput" placeholder="輸入暱稱（不能用「管理員」）" autocomplete="off">
+<div id="adminStatusBox"></div>
+<div id="tokenFieldWrap">
+<label>管理員 Token（選填）</label>
+<input type="text" id="tokenInput" placeholder="若你是管理員，請輸入 Token" autocomplete="off">
 </div>
-
+</div>
+<div id="createFields" style="display:none">
+<label>聊天室名稱</label>
+<input type="text" id="newRoomName" placeholder="例如: 我的討論區">
+<label>聊天室代碼</label>
+<input type="text" id="newRoomCode" placeholder="設定一組代碼">
+<label>你的暱稱</label>
+<input type="text" id="newRoomNickname" placeholder="輸入暱稱" autocomplete="off">
+<p class="hint-text">建立後系統會給您一組管理員 Token，請務必保存！</p>
+</div>
+<button id="joinBtn">加入聊天</button>
+<button class="secondary" id="switchToCreateBtn">＋ 建立新的聊天室</button>
+<div class="error-msg" id="errorMsg"></div>
+<div id="tokenDisplay"></div>
+</div>
+</div>
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<button class="sidebar-close" id="closeSidebarBtn">✕</button>
+目前聊天室
+<div class="room-name"><span id="currentRoomName">未加入</span><span class="role-badge" id="roleBadge">成員</span></div>
+</div>
+<div class="my-rooms-section">
+<div class="my-rooms-header"><span>我的聊天室</span><button id="addRoomBtn">＋ 加入 / 新增</button></div>
+<div class="my-rooms-list" id="myRoomsList"><div class="my-rooms-empty">還沒有加入任何聊天室</div></div>
+</div>
+<div class="channel-list" id="channelList"></div>
+<div class="sidebar-footer">
+<button id="addChannelBtn">＋ 新增頻道</button>
+<button id="viewMembersBtn">👥 成員列表</button>
+<button id="manageCmdsBtn">🤖 管理指令</button>
+<button id="manageBtnsBtn">🔘 管理按鈕</button>
+<button id="showCodeSideBtn">🔑 顯示代碼</button>
+<button id="toolboxBtn">🧰 工具箱</button>
+<button id="settingsBtn">⚙️ 設定</button>
+<button id="leaveRoomBtn" class="danger" style="display:none">🚪 退出聊天室</button>
+</div>
+</aside>
+<main class="chat-main">
+<div class="chat-header">
+<button class="menu-btn" id="openSidebarBtn">☰</button>
+<h3 id="channelTitle"># 請選擇頻道</h3>
+<button class="menu-btn" id="showCodeBtn" style="font-size:1rem">🔑</button>
+<span class="bot-badge">🤖</span>
+</div>
+<div class="quick-buttons" id="quickButtons"></div>
+<div class="messages-area" id="messagesArea">
+<div class="empty-state"><div class="big">💬</div><div>加入聊天室後即可開始對話</div></div>
+</div>
+<div class="hint">輸入 /help 查看指令</div>
+<div class="input-area">
+<button class="icon-btn" id="uploadImageBtn" disabled>📷</button>
+<input type="text" id="messageInput" placeholder="請先加入聊天室..." autocomplete="off" disabled>
+<button id="sendBtn" disabled>傳送</button>
+<input type="file" id="imageFileInput" accept="image/*" style="display:none">
+</div>
+</main>
+<div class="modal-backdrop hidden" id="roomCodeModal"><div class="modal" style="max-width:360px"><h3>🔑 聊天室資訊</h3><label>名稱</label><div id="roomNameDisplay" style="padding:12px;background:rgba(15,25,35,.6);border-radius:10px;color:#d4e9ff"></div><label>代碼</label><div class="room-code-box" id="roomCodeDisplay"></div><div class="modal-actions"><button class="cancel" id="closeCodeBtn">關閉</button><button class="confirm" id="copyCodeBtn">複製代碼</button></div><div class="error-msg" id="codeError"></div></div></div>
+<div class="modal-backdrop hidden" id="channelModal"><div class="modal"><h3>新增頻道</h3><label>頻道名稱</label><input type="text" id="channelNameInput" placeholder="例如: 討論區"><label>頻道類型</label><select id="channelTypeSelect"><option value="text">💬 文字頻道</option><option value="announcement">📢 公告頻道</option><option value="forum">🗂️ 討論區</option></select><div class="modal-actions"><button class="cancel" id="cancelChannelBtn">取消</button><button class="confirm" id="confirmChannelBtn">建立</button></div><div class="error-msg" id="channelError"></div></div></div>
+<div class="modal-backdrop hidden" id="membersModal"><div class="modal"><h3>👥 成員列表</h3><div id="memberList"></div><div class="modal-actions"><button class="cancel" id="closeMembersBtn">關閉</button></div></div></div>
+<div class="modal-backdrop hidden" id="cmdsModal"><div class="modal"><h3>🤖 管理指令</h3><div id="cmdList"></div><label>新增指令</label><input type="text" id="newCmdName" placeholder="/抽獎"><label>回應內容</label><input type="text" id="newCmdResp" placeholder="恭喜中獎！"><div class="modal-actions"><button class="cancel" id="closeCmdsBtn">關閉</button><button class="confirm" id="addCmdBtn">新增指令</button></div><div class="error-msg" id="cmdError"></div></div></div>
+<div class="modal-backdrop hidden" id="btnsModal"><div class="modal"><h3>🔘 管理按鈕</h3><div id="btnList"></div><label>按鈕文字</label><input type="text" id="newBtnLabel" placeholder="官方網站"><label>動作類型</label><select id="newBtnType"><option value="link">🔗 連結</option><option value="copy">📋 複製</option></select><label>動作內容</label><input type="text" id="newBtnValue" placeholder="https://... 或文字"><div class="modal-actions"><button class="cancel" id="closeBtnsBtn">關閉</button><button class="confirm" id="addBtnBtn">新增按鈕</button></div><div class="error-msg" id="btnError"></div></div></div>
+<div class="modal-backdrop hidden" id="editMsgModal"><div class="modal"><h3>📝 編輯訊息</h3><textarea id="editMsgInput" placeholder="修改訊息內容..."></textarea><div class="modal-actions"><button class="cancel" id="cancelEditMsgBtn">取消</button><button class="confirm" id="saveEditMsgBtn">儲存</button></div><div class="error-msg" id="editMsgError"></div></div></div>
+<div class="modal-backdrop hidden" id="settingsModal"><div class="modal"><h3>⚙️ 設定</h3><label>🎨 主題顏色</label><div class="theme-picker" id="themePicker"><div class="theme-swatch" data-theme="default" style="background:#1e5a86"></div><div class="theme-swatch" data-theme="purple" style="background:#7a4dbf"></div><div class="theme-swatch" data-theme="green" style="background:#2d8a5c"></div><div class="theme-swatch" data-theme="red" style="background:#c0392b"></div><div class="theme-swatch" data-theme="pink" style="background:#c94b8c"></div></div><label>🔤 字體大小</label><div class="option-row" id="fontSizeRow"><button class="option-btn" data-size="small">小</button><button class="option-btn" data-size="medium">中</button><button class="option-btn" data-size="large">大</button><button class="option-btn" data-size="xlarge">特大</button></div><label>📝 字體</label><div class="option-row" id="fontFamilyRow"><button class="option-btn" data-font="system">系統</button><button class="option-btn" data-font="jhenghei">正黑體</button><button class="option-btn" data-font="pingfang">蘋方</button><button class="option-btn" data-font="noto">思源</button></div><div class="modal-actions"><button class="cancel" id="closeSettingsBtn">關閉</button></div></div></div>
+</div>
 <div class="toast" id="toast"></div>
 <div class="uploading-overlay hidden" id="uploadingOverlay">📤 圖片上傳中...</div>
-
 <div class="toolbox-overlay" id="toolboxOverlay">
-  <div class="toolbox-header">
-    <h2>🧰 工具箱</h2>
-    <button class="toolbox-close" id="closeToolboxBtn">✕</button>
-  </div>
-  <div class="toolbox-tabs">
-    <button class="toolbox-tab active" data-tab="timer">⏱️ 計時器</button>
-    <button class="toolbox-tab" data-tab="notes">📝 筆記</button>
-    <button class="toolbox-tab" data-tab="calc">🧮 計算機</button>
-    <button class="toolbox-tab" data-tab="countdown">📅 倒數日</button>
-  </div>
-  <div class="toolbox-content">
-
-    <div class="toolbox-panel active" id="panel-timer">
-      <div class="timer-switch">
-        <button id="timerModeCountdown" class="active">倒數計時</button>
-        <button id="timerModeStopwatch">碼錶</button>
-      </div>
-      <div class="timer-display" id="timerDisplay">00:00:00</div>
-      <div class="timer-input-row" id="countdownInputRow">
-        <input type="number" id="countdownMin" placeholder="分鐘" min="0" max="999">
-        <input type="number" id="countdownSec" placeholder="秒" min="0" max="59">
-      </div>
-      <div class="timer-actions">
-        <button class="primary" id="timerStartBtn">▶ 開始</button>
-        <button class="secondary" id="timerPauseBtn">⏸ 暫停</button>
-        <button class="danger" id="timerResetBtn">↺ 重置</button>
-      </div>
-    </div>
-
-    <div class="toolbox-panel" id="panel-notes">
-      <textarea class="notes-area" id="notesArea" placeholder="在這裡寫筆記...（自動儲存）"></textarea>
-      <div class="notes-info" id="notesInfo">已自動儲存</div>
-    </div>
-
-    <div class="toolbox-panel" id="panel-calc">
-      <div class="calc-display" id="calcDisplay">0</div>
-      <div class="calc-grid">
-        <button class="clear" data-calc="C">C</button>
-        <button class="clear" data-calc="⌫">⌫</button>
-        <button class="op" data-calc="%">%</button>
-        <button class="op" data-calc="/">÷</button>
-        <button data-calc="7">7</button>
-        <button data-calc="8">8</button>
-        <button data-calc="9">9</button>
-        <button class="op" data-calc="*">×</button>
-        <button data-calc="4">4</button>
-        <button data-calc="5">5</button>
-        <button data-calc="6">6</button>
-        <button class="op" data-calc="-">−</button>
-        <button data-calc="1">1</button>
-        <button data-calc="2">2</button>
-        <button data-calc="3">3</button>
-        <button class="op" data-calc="+">+</button>
-        <button data-calc="0">0</button>
-        <button data-calc=".">.</button>
-        <button class="eq" data-calc="=" style="grid-column: span 2;">=</button>
-      </div>
-    </div>
-
-    <div class="toolbox-panel" id="panel-countdown">
-      <div class="countdown-input">
-        <input type="date" id="countdownDate">
-      </div>
-      <div class="countdown-result">
-        <div class="days" id="countdownDays">--</div>
-        <div class="label">天</div>
-        <div class="target-date" id="countdownTarget">請選擇日期</div>
-      </div>
-    </div>
-
-  </div>
+<div class="toolbox-header"><h2>🧰 工具箱</h2><button class="toolbox-close" id="closeToolboxBtn">✕</button></div>
+<div class="toolbox-tabs">
+<button class="toolbox-tab active" data-tab="timer">⏱️ 計時器</button>
+<button class="toolbox-tab" data-tab="notes">📝 筆記</button>
+<button class="toolbox-tab" data-tab="calc">🧮 計算機</button>
+<button class="toolbox-tab" data-tab="countdown">📅 倒數日</button>
 </div>
-
+<div class="toolbox-content">
+<div class="toolbox-panel active" id="panel-timer">
+<div class="timer-switch"><button id="timerModeCountdown" class="active">倒數計時</button><button id="timerModeStopwatch">碼錶</button></div>
+<div class="timer-display" id="timerDisplay">00:00:00</div>
+<div class="timer-input-row" id="countdownInputRow"><input type="number" id="countdownMin" placeholder="分鐘" min="0"><input type="number" id="countdownSec" placeholder="秒" min="0" max="59"></div>
+<div class="timer-actions"><button class="primary" id="timerStartBtn">▶ 開始</button><button class="secondary" id="timerPauseBtn">⏸ 暫停</button><button class="danger" id="timerResetBtn">↺ 重置</button></div>
+</div>
+<div class="toolbox-panel" id="panel-notes"><textarea class="notes-area" id="notesArea" placeholder="在這裡寫筆記...（自動儲存）"></textarea><div class="notes-info" id="notesInfo">已自動儲存</div></div>
+<div class="toolbox-panel" id="panel-calc"><div class="calc-display" id="calcDisplay">0</div><div class="calc-grid"><button class="clear" data-calc="C">C</button><button class="clear" data-calc="⌫">⌫</button><button class="op" data-calc="%">%</button><button class="op" data-calc="/">÷</button><button data-calc="7">7</button><button data-calc="8">8</button><button data-calc="9">9</button><button class="op" data-calc="*">×</button><button data-calc="4">4</button><button data-calc="5">5</button><button data-calc="6">6</button><button class="op" data-calc="-">−</button><button data-calc="1">1</button><button data-calc="2">2</button><button data-calc="3">3</button><button class="op" data-calc="+">+</button><button data-calc="0">0</button><button data-calc=".">.</button><button class="eq" data-calc="=" style="grid-column:span 2">=</button></div></div>
+<div class="toolbox-panel" id="panel-countdown"><div class="countdown-input"><input type="date" id="countdownDate"></div><div class="countdown-result"><div class="days" id="countdownDays">--</div><div class="label">天</div><div class="target-date" id="countdownTarget">請選擇日期</div></div></div>
+</div>
+</div>
 <script>
-(function() {
-  'use strict';
+(function(){
+'use strict';
 
-  // ========== PWA ==========
-  (function setupPWA() {
-    const manifest = {
-      name: 'MDHS|ADMIN',
-      short_name: 'MDHS|ADMIN',
-      description: 'MDHS 聊天室',
-      start_url: '.',
-      display: 'standalone',
-      background_color: '#1a2a3a',
-      theme_color: '#1a2a3a',
-      orientation: 'portrait',
-      icons: [{
-        src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%231a2a3a'/%3E%3Cpath d='M50 60h92a10 10 0 0 1 10 10v50a10 10 0 0 1-10 10h-50l-25 22v-22h-17a10 10 0 0 1-10-10V70a10 10 0 0 1 10-10z' fill='%234f9eff'/%3E%3Ccircle cx='75' cy='95' r='6' fill='white'/%3E%3Ccircle cx='96' cy='95' r='6' fill='white'/%3E%3Ccircle cx='117' cy='95' r='6' fill='white'/%3E%3C/svg%3E",
-        sizes: '192x192',
-        type: 'image/svg+xml',
-        purpose: 'any maskable'
-      }]
-    };
-    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
-    const link = document.createElement('link');
-    link.rel = 'manifest';
-    link.href = URL.createObjectURL(blob);
-    document.head.appendChild(link);
+const SB_URL='https://ixmkbqpdugazdxbqogxw.supabase.co';
+const SB_KEY='sb_publishable_LuHQhy3xbv4b0ko02AZAyA_zCf7mB59';
+const sb=window.supabase.createClient(SB_URL,SB_KEY);
 
-    if ('serviceWorker' in navigator) {
-      const swCode = `
-        const CACHE_NAME = 'mdhs-admin-v11';
-        self.addEventListener('install', e => self.skipWaiting());
-        self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
-        self.addEventListener('fetch', e => {
-          if (e.request.method !== 'GET') return;
-          e.respondWith(
-            caches.open(CACHE_NAME).then(cache =>
-              fetch(e.request).then(res => {
-                if (res && res.status === 200 && res.type === 'basic') cache.put(e.request, res.clone());
-                return res;
-              }).catch(() => cache.match(e.request))
-            )
-          );
-        });
-      `;
-      const swBlob = new Blob([swCode], { type: 'application/javascript' });
-      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
-    }
-  })();
+function getUserId(){let uid=localStorage.getItem('chat_user_id');if(!uid){uid='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('chat_user_id',uid);}return uid;}
+const USER_ID=getUserId();
 
-  const SB_URL = 'https://ixmkbqpdugazdxbqogxw.supabase.co';
-  const SB_KEY = 'sb_publishable_LuHQhy3xbv4b0ko02AZAyA_zCf7mB59';
-  const sb = window.supabase.createClient(SB_URL, SB_KEY);
+function getMyTokens(){try{return JSON.parse(localStorage.getItem('chat_tokens')||'{}');}catch(e){return {};}}
+function saveToken(id,t){const a=getMyTokens();a[id]=t;localStorage.setItem('chat_tokens',JSON.stringify(a));}
+function removeToken(id){const a=getMyTokens();delete a[id];localStorage.setItem('chat_tokens',JSON.stringify(a));}
+function getMyRooms(){try{return JSON.parse(localStorage.getItem('chat_my_rooms')||'[]');}catch(e){return [];}}
+function addMyRoom(r){const a=getMyRooms();const i=a.findIndex(x=>x.id===r.id);if(i>=0){a[i].name=r.name;a[i].code=r.code;}else a.push({id:r.id,name:r.name,code:r.code});localStorage.setItem('chat_my_rooms',JSON.stringify(a));}
+function removeMyRoom(id){const a=getMyRooms().filter(x=>x.id!==id);localStorage.setItem('chat_my_rooms',JSON.stringify(a));}
 
-  // ========== 匿名登入 ==========
-  let AUTH_UID = null;
-  async function ensureAuth() {
-    try {
-      const { data: { session } } = await sb.auth.getSession();
-      if (session && session.user) {
-        AUTH_UID = session.user.id;
-        console.log('已登入，uid =', AUTH_UID);
-        return AUTH_UID;
-      }
-      const { data, error } = await sb.auth.signInAnonymously();
-      if (error) {
-        console.error('匿名登入失敗：', error);
-        return null;
-      }
-      AUTH_UID = data.user.id;
-      console.log('匿名登入成功，uid =', AUTH_UID);
-      return AUTH_UID;
-    } catch (err) {
-      console.error('ensureAuth 錯誤：', err);
-      return null;
-    }
-  }
+let currentRoom=null,currentChannel=null;
+let currentUser={nickname:'訪客',role:'member'};
+let channels=[],messages=[],members=[],customCmds=[],customBtns=[];
+let rtMessages=null,rtMembers=null,rtCmds=null,rtBtns=null,heartbeatTimer=null;
+let isCreateMode=false,isJoining=false;
 
-  function getUserId() {
-    let uid = localStorage.getItem('chat_user_id');
-    if (!uid) {
-      uid = 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-      localStorage.setItem('chat_user_id', uid);
-    }
-    return uid;
-  }
-  const USER_ID = getUserId();
+const $=id=>document.getElementById(id);
+const loadingScreen=$('loadingScreen');
+const joinOverlay=$('joinOverlay'),joinTitle=$('joinTitle'),joinSubtitle=$('joinSubtitle');
+const joinFields=$('joinFields'),createFields=$('createFields');
+const roomCodeInput=$('roomCodeInput'),nicknameInput=$('nicknameInput'),tokenInput=$('tokenInput');
+const adminStatusBox=$('adminStatusBox'),tokenFieldWrap=$('tokenFieldWrap');
+const newRoomName=$('newRoomName'),newRoomCode=$('newRoomCode'),newRoomNickname=$('newRoomNickname');
+const joinBtn=$('joinBtn'),switchToCreateBtn=$('switchToCreateBtn'),errorMsg=$('errorMsg');
+const tokenDisplay=$('tokenDisplay');
+const currentRoomNameEl=$('currentRoomName'),roleBadge=$('roleBadge');
+const myRoomsListEl=$('myRoomsList'),addRoomBtn=$('addRoomBtn');
+const channelListEl=$('channelList'),addChannelBtn=$('addChannelBtn'),viewMembersBtn=$('viewMembersBtn');
+const manageCmdsBtn=$('manageCmdsBtn'),manageBtnsBtn=$('manageBtnsBtn');
+const channelTitle=$('channelTitle'),messagesArea=$('messagesArea');
+const messageInput=$('messageInput'),sendBtn=$('sendBtn'),quickButtons=$('quickButtons');
+const uploadImageBtn=$('uploadImageBtn'),imageFileInput=$('imageFileInput'),uploadingOverlay=$('uploadingOverlay');
+const channelModal=$('channelModal'),channelNameInput=$('channelNameInput');
+const channelTypeSelect=$('channelTypeSelect'),cancelChannelBtn=$('cancelChannelBtn');
+const confirmChannelBtn=$('confirmChannelBtn'),channelError=$('channelError');
+const membersModal=$('membersModal'),memberList=$('memberList'),closeMembersBtn=$('closeMembersBtn');
+const cmdsModal=$('cmdsModal'),cmdList=$('cmdList'),closeCmdsBtn=$('closeCmdsBtn');
+const newCmdName=$('newCmdName'),newCmdResp=$('newCmdResp'),addCmdBtn=$('addCmdBtn'),cmdError=$('cmdError');
+const btnsModal=$('btnsModal'),btnList=$('btnList'),closeBtnsBtn=$('closeBtnsBtn');
+const newBtnLabel=$('newBtnLabel'),newBtnType=$('newBtnType'),newBtnValue=$('newBtnValue');
+const addBtnBtn=$('addBtnBtn'),btnError=$('btnError');
+const toast=$('toast');
+const sidebar=$('sidebar'),drawerBackdrop=$('drawerBackdrop');
+const openSidebarBtn=$('openSidebarBtn'),closeSidebarBtn=$('closeSidebarBtn');
+const showCodeBtn=$('showCodeBtn'),showCodeSideBtn=$('showCodeSideBtn');
+const roomCodeModal=$('roomCodeModal'),roomCodeDisplay=$('roomCodeDisplay');
+const roomNameDisplay=$('roomNameDisplay'),closeCodeBtn=$('closeCodeBtn');
+const copyCodeBtn=$('copyCodeBtn'),codeError=$('codeError');
+const leaveRoomBtn=$('leaveRoomBtn'),toolboxBtn=$('toolboxBtn');
+const settingsBtn=$('settingsBtn'),settingsModal=$('settingsModal'),closeSettingsBtn=$('closeSettingsBtn');
+const editMsgModal=$('editMsgModal'),editMsgInput=$('editMsgInput');
+const cancelEditMsgBtn=$('cancelEditMsgBtn'),saveEditMsgBtn=$('saveEditMsgBtn'),editMsgError=$('editMsgError');
 
-  function getMyTokens() {
-    try { return JSON.parse(localStorage.getItem('chat_tokens') || '{}'); } catch(e) { return {}; }
-  }
-  function saveToken(roomId, token) {
-    const t = getMyTokens(); t[roomId] = token;
-    localStorage.setItem('chat_tokens', JSON.stringify(t));
-  }
-  function removeToken(roomId) {
-    const t = getMyTokens(); delete t[roomId];
-    localStorage.setItem('chat_tokens', JSON.stringify(t));
-  }
+const isAdmin=()=>currentUser.role==='admin';
+const escapeHtml=t=>{const d=document.createElement('div');d.textContent=t;return d.innerHTML;};
+const channelIcon=t=>t==='announcement'?'📢':t==='forum'?'🗂️':'💬';
+const IMG_PREFIX='[IMG]';
 
-  function getMyRooms() {
-    try { return JSON.parse(localStorage.getItem('chat_my_rooms') || '[]'); } catch(e) { return []; }
-  }
-  function addMyRoom(room) {
-    const rooms = getMyRooms();
-    if (!rooms.find(r => r.id === room.id)) {
-      rooms.push({ id: room.id, name: room.name, code: room.code });
-    } else {
-      const idx = rooms.findIndex(r => r.id === room.id);
-      rooms[idx].name = room.name;
-      rooms[idx].code = room.code;
-    }
-    localStorage.setItem('chat_my_rooms', JSON.stringify(rooms));
-  }
-  function removeMyRoom(roomId) {
-    const rooms = getMyRooms().filter(r => r.id !== roomId);
-    localStorage.setItem('chat_my_rooms', JSON.stringify(rooms));
-  }
+function showToast(m){toast.textContent=m;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2500);}
+function openDrawer(){sidebar.classList.add('open');drawerBackdrop.classList.add('open');}
+function closeDrawer(){sidebar.classList.remove('open');drawerBackdrop.classList.remove('open');}
+openSidebarBtn.addEventListener('click',openDrawer);
+closeSidebarBtn.addEventListener('click',closeDrawer);
+drawerBackdrop.addEventListener('click',closeDrawer);
 
-  let currentRoom = null, currentChannel = null;
-  let currentUser = { nickname: '訪客', role: 'member' };
-  let channels = [], messages = [], members = [], customCmds = [], customBtns = [];
-  let rtMessages = null, rtMembers = null, rtCmds = null, rtBtns = null, heartbeatTimer = null;
-  let isCreateMode = false;
-  let isJoining = false;
+function applyTheme(t){document.body.classList.remove('theme-purple','theme-green','theme-red','theme-pink');if(t&&t!=='default')document.body.classList.add('theme-'+t);document.querySelectorAll('#themePicker .theme-swatch').forEach(e=>e.classList.toggle('active',e.dataset.theme===t));localStorage.setItem('chat_theme',t||'default');}
+function applyFontSize(s){document.body.classList.remove('font-small','font-medium','font-large','font-xlarge');document.body.classList.add('font-'+s);document.querySelectorAll('#fontSizeRow .option-btn').forEach(e=>e.classList.toggle('active',e.dataset.size===s));localStorage.setItem('chat_font_size',s);}
+function applyFontFamily(f){document.body.classList.remove('font-jhenghei','font-pingfang','font-noto');if(f&&f!=='system')document.body.classList.add('font-'+f);document.querySelectorAll('#fontFamilyRow .option-btn').forEach(e=>e.classList.toggle('active',e.dataset.font===f));localStorage.setItem('chat_font_family',f||'system');}
+applyTheme(localStorage.getItem('chat_theme')||'default');
+applyFontSize(localStorage.getItem('chat_font_size')||'medium');
+applyFontFamily(localStorage.getItem('chat_font_family')||'system');
+document.querySelectorAll('#themePicker .theme-swatch').forEach(e=>e.addEventListener('click',()=>applyTheme(e.dataset.theme)));
+document.querySelectorAll('#fontSizeRow .option-btn').forEach(e=>e.addEventListener('click',()=>applyFontSize(e.dataset.size)));
+document.querySelectorAll('#fontFamilyRow .option-btn').forEach(e=>e.addEventListener('click',()=>applyFontFamily(e.dataset.font)));
+settingsBtn.addEventListener('click',()=>{closeDrawer();settingsModal.classList.remove('hidden');});
+closeSettingsBtn.addEventListener('click',()=>settingsModal.classList.add('hidden'));
 
-  const $ = id => document.getElementById(id);
-  const loadingScreen = $('loadingScreen');
-  const joinOverlay = $('joinOverlay'), joinTitle = $('joinTitle'), joinSubtitle = $('joinSubtitle');
-  const joinFields = $('joinFields'), createFields = $('createFields');
-  const roomCodeInput = $('roomCodeInput'), nicknameInput = $('nicknameInput'), tokenInput = $('tokenInput');
-  const adminStatusBox = $('adminStatusBox'), tokenFieldWrap = $('tokenFieldWrap');
-  const newRoomName = $('newRoomName'), newRoomCode = $('newRoomCode'), newRoomNickname = $('newRoomNickname');
-  const joinBtn = $('joinBtn'), switchToCreateBtn = $('switchToCreateBtn'), errorMsg = $('errorMsg');
-  const tokenDisplay = $('tokenDisplay');
-  const currentRoomNameEl = $('currentRoomName'), roleBadge = $('roleBadge');
-  const myRoomsListEl = $('myRoomsList'), addRoomBtn = $('addRoomBtn');
-  const channelListEl = $('channelList'), addChannelBtn = $('addChannelBtn'), viewMembersBtn = $('viewMembersBtn');
-  const manageCmdsBtn = $('manageCmdsBtn'), manageBtnsBtn = $('manageBtnsBtn');
-  const channelTitle = $('channelTitle'), messagesArea = $('messagesArea');
-  const messageInput = $('messageInput'), sendBtn = $('sendBtn'), quickButtons = $('quickButtons');
-  const uploadImageBtn = $('uploadImageBtn'), imageFileInput = $('imageFileInput'), uploadingOverlay = $('uploadingOverlay');
-  const channelModal = $('channelModal'), channelNameInput = $('channelNameInput');
-  const channelTypeSelect = $('channelTypeSelect'), cancelChannelBtn = $('cancelChannelBtn');
-  const confirmChannelBtn = $('confirmChannelBtn'), channelError = $('channelError');
-  const membersModal = $('membersModal'), memberList = $('memberList'), closeMembersBtn = $('closeMembersBtn');
-  const cmdsModal = $('cmdsModal'), cmdList = $('cmdList'), closeCmdsBtn = $('closeCmdsBtn');
-  const newCmdName = $('newCmdName'), newCmdResp = $('newCmdResp'), addCmdBtn = $('addCmdBtn'), cmdError = $('cmdError');
-  const btnsModal = $('btnsModal'), btnList = $('btnList'), closeBtnsBtn = $('closeBtnsBtn');
-  const newBtnLabel = $('newBtnLabel'), newBtnType = $('newBtnType'), newBtnValue = $('newBtnValue');
-  const addBtnBtn = $('addBtnBtn'), btnError = $('btnError');
-  const toast = $('toast');
-  const sidebar = $('sidebar'), drawerBackdrop = $('drawerBackdrop');
-  const openSidebarBtn = $('openSidebarBtn'), closeSidebarBtn = $('closeSidebarBtn');
-  const showCodeBtn = $('showCodeBtn'), showCodeSideBtn = $('showCodeSideBtn');
-  const roomCodeModal = $('roomCodeModal'), roomCodeDisplay = $('roomCodeDisplay');
-  const roomNameDisplay = $('roomNameDisplay'), closeCodeBtn = $('closeCodeBtn');
-  const copyCodeBtn = $('copyCodeBtn'), codeError = $('codeError');
-  const leaveRoomBtn = $('leaveRoomBtn');
-  const toolboxBtn = $('toolboxBtn');
-  const settingsBtn = $('settingsBtn');
-  const settingsModal = $('settingsModal');
-  const closeSettingsBtn = $('closeSettingsBtn');
-  const editMsgModal = $('editMsgModal'), editMsgInput = $('editMsgInput');
-  const cancelEditMsgBtn = $('cancelEditMsgBtn'), saveEditMsgBtn = $('saveEditMsgBtn');
-  const editMsgError = $('editMsgError');
+let editingMsgId=null;
+function openEditMsgModal(id){const m=messages.find(x=>x.id===id);if(!m)return;if(m.sender!==currentUser.nickname){showToast('只能編輯自己的訊息');return;}if(m.text&&m.text.startsWith(IMG_PREFIX)){showToast('圖片訊息無法編輯');return;}editingMsgId=id;editMsgInput.value=m.text;editMsgError.textContent='';editMsgModal.classList.remove('hidden');editMsgInput.focus();}
+function closeEditMsgModal(){editMsgModal.classList.add('hidden');editingMsgId=null;editMsgInput.value='';}
+async function saveEditMsg(){if(!editingMsgId)return;const t=editMsgInput.value.trim();if(!t){editMsgError.textContent='訊息不能為空';return;}editMsgError.textContent='儲存中...';const {error}=await sb.from('messages').update({text:escapeHtml(t),edited:true,edited_at:new Date().toISOString()}).eq('id',editingMsgId);if(error){editMsgError.textContent='❌ 失敗：'+error.message;return;}const i=messages.findIndex(m=>m.id===editingMsgId);if(i>=0){messages[i].text=escapeHtml(t);messages[i].edited=true;messages[i].edited_at=new Date().toISOString();}renderMessages();closeEditMsgModal();showToast('✅ 已更新');}
+cancelEditMsgBtn.addEventListener('click',closeEditMsgModal);
+saveEditMsgBtn.addEventListener('click',saveEditMsg);
+editMsgInput.addEventListener('keypress',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();saveEditMsg();}});
 
-  const isAdmin = () => currentUser.role === 'admin';
-  const escapeHtml = t => { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; };
-  const channelIcon = type => type === 'announcement' ? '📢' : type === 'forum' ? '🗂️' : '💬';
-  const IMG_PREFIX = '[IMG]';
+const toolboxOverlay=$('toolboxOverlay'),closeToolboxBtn=$('closeToolboxBtn');
+const toolboxTabs=document.querySelectorAll('.toolbox-tab'),toolboxPanels=document.querySelectorAll('.toolbox-panel');
+toolboxBtn.addEventListener('click',()=>{closeDrawer();toolboxOverlay.classList.add('open');});
+closeToolboxBtn.addEventListener('click',()=>toolboxOverlay.classList.remove('open'));
+toolboxTabs.forEach(tab=>tab.addEventListener('click',()=>{toolboxTabs.forEach(t=>t.classList.remove('active'));tab.classList.add('active');toolboxPanels.forEach(p=>p.classList.remove('active'));const p=$('panel-'+tab.dataset.tab);if(p)p.classList.add('active');}));
 
-  function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
-  }
+let timerMode='countdown',timerInterval=null,timerRemaining=0,stopwatchElapsed=0;
+const timerDisplay=$('timerDisplay'),timerStartBtn=$('timerStartBtn'),timerPauseBtn=$('timerPauseBtn'),timerResetBtn=$('timerResetBtn');
+const countdownInputRow=$('countdownInputRow'),timerModeCountdown=$('timerModeCountdown'),timerModeStopwatch=$('timerModeStopwatch');
+const countdownMin=$('countdownMin'),countdownSec=$('countdownSec');
+function formatTime(ms){if(ms<0)ms=0;const s=Math.floor(ms/1000);return String(Math.floor(s/3600)).padStart(2,'0')+':'+String(Math.floor((s%3600)/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function renderTimer(){timerDisplay.textContent=timerMode==='countdown'?formatTime(timerRemaining):formatTime(stopwatchElapsed);}
+function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
+timerModeCountdown.addEventListener('click',()=>{timerMode='countdown';timerModeCountdown.classList.add('active');timerModeStopwatch.classList.remove('active');countdownInputRow.style.display='flex';stopTimer();timerRemaining=0;renderTimer();});
+timerModeStopwatch.addEventListener('click',()=>{timerMode='stopwatch';timerModeStopwatch.classList.add('active');timerModeCountdown.classList.remove('active');countdownInputRow.style.display='none';stopTimer();stopwatchElapsed=0;renderTimer();});
+timerStartBtn.addEventListener('click',()=>{if(timerMode==='countdown'){if(timerRemaining<=0){const m=parseInt(countdownMin.value)||0,s=parseInt(countdownSec.value)||0;timerRemaining=(m*60+s)*1000;if(timerRemaining<=0){alert('請輸入時間');return;}}if(timerInterval)return;const st=Date.now(),init=timerRemaining;timerInterval=setInterval(()=>{timerRemaining=init-(Date.now()-st);if(timerRemaining<=0){timerRemaining=0;stopTimer();renderTimer();try{if(navigator.vibrate)navigator.vibrate([300,150,300,150,300]);}catch(e){}alert('⏰ 時間到！');}else renderTimer();},100);}else{if(timerInterval)return;const st=Date.now()-stopwatchElapsed;timerInterval=setInterval(()=>{stopwatchElapsed=Date.now()-st;renderTimer();},50);}});
+timerPauseBtn.addEventListener('click',stopTimer);
+timerResetBtn.addEventListener('click',()=>{stopTimer();timerRemaining=0;stopwatchElapsed=0;countdownMin.value='';countdownSec.value='';renderTimer();});
+renderTimer();
 
-  function openDrawer() { sidebar.classList.add('open'); drawerBackdrop.classList.add('open'); }
-  function closeDrawer() { sidebar.classList.remove('open'); drawerBackdrop.classList.remove('open'); }
-  openSidebarBtn.addEventListener('click', openDrawer);
-  closeSidebarBtn.addEventListener('click', closeDrawer);
-  drawerBackdrop.addEventListener('click', closeDrawer);
+const notesArea=$('notesArea'),notesInfo=$('notesInfo');
+notesArea.value=localStorage.getItem('toolbox_notes')||'';
+let notesTimer=null;
+notesArea.addEventListener('input',()=>{notesInfo.textContent='儲存中...';if(notesTimer)clearTimeout(notesTimer);notesTimer=setTimeout(()=>{localStorage.setItem('toolbox_notes',notesArea.value);notesInfo.textContent='✅ 已自動儲存';},500);});
 
-  // ========== 設定 ==========
-  function applyTheme(theme) {
-    document.body.classList.remove('theme-purple', 'theme-green', 'theme-red', 'theme-pink');
-    if (theme && theme !== 'default') document.body.classList.add('theme-' + theme);
-    document.querySelectorAll('#themePicker .theme-swatch').forEach(el => {
-      el.classList.toggle('active', el.dataset.theme === theme);
-    });
-    localStorage.setItem('chat_theme', theme || 'default');
-  }
-  function applyFontSize(size) {
-    document.body.classList.remove('font-small', 'font-medium', 'font-large', 'font-xlarge');
-    document.body.classList.add('font-' + size);
-    document.querySelectorAll('#fontSizeRow .option-btn').forEach(el => {
-      el.classList.toggle('active', el.dataset.size === size);
-    });
-    localStorage.setItem('chat_font_size', size);
-  }
-  function applyFontFamily(font) {
-    document.body.classList.remove('font-jhenghei', 'font-pingfang', 'font-noto');
-    if (font && font !== 'system') document.body.classList.add('font-' + font);
-    document.querySelectorAll('#fontFamilyRow .option-btn').forEach(el => {
-      el.classList.toggle('active', el.dataset.font === font);
-    });
-    localStorage.setItem('chat_font_family', font || 'system');
-  }
+let calcExpr='';
+const calcDisplay=$('calcDisplay');
+document.querySelectorAll('.calc-grid button').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.calc;if(v==='C')calcExpr='';else if(v==='⌫')calcExpr=calcExpr.slice(0,-1);else if(v==='='){try{if(!calcExpr)return;if(!/^[\d+\-*/.%() ]+$/.test(calcExpr))throw 0;const r=Function('"use strict";return ('+calcExpr.replace(/%/g,'/100')+')')();if(!isFinite(r))throw 0;calcExpr=String(r);}catch(e){calcExpr='錯誤';}}else{if(calcExpr==='錯誤')calcExpr='';calcExpr+=v;}calcDisplay.textContent=calcExpr||'0';}));
 
-  applyTheme(localStorage.getItem('chat_theme') || 'default');
-  applyFontSize(localStorage.getItem('chat_font_size') || 'medium');
-  applyFontFamily(localStorage.getItem('chat_font_family') || 'system');
+const countdownDate=$('countdownDate'),countdownDays=$('countdownDays'),countdownTarget=$('countdownTarget');
+function updateCountdown(){if(!countdownDate.value){countdownDays.textContent='--';countdownTarget.textContent='請選擇日期';return;}const t=new Date(countdownDate.value+'T00:00:00'),td=new Date();td.setHours(0,0,0,0);countdownDays.textContent=Math.round((t-td)/86400000);countdownTarget.textContent='目標：'+countdownDate.value;}
+const savedDate=localStorage.getItem('toolbox_countdown_date');if(savedDate)countdownDate.value=savedDate;updateCountdown();
+countdownDate.addEventListener('change',()=>{localStorage.setItem('toolbox_countdown_date',countdownDate.value);updateCountdown();});
 
-  document.querySelectorAll('#themePicker .theme-swatch').forEach(el => {
-    el.addEventListener('click', () => applyTheme(el.dataset.theme));
-  });
-  document.querySelectorAll('#fontSizeRow .option-btn').forEach(el => {
-    el.addEventListener('click', () => applyFontSize(el.dataset.size));
-  });
-  document.querySelectorAll('#fontFamilyRow .option-btn').forEach(el => {
-    el.addEventListener('click', () => applyFontFamily(el.dataset.font));
-  });
+function validateNickname(n){n=(n||'').trim();if(!n)return{ok:false,msg:'請輸入暱稱'};if(n==='管理員')return{ok:false,msg:'暱稱不能叫「管理員」'};if(n.length>12)return{ok:false,msg:'暱稱不能超過12字'};return{ok:true,name:n};}
+async function checkRoomHasAdmin(id){const{data}=await sb.from('members').select('id,nickname,role,user_id').eq('room_id',id).eq('role','admin').neq('user_id',USER_ID).limit(1);return(data&&data.length>0)?data[0]:null;}
+async function findOtherAdminIncludingSelf(id){const{data}=await sb.from('members').select('id,nickname,role,user_id').eq('room_id',id).eq('role','admin').limit(1);return(data&&data.length>0)?data[0]:null;}
 
-  settingsBtn.addEventListener('click', () => {
-    closeDrawer();
-    settingsModal.classList.remove('hidden');
-  });
-  closeSettingsBtn.addEventListener('click', () => {
-    settingsModal.classList.add('hidden');
-  });
+function openCodeModal(){if(!currentRoom){showToast('尚未加入');return;}roomNameDisplay.textContent=currentRoom.name;roomCodeDisplay.textContent=currentRoom.code;codeError.textContent='';roomCodeModal.classList.remove('hidden');closeDrawer();}
+showCodeBtn.addEventListener('click',openCodeModal);
+showCodeSideBtn.addEventListener('click',openCodeModal);
+closeCodeBtn.addEventListener('click',()=>roomCodeModal.classList.add('hidden'));
+copyCodeBtn.addEventListener('click',async()=>{if(!currentRoom)return;try{await navigator.clipboard.writeText(currentRoom.code);codeError.textContent='✅ 已複製！';codeError.style.color='#7bffb0';setTimeout(()=>codeError.textContent='',1500);}catch(e){const ta=document.createElement('textarea');ta.value=currentRoom.code;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);codeError.textContent='✅ 已複製！';codeError.style.color='#7bffb0';setTimeout(()=>codeError.textContent='',1500);}});
 
-  // ========== 編輯訊息 ==========
-  let editingMsgId = null;
+leaveRoomBtn.addEventListener('click',async()=>{if(!currentRoom)return;const isA=isAdmin();if(!confirm(isA?'⚠️ 你是管理員，退出後管理員位置會釋放。\n\n確定嗎？':'確定要退出？'))return;try{await sendSystemMessage(currentUser.nickname+' 退出了聊天室'+(isA?'（管理員位置已釋放）':''));await sb.from('members').delete().eq('room_id',currentRoom.id).eq('user_id',USER_ID);removeMyRoom(currentRoom.id);removeToken(currentRoom.id);localStorage.removeItem('chat_last_room_code');localStorage.removeItem('chat_last_nickname');}catch(e){}alert('已退出');location.reload();});
 
-  function openEditMsgModal(msgId) {
-    const msg = messages.find(m => m.id === msgId);
-    if (!msg) return;
-    if (msg.sender !== currentUser.nickname) { showToast('只能編輯自己的訊息'); return; }
-    if (msg.text && msg.text.startsWith(IMG_PREFIX)) { showToast('圖片訊息無法編輯'); return; }
-    editingMsgId = msgId;
-    editMsgInput.value = msg.text;
-    editMsgError.textContent = '';
-    editMsgModal.classList.remove('hidden');
-    editMsgInput.focus();
-  }
-  function closeEditMsgModal() {
-    editMsgModal.classList.add('hidden');
-    editingMsgId = null;
-    editMsgInput.value = '';
-  }
-  async function saveEditMsg() {
-    if (!editingMsgId) return;
-    const newText = editMsgInput.value.trim();
-    if (!newText) { editMsgError.textContent = '訊息不能為空'; return; }
-    editMsgError.textContent = '儲存中...';
-    const { error } = await sb.from('messages').update({
-      text: escapeHtml(newText),
-      edited: true,
-      edited_at: new Date().toISOString()
-    }).eq('id', editingMsgId);
-    if (error) {
-      editMsgError.textContent = '❌ 儲存失敗：' + error.message;
-      return;
-    }
-    const idx = messages.findIndex(m => m.id === editingMsgId);
-    if (idx >= 0) {
-      messages[idx].text = escapeHtml(newText);
-      messages[idx].edited = true;
-      messages[idx].edited_at = new Date().toISOString();
-    }
-    renderMessages();
-    closeEditMsgModal();
-    showToast('✅ 已更新訊息');
-  }
-  cancelEditMsgBtn.addEventListener('click', closeEditMsgModal);
-  saveEditMsgBtn.addEventListener('click', saveEditMsg);
-  editMsgInput.addEventListener('keypress', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveEditMsg(); }
-  });
+async function sendSystemMessage(text){if(!currentRoom)return;let c=channels.find(x=>x.name==='加入')||channels[0];if(!c)return;await sb.from('messages').insert({channel_id:c.id,text:text,sender:'system',is_system:true});}
+async function cleanupExpiredRooms(){const d=new Date(Date.now()-7*86400000).toISOString();const{data}=await sb.from('rooms').select('id').lt('last_active',d);if(!data)return;for(const r of data)await sb.from('rooms').delete().eq('id',r.id);}
+async function touchRoom(){if(!currentRoom)return;await sb.from('rooms').update({last_active:new Date().toISOString()}).eq('id',currentRoom.id);}
 
-  // ========== 工具箱 ==========
-  const toolboxOverlay = $('toolboxOverlay');
-  const closeToolboxBtn = $('closeToolboxBtn');
-  const toolboxTabs = document.querySelectorAll('.toolbox-tab');
-  const toolboxPanels = document.querySelectorAll('.toolbox-panel');
+async function loadChannels(id){const{data}=await sb.from('channels').select('*').eq('room_id',id).order('created_at');channels=data||[];renderChannelList();}
+async function loadMessages(id){const{data}=await sb.from('messages').select('*').eq('channel_id',id).order('created_at');messages=data||[];renderMessages();}
+async function loadMembers(id){const{data}=await sb.from('members').select('*').eq('room_id',id).order('created_at');members=data||[];renderMembers();}
+async function loadCmds(id){const{data}=await sb.from('custom_commands').select('*').eq('room_id',id).order('created_at');customCmds=data||[];renderCmds();}
+async function loadBtns(id){const{data}=await sb.from('custom_buttons').select('*').eq('room_id',id).order('created_at');customBtns=data||[];renderQuickButtons();renderBtns();}
+async function findRoomByCode(code){const{data}=await sb.from('rooms').select('*').eq('code',code.toLowerCase()).maybeSingle();return data;}
 
-  function openToolbox() { toolboxOverlay.classList.add('open'); }
-  function closeToolbox() { toolboxOverlay.classList.remove('open'); }
-  toolboxBtn.addEventListener('click', () => { closeDrawer(); openToolbox(); });
-  closeToolboxBtn.addEventListener('click', closeToolbox);
+function renderMyRooms(){const rooms=getMyRooms();if(!rooms.length){myRoomsListEl.innerHTML='<div class="my-rooms-empty">還沒有加入任何聊天室</div>';return;}let h='';rooms.forEach(r=>{h+='<div class="my-room-item '+(currentRoom&&currentRoom.id===r.id?'active':'')+'" data-room-id="'+r.id+'"><span>🔒</span><div class="info"><div class="rname">'+escapeHtml(r.name)+'</div><div class="rcode">#'+escapeHtml(r.code)+'</div></div></div>';});myRoomsListEl.innerHTML=h;myRoomsListEl.querySelectorAll('.my-room-item').forEach(e=>e.addEventListener('click',()=>switchToRoom(e.dataset.roomId)));}
+async function switchToRoom(id){if(currentRoom&&currentRoom.id===id){closeDrawer();return;}const t=getMyRooms().find(r=>r.id===id);if(!t)return;closeDrawer();await joinRoomByCode(t.code,currentUser.nickname,true);}
 
-  toolboxTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      toolboxTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      toolboxPanels.forEach(p => p.classList.remove('active'));
-      const panel = $('panel-' + tab.dataset.tab);
-      if (panel) panel.classList.add('active');
-    });
-  });
+function renderChannelList(){if(!channels.length){channelListEl.innerHTML='';return;}let h='';const n=channels.filter(c=>c.type!=='forum'),f=channels.filter(c=>c.type==='forum');if(n.length){h+='<div class="channel-section-title">頻道</div>';n.forEach(c=>h+=channelItemHtml(c));}if(f.length){h+='<div class="channel-section-title">討論區</div>';f.forEach(c=>h+=channelItemHtml(c));}channelListEl.innerHTML=h;channelListEl.querySelectorAll('.channel-item').forEach(e=>e.addEventListener('click',ev=>{if(ev.target.classList.contains('del-btn'))return;switchChannel(e.dataset.channelId);closeDrawer();}));channelListEl.querySelectorAll('.del-btn').forEach(b=>b.addEventListener('click',async ev=>{ev.stopPropagation();const ch=channels.find(c=>c.id===b.dataset.channelId);if(!ch)return;if(!isAdmin()){alert('只有管理員');return;}if(ch.name==='加入'){alert('無法刪除');return;}if(!confirm('確定刪除？'))return;await sb.from('channels').delete().eq('id',b.dataset.channelId);await loadChannels(currentRoom.id);if(!channels.find(c=>c.id===currentChannel?.id)){if(channels.length)switchChannel(channels[0].id);else{currentChannel=null;renderMessages();}}}));}
+function channelItemHtml(ch){const canDel=isAdmin()&&ch.name!=='加入';return'<div class="channel-item '+(ch.id===currentChannel?.id?'active':'')+'" data-channel-id="'+ch.id+'"><span>'+channelIcon(ch.type)+'</span><span>'+escapeHtml(ch.name)+'</span>'+(canDel?'<button class="del-btn" data-channel-id="'+ch.id+'">✕</button>':'')+'</div>';}
+function getRoleOfSender(n){const m=members.find(x=>x.nickname===n);return m?m.role:'member';}
 
-  // ----- 計時器 -----
-  let timerMode = 'countdown';
-  let timerInterval = null;
-  let timerRemaining = 0;
-  let stopwatchElapsed = 0;
-  const timerDisplay = $('timerDisplay');
-  const timerStartBtn = $('timerStartBtn');
-  const timerPauseBtn = $('timerPauseBtn');
-  const timerResetBtn = $('timerResetBtn');
-  const countdownInputRow = $('countdownInputRow');
-  const timerModeCountdown = $('timerModeCountdown');
-  const timerModeStopwatch = $('timerModeStopwatch');
-  const countdownMin = $('countdownMin');
-  const countdownSec = $('countdownSec');
-
-  function formatTime(ms) {
-    if (ms < 0) ms = 0;
-    const totalSec = Math.floor(ms / 1000);
-    const h = String(Math.floor(totalSec / 3600)).padStart(2, '0');
-    const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
-    const s = String(totalSec % 60).padStart(2, '0');
-    return `${h}:${m}:${s}`;
-  }
-  function renderTimer() {
-    if (timerMode === 'countdown') timerDisplay.textContent = formatTime(timerRemaining);
-    else timerDisplay.textContent = formatTime(stopwatchElapsed);
-  }
-  function stopTimer() {
-    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-  }
-
-  timerModeCountdown.addEventListener('click', () => {
-    timerMode = 'countdown';
-    timerModeCountdown.classList.add('active');
-    timerModeStopwatch.classList.remove('active');
-    countdownInputRow.style.display = 'flex';
-    stopTimer();
-    timerRemaining = 0;
-    renderTimer();
-  });
-  timerModeStopwatch.addEventListener('click', () => {
-    timerMode = 'stopwatch';
-    timerModeStopwatch.classList.add('active');
-    timerModeCountdown.classList.remove('active');
-    countdownInputRow.style.display = 'none';
-    stopTimer();
-    stopwatchElapsed = 0;
-    renderTimer();
-  });
-
-  timerStartBtn.addEventListener('click', () => {
-    if (timerMode === 'countdown') {
-      if (timerRemaining <= 0) {
-        const m = parseInt(countdownMin.value) || 0;
-        const s = parseInt(countdownSec.value) || 0;
-        timerRemaining = (m * 60 + s) * 1000;
-        if (timerRemaining <= 0) { alert('請輸入時間'); return; }
-      }
-      if (timerInterval) return;
-      const startTime = Date.now();
-      const initialRemaining = timerRemaining;
-      timerInterval = setInterval(() => {
-        timerRemaining = initialRemaining - (Date.now() - startTime);
-        if (timerRemaining <= 0) {
-          timerRemaining = 0;
-          stopTimer();
-          renderTimer();
-          try { if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 300]); } catch(e) {}
-          alert('⏰ 時間到！');
-        } else {
-          renderTimer();
-        }
-      }, 100);
-    } else {
-      if (timerInterval) return;
-      const startTime = Date.now() - stopwatchElapsed;
-      timerInterval = setInterval(() => {
-        stopwatchElapsed = Date.now() - startTime;
-        renderTimer();
-      }, 50);
+function renderMessages(){
+  if(!currentChannel){messagesArea.innerHTML='<div class="empty-state"><div class="big">💬</div><div>請選擇一個頻道</div></div>';return;}
+  if(!messages.length){messagesArea.innerHTML='<div class="empty-state"><div class="big">✨</div><div>這個頻道還沒有訊息</div></div>';return;}
+  let h='';
+  messages.forEach(m=>{
+    if(m.is_system){h+='<div class="message system"><div class="bubble">'+escapeHtml(m.text)+'</div></div>';}
+    else{
+      const cls=m.is_bot?'bot':'user',isMine=!m.is_bot&&m.sender===currentUser.nickname,isImg=m.text&&m.text.startsWith(IMG_PREFIX);
+      let lbl='';
+      if(m.is_bot)lbl='🤖 小幫手';
+      else{const r=getRoleOfSender(m.sender);lbl=escapeHtml(m.sender)+' '+(r==='admin'?'<span class="role-tag">[管理員]</span>':'<span class="role-tag member">[成員]</span>');}
+      const eTag=m.edited?'<span class="edited-tag">（已編輯）</span>':'';
+      const eBtn=(isMine&&!isImg)?'<button class="edit-btn" data-msg-id="'+m.id+'">✏️ 編輯</button>':'';
+      let ch='';
+      if(isImg){const u=m.text.substring(IMG_PREFIX.length);ch='<img class="chat-image" src="'+escapeHtml(u)+'" onclick="window.open(\''+escapeHtml(u)+'\',\'_blank\')">';}
+      else ch=escapeHtml(m.text).replace(/\n/g,'<br>');
+      h+='<div class="message '+cls+'" data-msg-id="'+m.id+'"><div class="sender">'+lbl+eTag+eBtn+'</div><div class="bubble">'+ch+'</div></div>';
     }
   });
-  timerPauseBtn.addEventListener('click', stopTimer);
-  timerResetBtn.addEventListener('click', () => {
-    stopTimer();
-    timerRemaining = 0;
-    stopwatchElapsed = 0;
-    countdownMin.value = '';
-    countdownSec.value = '';
-    renderTimer();
-  });
-  renderTimer();
+  messagesArea.innerHTML=h;
+  messagesArea.scrollTop=messagesArea.scrollHeight;
+  messagesArea.querySelectorAll('.edit-btn').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();openEditMsgModal(b.dataset.msgId);}));
+}
 
-  // ----- 筆記 -----
-  const notesArea = $('notesArea');
-  const notesInfo = $('notesInfo');
-  notesArea.value = localStorage.getItem('toolbox_notes') || '';
-  let notesTimer = null;
-  notesArea.addEventListener('input', () => {
-    notesInfo.textContent = '儲存中...';
-    if (notesTimer) clearTimeout(notesTimer);
-    notesTimer = setTimeout(() => {
-      localStorage.setItem('toolbox_notes', notesArea.value);
-      const t = new Date();
-      notesInfo.textContent = '✅ 已自動儲存（' +
-        String(t.getHours()).padStart(2,'0') + ':' +
-        String(t.getMinutes()).padStart(2,'0') + ':' +
-        String(t.getSeconds()).padStart(2,'0') + '）';
-    }, 500);
-  });
+function renderMembers(){if(!members.length){memberList.innerHTML='<div style="color:#7f9db8;text-align:center;padding:20px">目前沒有成員</div>';return;}let h='';members.forEach(m=>{const isSelf=m.user_id===USER_ID,isA=m.role==='admin';const kb=(isAdmin()&&!isSelf&&!isA)?'<button class="kick-btn" data-user-id="'+m.user_id+'">踢出</button>':'';h+='<div class="member-item '+(isSelf?'self':'')+'"><span class="name">'+escapeHtml(m.nickname)+(isSelf?' <span style="color:#7bffb0;font-size:.7rem">(你)</span>':'')+'</span><span class="badge '+(isA?'admin':'')+'">'+(isA?'管理員':'成員')+'</span>'+kb+'</div>';});memberList.innerHTML=h;memberList.querySelectorAll('.kick-btn').forEach(b=>b.addEventListener('click',async()=>{if(!confirm('確定踢出？'))return;await sb.from('members').delete().eq('room_id',currentRoom.id).eq('user_id',b.dataset.userId);await sendSystemMessage('一位成員被管理員踢出聊天室');await loadMembers(currentRoom.id);showToast('已踢出');}));}
 
-  // ----- 計算機 -----
-  let calcExpr = '';
-  const calcDisplay = $('calcDisplay');
-  document.querySelectorAll('.calc-grid button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const v = btn.dataset.calc;
-      if (v === 'C') {
-        calcExpr = '';
-      } else if (v === '⌫') {
-        calcExpr = calcExpr.slice(0, -1);
-      } else if (v === '=') {
-        try {
-          if (!calcExpr) return;
-          if (!/^[\d+\-*/.%() ]+$/.test(calcExpr)) throw new Error('invalid');
-          let expr = calcExpr.replace(/%/g, '/100');
-          const result = Function('"use strict";return (' + expr + ')')();
-          if (!isFinite(result)) throw new Error('nan');
-          calcExpr = String(result);
-        } catch (e) {
-          calcExpr = '錯誤';
-        }
-      } else {
-        if (calcExpr === '錯誤') calcExpr = '';
-        calcExpr += v;
-      }
-      calcDisplay.textContent = calcExpr || '0';
-    });
-  });
+function renderCmds(){if(!customCmds.length){cmdList.innerHTML='<div style="color:#7f9db8;text-align:center;padding:20px">尚未設定任何指令</div>';return;}let h='';customCmds.forEach(c=>{h+='<div class="cmd-item"><span class="cmd-name">'+escapeHtml(c.command)+'</span><span class="cmd-resp">'+escapeHtml(c.response)+'</span><button class="del-btn" data-cmd-id="'+c.id+'">✕</button></div>';});cmdList.innerHTML=h;cmdList.querySelectorAll('.del-btn').forEach(b=>b.addEventListener('click',async()=>{if(!isAdmin()){alert('只有管理員');return;}if(!confirm('刪除？'))return;await sb.from('custom_commands').delete().eq('id',b.dataset.cmdId);await loadCmds(currentRoom.id);}));}
 
-  // ----- 倒數日 -----
-  const countdownDate = $('countdownDate');
-  const countdownDays = $('countdownDays');
-  const countdownTarget = $('countdownTarget');
+function renderBtns(){if(!btnList)return;if(!customBtns.length){btnList.innerHTML='<div style="color:#7f9db8;text-align:center;padding:20px">尚未設定任何按鈕</div>';return;}let h='';customBtns.forEach(b=>{h+='<div class="btn-item"><span class="btn-label">'+escapeHtml(b.label)+'</span><span class="btn-type">'+(b.action_type==='link'?'🔗 連結':'📋 複製')+'</span><button class="del-btn" data-btn-id="'+b.id+'">✕</button></div>';});btnList.innerHTML=h;btnList.querySelectorAll('.del-btn').forEach(b=>b.addEventListener('click',async()=>{if(!isAdmin()){alert('只有管理員');return;}if(!confirm('刪除？'))return;await sb.from('custom_buttons').delete().eq('id',b.dataset.btnId);await loadBtns(currentRoom.id);}));}
+function renderQuickButtons(){if(!customBtns.length){quickButtons.innerHTML='';return;}let h='';customBtns.forEach(b=>{h+='<button class="quick-btn" data-btn-id="'+b.id+'">'+escapeHtml(b.label)+'</button>';});quickButtons.innerHTML=h;quickButtons.querySelectorAll('.quick-btn').forEach(b=>b.addEventListener('click',()=>{const x=customBtns.find(y=>y.id===b.dataset.btnId);if(!x)return;if(x.action_type==='link')window.open(x.action_value,'_blank');else if(x.action_type==='copy'){navigator.clipboard.writeText(x.action_value).then(()=>showToast('✅ 已複製')).catch(()=>{const ta=document.createElement('textarea');ta.value=x.action_value;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('✅ 已複製');});}}));}
 
-  function updateCountdown() {
-    if (!countdownDate.value) {
-      countdownDays.textContent = '--';
-      countdownTarget.textContent = '請選擇日期';
-      return;
-    }
-    const target = new Date(countdownDate.value + 'T00:00:00');
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const diff = Math.round((target - today) / (24 * 60 * 60 * 1000));
-    countdownDays.textContent = diff;
-    countdownTarget.textContent = '目標日期：' + countdownDate.value;
-  }
-  const savedDate = localStorage.getItem('toolbox_countdown_date');
-  if (savedDate) { countdownDate.value = savedDate; }
-  updateCountdown();
-  countdownDate.addEventListener('change', () => {
-    localStorage.setItem('toolbox_countdown_date', countdownDate.value);
-    updateCountdown();
-  });
+function switchChannel(id){currentChannel=channels.find(c=>c.id===id);if(!currentChannel)return;channelTitle.textContent=channelIcon(currentChannel.type)+' '+currentChannel.name;renderChannelList();loadMessages(id);messageInput.focus();}
+function updateRoomUI(){if(!currentRoom)return;currentRoomNameEl.textContent=currentRoom.name;roleBadge.textContent=isAdmin()?'管理員':'成員';roleBadge.className='role-badge'+(isAdmin()?' admin':'');leaveRoomBtn.style.display='block';}
 
-  // ========== 暱稱驗證 ==========
-  function validateNickname(name) {
-    const n = (name || '').trim();
-    if (!n) return { ok: false, msg: '請輸入暱稱' };
-    if (n === '管理員') return { ok: false, msg: '暱稱不能叫「管理員」' };
-    if (n.length > 12) return { ok: false, msg: '暱稱不能超過 12 個字' };
-    return { ok: true, name: n };
-  }
-
-  async function checkRoomHasAdmin(roomId) {
-    const { data, error } = await sb.from('members')
-      .select('id, nickname, role, user_id')
-      .eq('room_id', roomId)
-      .eq('role', 'admin')
-      .neq('user_id', USER_ID)
-      .limit(1);
-    if (error) { console.error('checkRoomHasAdmin:', error); return null; }
-    if (data && data.length > 0) return data[0];
-    return null;
-  }
-
-  async function findOtherAdminIncludingSelf(roomId) {
-    const { data, error } = await sb.from('members')
-      .select('id, nickname, role, user_id')
-      .eq('room_id', roomId)
-      .eq('role', 'admin')
-      .limit(1);
-    if (error) { console.error(error); return null; }
-    if (data && data.length > 0) return data[0];
-    return null;
-  }
-
-  function openCodeModal() {
-    if (!currentRoom) { showToast('尚未加入聊天室'); return; }
-    roomNameDisplay.textContent = currentRoom.name;
-    roomCodeDisplay.textContent = currentRoom.code;
-    codeError.textContent = '';
-    roomCodeModal.classList.remove('hidden');
-    closeDrawer();
-  }
-  showCodeBtn.addEventListener('click', openCodeModal);
-  showCodeSideBtn.addEventListener('click', openCodeModal);
-  closeCodeBtn.addEventListener('click', () => roomCodeModal.classList.add('hidden'));
-  copyCodeBtn.addEventListener('click', async () => {
-    if (!currentRoom) return;
-    const code = currentRoom.code;
-    try {
-      await navigator.clipboard.writeText(code);
-      codeError.textContent = '✅ 已複製！';
-      codeError.style.color = '#7bffb0';
-      setTimeout(() => { codeError.textContent = ''; }, 1500);
-    } catch (e) {
-      const ta = document.createElement('textarea');
-      ta.value = code;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      codeError.textContent = '✅ 已複製！';
-      codeError.style.color = '#7bffb0';
-      setTimeout(() => { codeError.textContent = ''; }, 1500);
-    }
-  });
-
-  leaveRoomBtn.addEventListener('click', async () => {
-    if (!currentRoom) return;
-    const isAdminLeaving = isAdmin();
-    const msg = isAdminLeaving
-      ? '⚠️ 你是管理員，退出後管理員位置會釋放給下一個人。\n\n確定要退出嗎？'
-      : '確定要退出聊天室嗎？';
-    if (!confirm(msg)) return;
-    try {
-      await sendSystemMessage(`${currentUser.nickname} 退出了聊天室${isAdminLeaving ? '（管理員位置已釋放）' : ''}`);
-      await sb.from('members').delete().eq('room_id', currentRoom.id).eq('user_id', USER_ID);
-      removeMyRoom(currentRoom.id);
-      removeToken(currentRoom.id);
-      localStorage.removeItem('chat_last_room_code');
-      localStorage.removeItem('chat_last_nickname');
-    } catch (e) { console.error(e); }
-    alert('已退出聊天室');
-    location.reload();
-  });
-
-  async function sendSystemMessage(text) {
-    if (!currentRoom) return;
-    let joinChannel = channels.find(c => c.name === '加入');
-    if (!joinChannel) joinChannel = channels[0];
-    if (!joinChannel) return;
-    await sb.from('messages').insert({
-      channel_id: joinChannel.id,
-      text: text,
-      sender: 'system',
-      sender_id: AUTH_UID,
-      is_system: true
-    });
-  }
-
-  async function cleanupExpiredRooms() {
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const { data, error } = await sb.from('rooms').select('id').lt('last_active', sevenDaysAgo);
-    if (error || !data || !data.length) return;
-    for (const r of data) {
-      await sb.from('rooms').delete().eq('id', r.id);
-    }
-  }
-
-  async function touchRoom() {
-    if (!currentRoom) return;
-    await sb.from('rooms').update({ last_active: new Date().toISOString() }).eq('id', currentRoom.id);
-  }
-
-  async function loadChannels(roomId) {
-    const { data } = await sb.from('channels').select('*').eq('room_id', roomId).order('created_at');
-    channels = data || [];
-    renderChannelList();
-  }
-  async function loadMessages(channelId) {
-    const { data } = await sb.from('messages').select('*').eq('channel_id', channelId).order('created_at');
-    messages = data || [];
-    renderMessages();
-  }
-  async function loadMembers(.coderoomId) {
-    const { data } = await, sb.from('members'). currentselect('*').eq('room_id', roomId).order('created_at');
-    members = data || [];
-    renderMembers();
-  }
-  async function loadCmds(roomId) {
-    const { data } = await sb.from('custom_commands').select('*').eq('room_id', roomId).order('created_at');
-    customCmds = data || [];
-    renderCmds();
-  }
-  async function loadBtns(roomId) {
-    const { data } = await sb.from('custom_buttons').select('*').eq('room_id', roomId).order('created_at');
-    customBtns = data || [];
-    renderQuickButtons();
-    renderBtns();
-  }
-  async function findRoomByCode(code) {
-    const { data } = await sb.from('rooms').select('*').eq('code', code.toLowerCase()).maybeSingle();
-    return data;
-  }
-
-  function renderMyRooms() {
-    const rooms = getMyRooms();
-    if (!rooms.length) {
-      myRoomsListEl.innerHTML = '<div class="my-rooms-empty">還沒有加入任何聊天室</div>';
-      return;
-    }
-    let html = '';
-    rooms.forEach(r => {
-      const active = currentRoom && currentRoom.id === r.id ? 'active' : '';
-      html += `<div class="my-room-item ${active}" data-room-id="${r.id}">
-        <span class="lock">🔒</span>
-        <div class="info">
-          <div class="rname">${escapeHtml(r.name)}</div>
-          <div class="rcode">#${escapeHtml(r.code)}</div>
-        </div>
-      </div>`;
-    });
-    myRoomsListEl.innerHTML = html;
-    myRoomsListEl.querySelectorAll('.my-room-item').forEach(el => {
-      el.addEventListener('click', () => switchToRoom(el.dataset.roomId));
-    });
-  }
-
-  async function switchToRoom(roomId) {
-    if (currentRoom && currentRoom.id === roomId) { closeDrawer(); return; }
-    const rooms = getMyRooms();
-    const target = rooms.find(r => r.id === roomId);
-    if (!target) return;
-    closeDrawer();
-    await joinRoomByCode(targetUser.nickname, true);
-  }
-
-  function renderChannelList() {
-    if (!channels.length) { channelListEl.innerHTML = ''; return; }
-    let html = '';
-    const normal = channels.filter(c => c.type !== 'forum');
-    const forums = channels.filter(c => c.type === 'forum');
-    if (normal.length) {
-      html += '<div class="channel-section-title">頻道</div>';
-      normal.forEach(ch => html += channelItemHtml(ch));
-    }
-    if (forums.length) {
-      html += '<div class="channel-section-title">討論區</div>';
-      forums.forEach(ch => html += channelItemHtml(ch));
-    }
-    channelListEl.innerHTML = html;
-    channelListEl.querySelectorAll('.channel-item').forEach(el => {
-      el.addEventListener('click', e => {
-        if (e.target.classList.contains('del-btn')) return;
-        switchChannel(el.dataset.channelId);
-        closeDrawer();
-      });
-    });
-    channelListEl.querySelectorAll('.del-btn').forEach(btn => {
-      btn.addEventListener('click', async e => {
-        e.stopPropagation();
-        const chId = btn.dataset.channelId;
-        const ch = channels.find(c => c.id === chId);
-        if (!ch) return;
-        if (!isAdmin()) { alert('只有管理員可以刪除頻道'); return; }
-        if (ch.name === '加入') { alert('「加入」頻道無法刪除'); return; }
-        if (!confirm('確定要刪除此頻道嗎？')) return;
-        await sb.from('channels').delete().eq('id', chId);
-        await loadChannels(currentRoom.id);
-        if (!channels.find(c => c.id === currentChannel?.id)) {
-          if (channels.length) switchChannel(channels[0].id);
-          else { currentChannel = null; renderMessages(); }
-        }
-      });
-    });
-  }
-  function channelItemHtml(ch) {
-    const active = ch.id === currentChannel?.id ? 'active' : '';
-    const canDelete = isAdmin() && ch.name !== '加入';
-    const delBtn = canDelete ? `<button class="del-btn" data-channel-id="${ch.id}">✕</button>` : '';
-    return `<div class="channel-item ${active}" data-channel-id="${ch.id}">
-      <span>${channelIcon(ch.type)}</span><span>${escapeHtml(ch.name)}</span>${delBtn}
-    </div>`;
-  }
-
-  function getRoleOfSender(senderName) {
-    const m = members.find(x => x.nickname === senderName);
-    return m ? m.role : 'member';
-  }
-  function renderMessages() {
-    if (!currentChannel) {
-      messagesArea.innerHTML = `<div class="empty-state"><div class="big">💬</div><div>請選擇一個頻道</div></div>`;
-      return;
-    }
-    if (!messages.length) {
-      messagesArea.innerHTML = `<div class="empty-state"><div class="big">✨</div><div>這個頻道還沒有訊息</div></div>`;
-      return;
-    }
-    let html = '';
-    messages.forEach(msg => {
-      if (msg.is_system) {
-        html += `<div class="message system"><div class="bubble">${escapeHtml(msg.text)}</div></div>`;
-      } else {
-        const cls = msg.is_bot ? 'bot' : 'user';
-        const isMine = !msg.is_bot && msg.sender === currentUser.nickname;
-        const isImage = msg.text && msg.text.startsWith(IMG_PREFIX);
-        let label = '';
-        if (msg.is_bot) {
-          label = '🤖 小幫手';
-        } else {
-          const role = getRoleOfSender(msg.sender);
-          const roleTag = role === 'admin'
-            ? '<span class="role-tag">[管理員]</span>'
-            : '<span class="role-tag member">[成員]</span>';
-          label = `${escapeHtml(msg.sender)} ${roleTag}`;
-        }
-        const editedTag = msg.edited ? '<span class="edited-tag">（已編輯）</span>' : '';
-        const editBtn = (isMine && !isImage)
-          ? `<button class="edit-btn" data-msg-id="${msg.id}">✏️ 編輯</button>`
-          : '';
-        let contentHtml = '';
-        if (isImage) {
-          const imgUrl = msg.text.substring(IMG_PREFIX.length);
-          contentHtml = `<img class="chat-image" src="${escapeHtml(imgUrl)}" onclick="window.open('${escapeHtml(imgUrl)}','_blank')">`;
-        } else {
-          contentHtml = escapeHtml(msg.text).replace(/\n/g, '<br>');
-        }
-        html += `<div class="message ${cls}" data-msg-id="${msg.id}">
-          <div class="sender">${label}${editedTag}${editBtn}</div>
-          <div class="bubble">${contentHtml}</div>
-        </div>`;
-      }
-    });
-    messagesArea.innerHTML = html;
-    messagesArea.scrollTop = messagesArea.scrollHeight;
-
-    messagesArea.querySelectorAll('.edit-btn').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        openEditMsgModal(btn.dataset.msgId);
-      });
-    });
-  }
-
-  function renderMembers() {
-    if (!members.length) {
-      memberList.innerHTML = '<div style="color:#7f9db8;text-align:center;padding:20px;">目前沒有成員</div>';
-      return;
-    }
-    let html = '';
-    members.forEach(m => {
-      const isSelf = m.user_id === USER_ID;
-      const isMemberAdmin = m.role === 'admin';
-      const kickBtn = (isAdmin() && !isSelf && !isMemberAdmin)
-        ? `<button class="kick-btn" data-user-id="${m.user_id}">踢出</button>` : '';
-      const selfTag = isSelf ? ' <span style="color:#7bffb0;font-size:0.7rem;">(你)</span>' : '';
-      html += `<div class="member-item ${isSelf ? 'self' : ''}">
-        <span class="name">${escapeHtml(m.nickname)}${selfTag}</span>
-        <span class="badge ${isMemberAdmin ? 'admin' : ''}">${isMemberAdmin ? '管理員' : '成員'}</span>
-        ${kickBtn}
-      </div>`;
-    });
-    memberList.innerHTML = html;
-    memberList.querySelectorAll('.kick-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const uid = btn.dataset.userId;
-        if (!confirm('確定要踢出這位成員嗎？')) return;
-        await sb.from('members').delete().eq('room_id', currentRoom.id).eq('user_id', uid);
-        await sendSystemMessage('一位成員被管理員踢出聊天室');
-        await loadMembers(currentRoom.id);
-        showToast('已踢出成員');
-      });
-    });
-  }
-
-  function renderCmds() {
-    if (!customCmds.length) {
-      cmdList.innerHTML = '<div style="color:#7f9db8;text-align:center;padding:20px;">尚未設定任何指令</div>';
-      return;
-    }
-    let html = '';
-    customCmds.forEach(c => {
-      html += `<div class="cmd-item">
-        <span class="cmd-name">${escapeHtml(c.command)}</span>
-        <span class="cmd-resp">${escapeHtml(c.response)}</span>
-        <button class="del-btn" data-cmd-id="${c.id}">✕</button>
-      </div>`;
-    });
-    cmdList.innerHTML = html;
-    cmdList.querySelectorAll('.del-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if (!isAdmin()) { alert('只有管理員可以刪除指令'); return; }
-        if (!confirm('確定刪除此指令？')) return;
-        await sb.from('custom_commands').delete().eq('id', btn.dataset.cmdId);
-        await loadCmds(currentRoom.id);
-      });
-    });
-  }
-
-  function renderBtns() {
-    if (!btnList) return;
-    if (!customBtns.length) {
-      btnList.innerHTML = '<div style="color:#7f9db8;text-align:center;padding:20px;">尚未設定任何按鈕</div>';
-      return;
-    }
-    let html = '';
-    customBtns.forEach(b => {
-      const typeLabel = b.action_type === 'link' ? '🔗 連結' : '📋 複製';
-      html += `<div class="btn-item">
-        <span class="btn-label">${escapeHtml(b.label)}</span>
-        <span class="btn-type">${typeLabel}</span>
-        <button class="del-btn" data-btn-id="${b.id}">✕</button>
-      </div>`;
-    });
-    btnList.innerHTML = html;
-    btnList.querySelectorAll('.del-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if (!isAdmin()) { alert('只有管理員可以刪除按鈕'); return; }
-        if (!confirm('確定刪除此按鈕？')) return;
-        await sb.from('custom_buttons').delete().eq('id', btn.dataset.btnId);
-        await loadBtns(currentRoom.id);
-      });
-    });
-  }
-  function renderQuickButtons() {
-    if (!customBtns.length) { quickButtons.innerHTML = ''; return; }
-    let html = '';
-    customBtns.forEach(b => {
-      html += `<button class="quick-btn" data-btn-id="${b.id}">${escapeHtml(b.label)}</button>`;
-    });
-    quickButtons.innerHTML = html;
-    quickButtons.querySelectorAll('.quick-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const b = customBtns.find(x => x.id === btn.dataset.btnId);
-        if (!b) return;
-        if (b.action_type === 'link') {
-          window.open(b.action_value, '_blank');
-        } else if (b.action_type === 'copy') {
-          navigator.clipboard.writeText(b.action_value).then(() => {
-            showToast('✅ 已複製：' + b.action_value.substring(0, 30) + (b.action_value.length > 30 ? '...' : ''));
-          }).catch(() => {
-            const ta = document.createElement('textarea');
-            ta.value = b.action_value;
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            document.body.removeChild(ta);
-            showToast('✅ 已複製');
-          });
-        }
-      });
-    });
-  }
-
-  function switchChannel(channelId) {
-    currentChannel = channels.find(c => c.id === channelId);
-    if (!currentChannel) return;
-    channelTitle.textContent = `${channelIcon(currentChannel.type)} ${currentChannel.name}`;
-    renderChannelList();
-    loadMessages(channelId);
-    messageInput.focus();
-  }
-  function updateRoomUI() {
-    if (!currentRoom) return;
-    currentRoomNameEl.textContent = currentRoom.name;
-    roleBadge.textContent = isAdmin() ? '管理員' : '成員';
-    roleBadge.className = 'role-badge' + (isAdmin() ? ' admin' : '');
-    leaveRoomBtn.style.display = 'block';
-  }
-
-  async function joinRoomByCode(code, nickname, skipValidation) {
-    if (isJoining) return;
-    isJoining = true;
-    try {
-      code = (code || '').trim().toLowerCase();
-      if (!code) { errorMsg.textContent = '請輸入聊天室代碼'; return; }
-
-      if (!skipValidation) {
-        const v = validateNickname(nickname);
-        if (!v.ok) { errorMsg.textContent = v.msg; return; }
-        nickname = v.name;
-      }
-
-      errorMsg.textContent = '載入中...';
-      await cleanupExpiredRooms();
-
-      const room = await findRoomByCode(code);
-      if (!room) { errorMsg.textContent = '找不到此聊天室'; return; }
-
-      const tokenValue = tokenInput.value.trim();
-      const savedToken = getMyTokens()[room.id];
-      const hasValidToken = (tokenValue && tokenValue === room.admin_token) || (savedToken && savedToken === room.admin_token);
-
-      const { data: myMembership } = await sb.from('members')
-        .select('*').eq('room_id', room.id).eq('user_id', USER_ID).maybeSingle();
-
-      let role = 'member';
-
-      if (myMembership && !hasValidToken) {
-        role = myMembership.role;
-      } else if (hasValidToken) {
-        const otherAdmin = await findOtherAdminIncludingSelf(room.id);
-        if (otherAdmin && otherAdmin.user_id !== USER_ID) {
-          await sb.from('members').delete()
-            .eq('room_id', room.id)
-            .eq('user_id', otherAdmin.user_id);
-        }
-        role = 'admin';
-        if (tokenValue) saveToken(room.id, tokenValue);
-        showToast('✅ 已用 Token 恢復管理員身分');
-      } else {
-        role = 'member';
-        if (tokenValue && tokenValue !== room.admin_token) {
-          errorMsg.textContent = 'Token 錯誤，將以一般成員身分加入';
-          await new Promise(r => setTimeout(r, 800));
-        }
-      }
-
-      currentRoom = room;
-      currentUser = { nickname, role };
-      localStorage.setItem('chat_last_room_code', code);
-      localStorage.setItem('chat_last_nickname', nickname);
-      addMyRoom(room);
-
-      joinOverlay.classList.add('hidden');
-      updateRoomUI();
-      renderMyRooms();
-
-      await touchRoom();
-      await loadChannels(room.id);
-      await loadMembers(room.id);
-      await loadCmds(room.id);
-      await loadBtns(room.id);
-
-      await sb.from('members').upsert({
-        room_id: room.id,
-        user_id: USER_ID,
-        auth_id: AUTH_UID,
-        nickname: nickname,
-        role: role,
-        last_seen: new Date().toISOString()
-      }, { onConflict: 'room_id,user_id' });
-
-      if (channels.length) {
-        switchChannel(channels[0].id);
-        await sendSystemMessage(`${nickname} 加入了聊天室`);
-      } else {
-        const { data } = await sb.from('channels').insert({ room_id: room.id, name: '一般', type: 'text' }).select().single();
-        if (data) { await loadChannels(room.id); switchChannel(data.id); }
-      }
-
-      messageInput.disabled = false;
-      sendBtn.disabled = false;
-      uploadImageBtn.disabled = false;
-      messageInput.placeholder = '輸入訊息...';
-      subscribeRealtime();
-      startHeartbeat();
-    } catch (err) {
-      console.error(err);
-      errorMsg.textContent = '載入失敗：' + (err.message || '未知錯誤');
-    } finally {
-      isJoining = false;
-    }
-  }
-
-  async function tryCreateRoom() {
-    const name = newRoomName.value.trim();
-    const code = newRoomCode.value.trim().toLowerCase();
-    const nickname = newRoomNickname.value.trim();
-
-    if (!name || !code) { errorMsg.textContent = '請填寫名稱與代碼'; return; }
-    const v = validateNickname(nickname);
-    if (!v.ok) { errorMsg.textContent = v.msg; return; }
-
-    errorMsg.textContent = '建立中...';
+async function joinRoomByCode(code,nickname,skipV){
+  if(isJoining)return;isJoining=true;
+  try{
+    code=(code||'').trim().toLowerCase();
+    if(!code){errorMsg.textContent='請輸入代碼';return;}
+    if(!skipV){const v=validateNickname(nickname);if(!v.ok){errorMsg.textContent=v.msg;return;}nickname=v.name;}
+    errorMsg.textContent='載入中...';
     await cleanupExpiredRooms();
+    const room=await findRoomByCode(code);
+    if(!room){errorMsg.textContent='找不到此聊天室';return;}
+    const tok=tokenInput.value.trim(),saved=getMyTokens()[room.id];
+    const hasTok=(tok&&tok===room.admin_token)||(saved&&saved===room.admin_token);
+    const{data:mine}=await sb.from('members').select('*').eq('room_id',room.id).eq('user_id',USER_ID).maybeSingle();
+    let role='member';
+    if(mine&&!hasTok)role=mine.role;
+    else if(hasTok){const oa=await findOtherAdminIncludingSelf(room.id);if(oa&&oa.user_id!==USER_ID)await sb.from('members').delete().eq('room_id',room.id).eq('user_id',oa.user_id);role='admin';if(tok)saveToken(room.id,tok);showToast('✅ 已恢復管理員');}
+    else{role='member';if(tok&&tok!==room.admin_token){errorMsg.textContent='Token 錯誤';await new Promise(r=>setTimeout(r,800));}}
+    currentRoom=room;currentUser={nickname:nickname,role:role};
+    localStorage.setItem('chat_last_room_code',code);localStorage.setItem('chat_last_nickname',nickname);addMyRoom(room);
+    joinOverlay.classList.add('hidden');updateRoomUI();renderMyRooms();
+    await touchRoom();await loadChannels(room.id);await loadMembers(room.id);await loadCmds(room.id);await loadBtns(room.id);
+    await sb.from('members').upsert({room_id:room.id,user_id:USER_ID,nickname:nickname,role:role,last_seen:new Date().toISOString()},{onConflict:'room_id,user_id'});
+    if(channels.length){switchChannel(channels[0].id);await sendSystemMessage(nickname+' 加入了聊天室');}
+    else{const{data}=await sb.from('channels').insert({room_id:room.id,name:'一般',type:'text'}).select().single();if(data){await loadChannels(room.id);switchChannel(data.id);}}
+    messageInput.disabled=false;sendBtn.disabled=false;uploadImageBtn.disabled=false;messageInput.placeholder='輸入訊息...';
+    subscribeRealtime();startHeartbeat();
+  }catch(e){console.error(e);errorMsg.textContent='載入失敗：'+(e.message||'');}
+  finally{isJoining=false;}
+}
 
-    const existing = await findRoomByCode(code);
-    if (existing) { errorMsg.textContent = '此代碼已被使用'; return; }
+async function tryCreateRoom(){
+  const name=newRoomName.value.trim(),code=newRoomCode.value.trim().toLowerCase(),nick=newRoomNickname.value.trim();
+  if(!name||!code){errorMsg.textContent='請填寫名稱與代碼';return;}
+  const v=validateNickname(nick);if(!v.ok){errorMsg.textContent=v.msg;return;}
+  errorMsg.textContent='建立中...';
+  await cleanupExpiredRooms();
+  const ex=await findRoomByCode(code);
+  if(ex){errorMsg.textContent='此代碼已被使用';return;}
+  const aTok='adm_'+Math.random().toString(36).slice(2,12)+Math.random().toString(36).slice(2,8);
+  const{data:room,error}=await sb.from('rooms').insert({name:name,code:code,admin_token:aTok}).select().single();
+  if(error||!room){errorMsg.textContent='建立失敗：'+(error?.message||'');return;}
+  await sb.from('channels').insert([{room_id:room.id,name:'加入',type:'announcement'},{room_id:room.id,name:'一般',type:'text'},{room_id:room.id,name:'討論區',type:'forum'}]);
+  currentRoom=room;currentUser={nickname:v.name,role:'admin'};
+  saveToken(room.id,aTok);localStorage.setItem('chat_last_room_code',code);localStorage.setItem('chat_last_nickname',v.name);addMyRoom(room);
+  joinOverlay.classList.add('hidden');updateRoomUI();renderMyRooms();
+  await loadChannels(room.id);await loadMembers(room.id);await loadCmds(room.id);await loadBtns(room.id);
+  await sb.from('members').upsert({room_id:room.id,user_id:USER_ID,nickname:v.name,role:'admin',last_seen:new Date().toISOString()},{onConflict:'room_id,user_id'});
+  switchChannel(channels[0].id);
+  await sendSystemMessage('聊天室「'+name+'」已建立！'+v.name+' 是管理員。');
+  tokenDisplay.innerHTML='<div class="token-display">🔑 Token（請保存）：<br>'+aTok+'</div>';
+  alert('🎉 聊天室已建立！\n\n管理員 Token：\n'+aTok+'\n\n請保存好！');
+  messageInput.disabled=false;sendBtn.disabled=false;uploadImageBtn.disabled=false;messageInput.placeholder='輸入訊息...';
+  subscribeRealtime();startHeartbeat();
+}
 
-    const adminToken = 'adm_' + Math.random().toString(36).slice(2, 12) + Math.random().toString(36).slice(2, 8);
-    const { data: room, error } = await sb.from('rooms').insert({ name, code, admin_token: adminToken }).select().single();
-    if (error || !room) { errorMsg.textContent = '建立失敗：' + (error?.message || ''); return; }
+function setCreateMode(c){isCreateMode=c;joinTitle.textContent=c?'✨ 建立聊天室':'🔒 加入聊天室';joinSubtitle.textContent=c?'建立一個屬於你的聊天室':'輸入聊天室代碼以繼續';joinFields.style.display=c?'none':'block';createFields.style.display=c?'block':'none';joinBtn.textContent=c?'建立並加入':'加入聊天';switchToCreateBtn.textContent=c?'← 返回':'＋ 建立新的聊天室';errorMsg.textContent='';tokenDisplay.innerHTML='';adminStatusBox.innerHTML='';tokenFieldWrap.style.display='none';}
 
-    await sb.from('channels').insert([
-      { room_id: room.id, name: '加入', type: 'announcement' },
-      { room_id: room.id, name: '一般', type: 'text' },
-      { room_id: room.id, name: '討論區', type: 'forum' }
-    ]);
+let checkTimer=null;
+roomCodeInput.addEventListener('input',()=>{if(checkTimer)clearTimeout(checkTimer);checkTimer=setTimeout(async()=>{const code=roomCodeInput.value.trim().toLowerCase();if(!code||isCreateMode){adminStatusBox.innerHTML='';tokenFieldWrap.style.display='block';return;}const room=await findRoomByCode(code);if(!room){adminStatusBox.innerHTML='';tokenFieldWrap.style.display='block';return;}const oa=await checkRoomHasAdmin(room.id);const{data:mine}=await sb.from('members').select('role').eq('room_id',room.id).eq('user_id',USER_ID).maybeSingle();if(oa)adminStatusBox.innerHTML='<div class="admin-status has-admin">⚠️ 已有管理員：'+escapeHtml(oa.nickname)+'<br><span style="font-size:.7rem;opacity:.8">若你是原本的管理員，可輸入 Token</span></div>';else if(mine&&mine.role==='admin')adminStatusBox.innerHTML='<div class="admin-status no-admin">✅ 你是管理員</div>';else adminStatusBox.innerHTML='<div class="admin-status no-admin">✅ 沒有管理員<br><span style="font-size:.7rem;opacity:.8">若有 Token，可輸入成為管理員</span></div>';tokenFieldWrap.style.display='block';},500);});
 
-    currentRoom = room;
-    currentUser = { nickname: v.name, role: 'admin' };
-    saveToken(room.id, adminToken);
-    localStorage.setItem('chat_last_room_code', code);
-    localStorage.setItem('chat_last_nickname', v.name);
-    addMyRoom(room);
+function subscribeRealtime(){
+  if(rtMessages)sb.removeChannel(rtMessages);if(rtMembers)sb.removeChannel(rtMembers);if(rtCmds)sb.removeChannel(rtCmds);if(rtBtns)sb.removeChannel(rtBtns);
+  rtMessages=sb.channel('rt-messages-'+currentRoom.id)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},p=>{const m=p.new;if(currentChannel&&m.channel_id===currentChannel.id){messages.push(m);renderMessages();}})
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'messages'},p=>{const m=p.new;if(currentChannel&&m.channel_id===currentChannel.id){const i=messages.findIndex(x=>x.id===m.id);if(i>=0){messages[i]=m;renderMessages();}}})
+    .on('postgres_changes',{event:'DELETE',schema:'public',table:'channels'},async()=>{if(currentRoom){await loadChannels(currentRoom.id);if(!channels.length){currentChannel=null;renderMessages();}else if(!channels.find(c=>c.id===currentChannel?.id))switchChannel(channels[0].id);}})
+    .subscribe();
+  rtMembers=sb.channel('rt-members-'+currentRoom.id).on('postgres_changes',{event:'*',schema:'public',table:'members'},async p=>{if(p.eventType==='DELETE'&&p.old&&p.old.user_id===USER_ID){alert('您已被踢出此聊天室');removeMyRoom(currentRoom.id);localStorage.removeItem('chat_last_room_code');localStorage.removeItem('chat_last_nickname');location.reload();return;}if(currentRoom)await loadMembers(currentRoom.id);}).subscribe();
+  rtCmds=sb.channel('rt-cmds-'+currentRoom.id).on('postgres_changes',{event:'*',schema:'public',table:'custom_commands'},async()=>{if(currentRoom)await loadCmds(currentRoom.id);}).subscribe();
+  rtBtns=sb.channel('rt-btns-'+currentRoom.id).on('postgres_changes',{event:'*',schema:'public',table:'custom_buttons'},async()=>{if(currentRoom)await loadBtns(currentRoom.id);}).subscribe();
+}
 
-    joinOverlay.classList.add('hidden');
-    updateRoomUI();
-    renderMyRooms();
-    await loadChannels(room.id);
-    await loadMembers(room.id);
-    await loadCmds(room.id);
-    await loadBtns(room.id);
-    await sb.from('members').upsert({
-      room_id: room.id, user_id: USER_ID, auth_id: AUTH_UID,
-      nickname: v.name, role: 'admin', last_seen: new Date().toISOString()
-    }, { onConflict: 'room_id,user_id' });
+function startHeartbeat(){if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=setInterval(async()=>{if(!currentRoom||!currentUser.nickname)return;await sb.from('members').update({last_seen:new Date().toISOString()}).eq('room_id',currentRoom.id).eq('user_id',USER_ID);await touchRoom();},30000);}
 
-    switchChannel(channels[0].id);
-    await sendSystemMessage(`聊天室「${name}」已建立！${v.name} 是管理員。`);
+uploadImageBtn.addEventListener('click',()=>{if(!currentChannel){showToast('請先選擇頻道');return;}imageFileInput.click();});
+imageFileInput.addEventListener('change',async e=>{const f=e.target.files[0];if(!f||!currentChannel)return;if(f.size>5242880){showToast('圖片不能超過 5MB');imageFileInput.value='';return;}uploadingOverlay.classList.remove('hidden');try{const ext=f.name.split('.').pop()||'jpg',fn=USER_ID+'_'+Date.now()+'.'+ext;const{error}=await sb.storage.from('chat-images').upload(fn,f,{cacheControl:'3600',upsert:false});if(error)throw error;const{data:ud}=sb.storage.from('chat-images').getPublicUrl(fn);await sb.from('messages').insert({channel_id:currentChannel.id,text:IMG_PREFIX+ud.publicUrl,sender:currentUser.nickname,is_bot:false,is_system:false});await touchRoom();showToast('✅ 圖片已傳送');}catch(e){showToast('❌ 上傳失敗：'+(e.message||''));}finally{uploadingOverlay.classList.add('hidden');imageFileInput.value='';}});
 
-    tokenDisplay.innerHTML = `<div class="token-display">🔑 Token（請保存）：<br>${adminToken}</div>`;
-    alert('🎉 聊天室已建立！\n\n管理員 Token：\n' + adminToken + '\n\n請保存好！下次加入時貼上即可恢復管理員身分。\n\n📌 此聊天室若 7 天無人使用，將自動刪除並釋放代碼。');
+function openChannelModal(){if(!isAdmin()){alert('只有管理員');return;}channelNameInput.value='';channelTypeSelect.value='text';channelError.textContent='';channelModal.classList.remove('hidden');closeDrawer();}
+function closeChannelModal(){channelModal.classList.add('hidden');}
+async function confirmAddChannel(){const n=channelNameInput.value.trim(),t=channelTypeSelect.value;if(!n){channelError.textContent='請輸入名稱';return;}if(channels.some(c=>c.name===n)){channelError.textContent='名稱已存在';return;}await sb.from('channels').insert({room_id:currentRoom.id,name:n,type:t});await loadChannels(currentRoom.id);const c=channels.find(x=>x.name===n);if(c)switchChannel(c.id);closeChannelModal();}
+function openMembersModal(){membersModal.classList.remove('hidden');loadMembers(currentRoom.id);closeDrawer();}
+function closeMembersModal(){membersModal.classList.add('hidden');}
+function openCmdsModal(){if(!isAdmin()){alert('只有管理員');return;}cmdsModal.classList.remove('hidden');cmdError.textContent='';newCmdName.value='';newCmdResp.value='';loadCmds(currentRoom.id);closeDrawer();}
+function closeCmdsModal(){cmdsModal.classList.add('hidden');}
+async function addCmd(){let n=newCmdName.value.trim(),r=newCmdResp.value.trim();if(!n){cmdError.textContent='請輸入名稱';return;}if(!r){cmdError.textContent='請輸入回應';return;}if(!n.startsWith('/'))n='/'+n;if(customCmds.some(c=>c.command===n)){cmdError.textContent='已存在';return;}await sb.from('custom_commands').insert({room_id:currentRoom.id,command:n,response:r});newCmdName.value='';newCmdResp.value='';cmdError.textContent='✅ 已新增';setTimeout(()=>cmdError.textContent='',1500);await loadCmds(currentRoom.id);}
+function openBtnsModal(){if(!isAdmin()){alert('只有管理員');return;}btnsModal.classList.remove('hidden');btnError.textContent='';newBtnLabel.value='';newBtnValue.value='';newBtnType.value='link';loadBtns(currentRoom.id);closeDrawer();}
+function closeBtnsModal(){btnsModal.classList.add('hidden');}
+async function addBtn(){const l=newBtnLabel.value.trim(),t=newBtnType.value,v=newBtnValue.value.trim();if(!l){btnError.textContent='請輸入文字';return;}if(!v){btnError.textContent='請輸入內容';return;}if(t==='link'&&!/^https?:\/\//i.test(v)){btnError.textContent='連結需以 http:// 或 https:// 開頭';return;}await sb.from('custom_buttons').insert({room_id:currentRoom.id,label:l,action_type:t,action_value:v});newBtnLabel.value='';newBtnValue.value='';btnError.textContent='✅ 已新增';setTimeout(()=>btnError.textContent='',1500);await loadBtns(currentRoom.id);}
 
-    messageInput.disabled = false;
-    sendBtn.disabled = false;
-    uploadImageBtn.disabled = false;
-    messageInput.placeholder = '輸入訊息...';
-    subscribeRealtime();
-    startHeartbeat();
-  }
+function handleBotCommand(cmd,full){
+  const c=cmd.trim().toLowerCase();
+  const cu=customCmds.find(x=>x.command.toLowerCase()===c);
+  if(cu)return cu.response;
+  if(c==='/規則'||c==='/rule')return'📋 規則：\n1. 尊重\n2. 禁廣告\n3. 友善\n4. /help 查看';
+  if(c==='/help'||c==='/幫助'){let h='🤖 指令：\n/規則\n/help\n/時間\n/問候\n/頻道';if(isAdmin())h+='\n\n👑 管理員：\n/set /名稱 回應\n/del /名稱';if(customCmds.length)h+='\n\n📝 自訂：\n'+customCmds.map(x=>x.command).join(', ');return h;}
+  if(c==='/時間'||c==='/time')return'🕒 '+new Date().toLocaleTimeString('zh-TW',{hour12:false});
+  if(c==='/問候'||c==='/hello')return'你好 '+escapeHtml(currentUser.nickname)+'！';
+  if(c==='/頻道'||c==='/channels')return'📁 頻道：\n'+channels.map(ch=>channelIcon(ch.type)+' '+ch.name).join('\n');
+  if(c.startsWith('/'))return'❓ 未知指令「'+full+'」，輸入 /help 查看。';
+  return null;
+}
 
-  function setCreateMode(create) {
-    isCreateMode = create;
-    joinTitle.textContent = create ? '✨ 建立聊天室' : '🔒 加入聊天室';
-    joinSubtitle.textContent = create ? '建立一個屬於你的聊天室' : '輸入聊天室代碼以繼續';
-    joinFields.style.display = create ? 'none' : 'block';
-    createFields.style.display = create ? 'block' : 'none';
-    joinBtn.textContent = create ? '建立並加入' : '加入聊天';
-    switchToCreateBtn.textContent = create ? '← 返回加入聊天室' : '＋ 建立新的聊天室';
-    errorMsg.textContent = '';
-    tokenDisplay.innerHTML = '';
-    adminStatusBox.innerHTML = '';
-    tokenFieldWrap.style.display = 'none';
-  }
+async function sendUserMessage(){
+  const t=messageInput.value.trim();if(!t||!currentChannel)return;
+  if(isAdmin()&&t.startsWith('/set ')){const r=t.substring(5).trim(),i=r.indexOf(' ');if(i===-1){showToast('格式：/set /名稱 回應');return;}let n=r.substring(0,i).trim(),v=r.substring(i+1).trim();if(!n.startsWith('/'))n='/'+n;await sb.from('custom_commands').upsert({room_id:currentRoom.id,command:n,response:v},{onConflict:'room_id,command'});await loadCmds(currentRoom.id);messageInput.value='';showToast('✅ 已設定 '+n);return;}
+  if(isAdmin()&&t.startsWith('/del ')){let n=t.substring(5).trim();if(!n.startsWith('/'))n='/'+n;await sb.from('custom_commands').delete().eq('room_id',currentRoom.id).eq('command',n);await loadCmds(currentRoom.id);messageInput.value='';showToast('✅ 已刪除 '+n);return;}
+  await sb.from('messages').insert({channel_id:currentChannel.id,text:escapeHtml(t),sender:currentUser.nickname,is_bot:false,is_system:false});
+  await touchRoom();messageInput.value='';
+  if(t.startsWith('/')){const r=handleBotCommand(t,t);if(r)setTimeout(async()=>{await sb.from('messages').insert({channel_id:currentChannel.id,text:escapeHtml(r),sender:'小幫手',is_bot:true,is_system:false});},200);}
+}
 
-  let checkTimer = null;
-  roomCodeInput.addEventListener('input', () => {
-    if (checkTimer) clearTimeout(checkTimer);
-    checkTimer = setTimeout(async () => {
-      const code = roomCodeInput.value.trim().toLowerCase();
-      if (!code || isCreateMode) {
-        adminStatusBox.innerHTML = '';
-        tokenFieldWrap.style.display = 'block';
-        return;
-      }
-      const room = await findRoomByCode(code);
-      if (!room) {
-        adminStatusBox.innerHTML = '';
-        tokenFieldWrap.style.display = 'block';
-        return;
-      }
-      const otherAdmin = await checkRoomHasAdmin(room.id);
-      const { data: myMembership } = await sb.from('members')
-        .select('role').eq('room_id', room.id).eq('user_id', USER_ID).maybeSingle();
+joinBtn.addEventListener('click',()=>{if(isCreateMode)tryCreateRoom();else joinRoomByCode(roomCodeInput.value,nicknameInput.value);});
+switchToCreateBtn.addEventListener('click',()=>setCreateMode(!isCreateMode));
+[roomCodeInput,nicknameInput,tokenInput,newRoomName,newRoomCode,newRoomNickname].forEach(i=>{if(i)i.addEventListener('keypress',e=>{if(e.key==='Enter'){e.preventDefault();joinBtn.click();}});});
+sendBtn.addEventListener('click',sendUserMessage);
+messageInput.addEventListener('keypress',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendUserMessage();}});
+addChannelBtn.addEventListener('click',openChannelModal);
+cancelChannelBtn.addEventListener('click',closeChannelModal);
+confirmChannelBtn.addEventListener('click',confirmAddChannel);
+viewMembersBtn.addEventListener('click',openMembersModal);
+closeMembersBtn.addEventListener('click',closeMembersModal);
+manageCmdsBtn.addEventListener('click',openCmdsModal);
+closeCmdsBtn.addEventListener('click',closeCmdsModal);
+addCmdBtn.addEventListener('click',addCmd);
+manageBtnsBtn.addEventListener('click',openBtnsModal);
+closeBtnsBtn.addEventListener('click',closeBtnsModal);
+addBtnBtn.addEventListener('click',addBtn);
+addRoomBtn.addEventListener('click',()=>{closeDrawer();joinOverlay.classList.remove('hidden');setCreateMode(false);roomCodeInput.value='';roomCodeInput.focus();});
 
-      if (otherAdmin) {
-        adminStatusBox.innerHTML = `<div class="admin-status has-admin">⚠️ 此聊天室已有管理員：${escapeHtml(otherAdmin.nickname)}<br><span style="font-size:0.7rem;opacity:0.8;">若你是原本的管理員，可輸入 Token 恢復身分</span></div>`;
-      } else if (myMembership && myMembership.role === 'admin') {
-        adminStatusBox.innerHTML = `<div class="admin-status no-admin">✅ 你是此聊天室的管理員，將以管理員身分加入</div>`;
-      } else {
-        adminStatusBox.innerHTML = `<div class="admin-status no-admin">✅ 此聊天室目前沒有管理員<br><span style="font-size:0.7rem;opacity:0.8;">若有 Token，可輸入成為管理員</span></div>`;
-      }
-      tokenFieldWrap.style.display = 'block';
-    }, 500);
-  });
-
-  function subscribeRealtime() {
-    if (rtMessages) sb.removeChannel(rtMessages);
-    if (rtMembers) sb.removeChannel(rtMembers);
-    if (rtCmds) sb.removeChannel(rtCmds);
-    if (rtBtns) sb.removeChannel(rtBtns);
-
-    rtMessages = sb.channel('rt-messages-' + currentRoom.id)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-        const m = payload.new;
-        if (currentChannel && m.channel_id === currentChannel.id) {
-          messages.push(m);
-          renderMessages();
-        }
-      })
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages' }, payload => {
-        const m = payload.new;
-        if (currentChannel && m.channel_id === currentChannel.id) {
-          const idx = messages.findIndex(x => x.id === m.id);
-          if (idx >= 0) { messages[idx] = m; renderMessages(); }
-        }
-      })
-      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'channels' }, async () => {
-        if (currentRoom) {
-          await loadChannels(currentRoom.id);
-          if (!channels.length) { currentChannel = null; renderMessages(); }
-          else if (!channels.find(c => c.id === currentChannel?.id)) switchChannel(channels[0].id);
-        }
-      })
-      .subscribe();
-
-    rtMembers = sb.channel('rt-members-' + currentRoom.id)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'members' }, async payload => {
-        if (payload.eventType === 'DELETE' && payload.old && payload.old.user_id === USER_ID) {
-          alert('您已被管理員踢出此聊天室');
-          removeMyRoom(currentRoom.id);
-          localStorage.removeItem('chat_last_room_code');
-          localStorage.removeItem('chat_last_nickname');
-          location.reload();
-          return;
-        }
-        if (currentRoom) await loadMembers(currentRoom.id);
-      })
-      .subscribe();
-
-    rtCmds = sb.channel('rt-cmds-' + currentRoom.id)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'custom_commands' }, async () => {
-        if (currentRoom) await loadCmds(currentRoom.id);
-      })
-      .subscribe();
-
-    rtBtns = sb.channel('rt-btns-' + currentRoom.id)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'custom_buttons' }, async () => {
-        if (currentRoom) await loadBtns(currentRoom.id);
-      })
-      .subscribe();
-  }
-
-  function startHeartbeat() {
-    if (heartbeatTimer) clearInterval(heartbeatTimer);
-    heartbeatTimer = setInterval(async () => {
-      if (!currentRoom || !currentUser.nickname) return;
-      await sb.from('members').update({ last_seen: new Date().toISOString() })
-        .eq('room_id', currentRoom.id).eq('user_id', USER_ID);
-      await touchRoom();
-    }, 30000);
-  }
-
-  uploadImageBtn.addEventListener('click', () => {
-    if (!currentChannel) { showToast('請先選擇頻道'); return; }
-    imageFileInput.click();
-  });
-  imageFileInput.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file || !currentChannel) return;
-    if (file.size > 5 * 1024 * 1024) {
-      showToast('圖片不能超過 5MB');
-      imageFileInput.value = '';
-      return;
-    }
-    uploadingOverlay.classList.remove('hidden');
-    try {
-      const ext = file.name.split('.').pop() || 'jpg';
-      const fileName = `${USER_ID}_${Date.now()}.${ext}`;
-      const { error } = await sb.storage.from('chat-images').upload(fileName, file, {
-        cacheControl: '3600', upsert: false
-      });
-      if (error) throw error;
-      const { data: urlData } = sb.storage.from('chat-images').getPublicUrl(fileName);
-      const publicUrl = urlData.publicUrl;
-      await sb.from('messages').insert({
-        channel_id: currentChannel.id,
-        text: IMG_PREFIX + publicUrl,
-        sender: currentUser.nickname,
-        sender_id: AUTH_UID,
-        is_bot: false, is_system: false
-      });
-      await touchRoom();
-      showToast('✅ 圖片已傳送');
-    } catch (err) {
-      console.error(err);
-      showToast('❌ 上傳失敗：' + (err.message || '未知錯誤'));
-    } finally {
-      uploadingOverlay.classList.add('hidden');
-      imageFileInput.value = '';
-    }
-  });
-
-  function openChannelModal() {
-    if (!isAdmin()) { alert('只有管理員可以新增頻道'); return; }
-    channelNameInput.value = '';
-    channelTypeSelect.value = 'text';
-    channelError.textContent = '';
-    channelModal.classList.remove('hidden');
-    closeDrawer();
-  }
-  function closeChannelModal() { channelModal.classList.add('hidden'); }
-  async function confirmAddChannel() {
-    const name = channelNameInput.value.trim();
-    const type = channelTypeSelect.value;
-    if (!name) { channelError.textContent = '請輸入頻道名稱'; return; }
-    if (channels.some(c => c.name === name)) { channelError.textContent = '頻道名稱已存在'; return; }
-    await sb.from('channels').insert({ room_id: currentRoom.id, name, type });
-    await loadChannels(currentRoom.id);
-    const newCh = channels.find(c => c.name === name);
-    if (newCh) switchChannel(newCh.id);
-    closeChannelModal();
-  }
-
-  function openMembersModal() {
-    membersModal.classList.remove('hidden');
-    loadMembers(currentRoom.id);
-    closeDrawer();
-  }
-  function closeMembersModal() { membersModal.classList.add('hidden'); }
-
-  function openCmdsModal() {
-    if (!isAdmin()) { alert('只有管理員可以管理指令'); return; }
-    cmdsModal.classList.remove('hidden');
-    cmdError.textContent = '';
-    newCmdName.value = '';
-    newCmdResp.value = '';
-    loadCmds(currentRoom.id);
-    closeDrawer();
-  }
-  function closeCmdsModal() { cmdsModal.classList.add('hidden'); }
-  async function addCmd() {
-    let name = newCmdName.value.trim();
-    const resp = newCmdResp.value.trim();
-    if (!name) { cmdError.textContent = '請輸入指令名稱'; return; }
-    if (!resp) { cmdError.textContent = '請輸入回應內容'; return; }
-    if (!name.startsWith('/')) name = '/' + name;
-    if (customCmds.some(c => c.command === name)) { cmdError.textContent = '此指令已存在'; return; }
-    await sb.from('custom_commands').insert({ room_id: currentRoom.id, command: name, response: resp });
-    newCmdName.value = '';
-    newCmdResp.value = '';
-    cmdError.textContent = '✅ 已新增';
-    setTimeout(() => cmdError.textContent = '', 1500);
-    await loadCmds(currentRoom.id);
-  }
-
-  function openBtnsModal() {
-    if (!isAdmin()) { alert('只有管理員可以管理按鈕'); return; }
-    btnsModal.classList.remove('hidden');
-    btnError.textContent = '';
-    newBtnLabel.value = '';
-    newBtnValue.value = '';
-    newBtnType.value = 'link';
-    loadBtns(currentRoom.id);
-    closeDrawer();
-  }
-  function closeBtnsModal() { btnsModal.classList.add('hidden'); }
-  async function addBtn() {
-    const label = newBtnLabel.value.trim();
-    const type = newBtnType.value;
-    const value = newBtnValue.value.trim();
-    if (!label) { btnError.textContent = '請輸入按鈕文字'; return; }
-    if (!value) { btnError.textContent = '請輸入動作內容'; return; }
-    if (type === 'link' && !/^https?:\/\//i.test(value)) {
-      btnError.textContent = '連結必須以 http:// 或 https:// 開頭';
-      return;
-    }
-    await sb.from('custom_buttons').insert({ room_id: currentRoom.id, label, action_type: type, action_value: value });
-    newBtnLabel.value = '';
-    newBtnValue.value = '';
-    btnError.textContent = '✅ 已新增按鈕';
-    setTimeout(() => btnError.textContent = '', 1500);
-    await loadBtns(currentRoom.id);
-  }
-
-  function handleBotCommand(cmd, full) {
-    const c = cmd.trim().toLowerCase();
-    const custom = customCmds.find(x => x.command.toLowerCase() === c);
-    if (custom) return custom.response;
-
-    if (c === '/規則' || c === '/rule') return `📋 聊天室規則：\n1. 尊重所有成員\n2. 禁止洗版廣告\n3. 保持友善\n4. 使用 /help 查看指令`;
-    if (c === '/help' || c === '/幫助') {
-      let help = `🤖 可用指令：\n/規則 - 規則\n/help - 幫助\n/時間 - 時間\n/問候 - 打招呼\n/頻道 - 列出頻道`;
-      if (isAdmin()) help += `\n\n👑 管理員指令：\n/set /指令名 回應內容\n/del /指令名`;
-      if (customCmds.length) help += `\n\n📝 自訂指令：\n` + customCmds.map(x => x.command).join(', ');
-      return help;
-    }
-    if (c === '/時間' || c === '/time') return `🕒 現在時間：${new Date().toLocaleTimeString('zh-TW', { hour12: false })}`;
-    if (c === '/問候' || c === '/hello') return `你好呀，${escapeHtml(currentUser.nickname)}！`;
-    if (c === '/頻道' || c === '/channels') return `📁 頻道：\n${channels.map(ch => `${channelIcon(ch.type)} ${ch.name}`).join('\n')}`;
-    if (c.startsWith('/')) return `❓ 未知指令「${full}」。輸入 /help 查看幫助。`;
-    return null;
-  }
-
-  async function sendUserMessage() {
-    const text = messageInput.value.trim();
-    if (!text || !currentChannel) return;
-
-    if (isAdmin() && text.startsWith('/set ')) {
-      const rest = text.substring(5).trim();
-      const spaceIdx = rest.indexOf(' ');
-      if (spaceIdx === -1) { showToast('格式：/set /指令名 回應內容'); return; }
-      let cmdName = rest.substring(0, spaceIdx).trim();
-      const resp = rest.substring(spaceIdx + 1).trim();
-      if (!cmdName.startsWith('/')) cmdName = '/' + cmdName;
-      await sb.from('custom_commands').upsert({ room_id: currentRoom.id, command: cmdName, response: resp }, { onConflict: 'room_id,command' });
-      await loadCmds(currentRoom.id);
-      messageInput.value = '';
-      showToast('✅ 已設定指令 ' + cmdName);
-      return;
-    }
-    if (isAdmin() && text.startsWith('/del ')) {
-      let cmdName = text.substring(5).trim();
-      if (!cmdName.startsWith('/')) cmdName = '/' + cmdName;
-      await sb.from('custom_commands').delete().eq('room_id', currentRoom.id).eq('command', cmdName);
-      await loadCmds(currentRoom.id);
-      messageInput.value = '';
-      showToast('✅ 已刪除指令 ' + cmdName);
-      return;
-    }
-
-    await sb.from('messages').insert({
-      channel_id: currentChannel.id,
-      text: escapeHtml(text),
-      sender: currentUser.nickname,
-      sender_id: AUTH_UID,
-      is_bot: false, is_system: false
-    });
-    await touchRoom();
-    messageInput.value = '';
-
-    if (text.startsWith('/')) {
-      const reply = handleBotCommand(text, text);
-      if (reply) {
-        setTimeout(async () => {
-          await sb.from('messages').insert({
-            channel_id: currentChannel.id,
-            text: escapeHtml(reply),
-            sender: '小幫手', is_bot: true, is_system: false
-          });
-        }, 200);
-      }
-    }
-  }
-
-  joinBtn.addEventListener('click', () => {
-    if (isCreateMode) tryCreateRoom();
-    else joinRoomByCode(roomCodeInput.value, nicknameInput.value);
-  });
-  switchToCreateBtn.addEventListener('click', () => setCreateMode(!isCreateMode));
-
-  [roomCodeInput, nicknameInput, tokenInput, newRoomName, newRoomCode, newRoomNickname].forEach(inp => {
-    if (inp) inp.addEventListener('keypress', e => {
-      if (e.key === 'Enter') { e.preventDefault(); joinBtn.click(); }
-    });
-  });
-
-  sendBtn.addEventListener('click', sendUserMessage);
-  messageInput.addEventListener('keypress', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendUserMessage(); }
-  });
-
-  addChannelBtn.addEventListener('click', openChannelModal);
-  cancelChannelBtn.addEventListener('click', closeChannelModal);
-  confirmChannelBtn.addEventListener('click', confirmAddChannel);
-  viewMembersBtn.addEventListener('click', openMembersModal);
-  closeMembersBtn.addEventListener('click', closeMembersModal);
-  manageCmdsBtn.addEventListener('click', openCmdsModal);
-  closeCmdsBtn.addEventListener('click', closeCmdsModal);
-  addCmdBtn.addEventListener('click', addCmd);
-  manageBtnsBtn.addEventListener('click', openBtnsModal);
-  closeBtnsBtn.addEventListener('click', closeBtnsModal);
-  addBtnBtn.addEventListener('click', addBtn);
-
-  addRoomBtn.addEventListener('click', () => {
-    closeDrawer();
-    joinOverlay.classList.remove('hidden');
-    setCreateMode(false);
-    roomCodeInput.value = '';
-    roomCodeInput.focus();
-  });
-
-    async function init() {
-    ensureAuth().catch(e=>console.warn(e));
-    renderMyRooms();
-    loadingScreen.classList.add('hidden');
-    joinOverlay.classList.remove('hidden');
-    roomCodeInput.focus();
-  }
-
-  init();
+function init(){
+  renderMyRooms();
+  loadingScreen.classList.add('hidden');
+  joinOverlay.classList.remove('hidden');
+  roomCodeInput.focus();
+}
+init();
 })();
 </script>
 </body>
