@@ -1926,7 +1926,7 @@
   });
 
   async function init() {
-    await ensureAuth();
+    ensureAuth().catch(e=>console.warn(e));
     renderMyRooms();
     const lastCode = localStorage.getItem('chat_last_room_code');
     const lastNick = localStorage.getItem('chat_last_nickname');
