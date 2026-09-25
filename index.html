@@ -1925,32 +1925,9 @@
     roomCodeInput.focus();
   });
 
-  async function init() {
+    async function init() {
     ensureAuth().catch(e=>console.warn(e));
     renderMyRooms();
-    const lastCode = localStorage.getItem('chat_last_room_code');
-    const lastNick = localStorage.getItem('chat_last_nickname');
-    if (lastCode && lastNick) {
-      try {
-        const room = await findRoomByCode(lastCode);
-        if (room) {
-          const { data: myMembership } = await sb.from('members')
-            .select('*').eq('room_id', room.id).eq('user_id', USER_ID).maybeSingle();
-          if (myMembership) {
-            currentUser.nickname = myMembership.nickname || lastNick;
-            await joinRoomByCode(lastCode, currentUser.nickname, true);
-            loadingScreen.classList.add('hidden');
-            return;
-          } else {
-            localStorage.removeItem('chat_last_room_code');
-            localStorage.removeItem('chat_last_nickname');
-          }
-        } else {
-          localStorage.removeItem('chat_last_room_code');
-          localStorage.removeItem('chat_last_nickname');
-        }
-      } catch (err) { console.error('自動登入失敗:', err); }
-    }
     loadingScreen.classList.add('hidden');
     joinOverlay.classList.remove('hidden');
     roomCodeInput.focus();
