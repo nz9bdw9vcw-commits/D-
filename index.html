@@ -598,13 +598,38 @@ manageBtnsBtn.addEventListener('click',openBtnsModal);
 closeBtnsBtn.addEventListener('click',closeBtnsModal);
 addBtnBtn.addEventListener('click',addBtn);
 addRoomBtn.addEventListener('click',()=>{closeDrawer();joinOverlay.classList.remove('hidden');setCreateMode(false);roomCodeInput.value='';roomCodeInput.focus();});
-
-function init(){
+async function init(){
   renderMyRooms();
+  const lastCode = localStorage.getItem('chat_last_room_code');
+  const lastNick = localStorage.getItem('chat_last_nickname');
+  if (lastCode && lastNick) {
+    try {
+      const room = await findRoomByCode(lastCode);
+      if (room) {
+        const { data: mine } = await sb.from('members')
+          .select('*').eq('room_id', room.id).eq('user_id', USER_ID).maybeSingle();
+        if (mine) {
+          currentUser.nickname = mine.nickname || lastNick;
+          await joinRoomByCode(lastCode, currentUser.nickname, true);
+          loadingScreen.classList.add('hidden');
+          return;
+        } else {
+          localStorage.removeItem('chat_last_room_code');
+          localStorage.removeItem('chat_last_nickname');
+        }
+      } else {
+        localStorage.removeItem('chat_last_room_code');
+        localStorage.removeItem('chat_last_nickname');
+      }
+    } catch (e) {
+      console.warn('自動登入失敗:', e);
+    }
+  }
   loadingScreen.classList.add('hidden');
   joinOverlay.classList.remove('hidden');
   roomCodeInput.focus();
 }
+
 init();
 })();
 </script>
