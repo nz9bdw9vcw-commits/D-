@@ -266,6 +266,7 @@ body.font-noto{font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif}
 <button class="toolbox-tab" data-tab="notes">📝 筆記</button>
 <button class="toolbox-tab" data-tab="calc">🧮 計算機</button>
 <button class="toolbox-tab" data-tab="countdown">📅 倒數日</button>
+<button class="toolbox-tab" data-tab="quiz">📝 數學測驗</button>
 </div>
 <div class="toolbox-content">
 <div class="toolbox-panel active" id="panel-timer">
@@ -277,6 +278,41 @@ body.font-noto{font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif}
 <div class="toolbox-panel" id="panel-notes"><textarea class="notes-area" id="notesArea" placeholder="在這裡寫筆記...（自動儲存）"></textarea><div class="notes-info" id="notesInfo">已自動儲存</div></div>
 <div class="toolbox-panel" id="panel-calc"><div class="calc-display" id="calcDisplay">0</div><div class="calc-grid"><button class="clear" data-calc="C">C</button><button class="clear" data-calc="⌫">⌫</button><button class="op" data-calc="%">%</button><button class="op" data-calc="/">÷</button><button data-calc="7">7</button><button data-calc="8">8</button><button data-calc="9">9</button><button class="op" data-calc="*">×</button><button data-calc="4">4</button><button data-calc="5">5</button><button data-calc="6">6</button><button class="op" data-calc="-">−</button><button data-calc="1">1</button><button data-calc="2">2</button><button data-calc="3">3</button><button class="op" data-calc="+">+</button><button data-calc="0">0</button><button data-calc=".">.</button><button class="eq" data-calc="=" style="grid-column:span 2">=</button></div></div>
 <div class="toolbox-panel" id="panel-countdown"><div class="countdown-input"><input type="date" id="countdownDate"></div><div class="countdown-result"><div class="days" id="countdownDays">--</div><div class="label">天</div><div class="target-date" id="countdownTarget">請選擇日期</div></div></div>
+<div class="toolbox-panel" id="panel-quiz">
+<div id="quizSetup">
+<label style="color:#8dc9ff;font-size:.85rem;display:block;margin-bottom:8px;">選擇題型</label>
+<div class="option-row" style="margin-bottom:12px;">
+<label class="option-btn" style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="qGcd" checked> 最大公因數</label>
+<label class="option-btn" style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="qLcm" checked> 最小公倍數</label>
+<label class="option-btn" style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="qIntAddSub" checked> 整數加減</label>
+<label class="option-btn" style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="qIntMulDiv" checked> 整數乘除</label>
+<label class="option-btn" style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="qDecAddSub"> 小數加減</label>
+<label class="option-btn" style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="qDecMulDiv"> 小數乘除</label>
+</div>
+<label style="color:#8dc9ff;font-size:.85rem;display:block;margin-bottom:8px;">難度</label>
+<div class="option-row" id="quizDiffRow" style="margin-bottom:16px;">
+<button class="option-btn active" data-diff="easy">簡單</button>
+<button class="option-btn" data-diff="medium">中等</button>
+<button class="option-btn" data-diff="hard">困難</button>
+</div>
+<div class="timer-actions"><button class="primary" id="quizStartBtn">▶ 開始測驗</button></div>
+<div id="quizSetupError" style="color:#ff7b7b;font-size:.8rem;margin-top:10px;text-align:center;"></div>
+</div>
+<div id="quizPlay" style="display:none;">
+<div style="text-align:center;color:#9ab8d4;font-size:.85rem;margin-bottom:8px;">第 <span id="quizCurrent">1</span> / 10 題</div>
+<div id="quizQuestion" style="font-size:1.6rem;text-align:center;padding:20px;color:#e0f0ff;font-family:monospace;min-height:80px;display:flex;align-items:center;justify-content:center;"></div>
+<div class="option-row" style="flex-direction:column;gap:8px;" id="quizOptions"></div>
+<div id="quizFeedback" style="text-align:center;font-size:1rem;margin-top:14px;min-height:24px;"></div>
+</div>
+<div id="quizResult" style="display:none;">
+<div class="countdown-result" style="margin-bottom:16px;">
+<div class="days" id="quizScore" style="font-size:2.5rem;">0 / 10</div>
+<div class="label">答對題數</div>
+</div>
+<div id="quizWrongList" style="margin-bottom:16px;"></div>
+<div class="timer-actions"><button class="primary" id="quizRetryBtn">↺ 重新測驗</button></div>
+</div>
+</div>
 </div>
 </div>
 <script>
@@ -405,6 +441,73 @@ const countdownDate=$('countdownDate'),countdownDays=$('countdownDays'),countdow
 function updateCountdown(){if(!countdownDate.value){countdownDays.textContent='--';countdownTarget.textContent='請選擇日期';return;}const t=new Date(countdownDate.value+'T00:00:00'),td=new Date();td.setHours(0,0,0,0);countdownDays.textContent=Math.round((t-td)/86400000);countdownTarget.textContent='目標：'+countdownDate.value;}
 const savedDate=localStorage.getItem('toolbox_countdown_date');if(savedDate)countdownDate.value=savedDate;updateCountdown();
 countdownDate.addEventListener('change',()=>{localStorage.setItem('toolbox_countdown_date',countdownDate.value);updateCountdown();});
+
+let quizQuestions=[],quizIndex=0,quizCorrect=0,quizWrong=[],quizDiff='easy';
+document.querySelectorAll('#quizDiffRow .option-btn').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('#quizDiffRow .option-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');quizDiff=b.dataset.diff;});});
+function randInt(m,n){return Math.floor(Math.random()*(n-m+1))+m;}
+function gcdF(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;}
+function lcmF(a,b){return Math.abs(a*b)/gcdF(a,b);}
+function quizRange(){if(quizDiff==='easy')return[1,10];if(quizDiff==='medium')return[1,50];return[1,100];}
+function genQuestion(types){
+const t=types[randInt(0,types.length-1)];const[mx,Mx]=quizRange();let q='',ans=0;
+if(t==='gcd'){const a=randInt(mx,Mx),b=randInt(mx,Mx);q='gcd('+a+', '+b+') = ?';ans=gcdF(a,b);}
+else if(t==='lcm'){const a=randInt(mx,Mx),b=randInt(mx,Mx);q='lcm('+a+', '+b+') = ?';ans=lcmF(a,b);}
+else if(t==='intAddSub'){const a=randInt(mx,Mx),b=randInt(mx,Mx);if(Math.random()<.5){q=a+' + '+b+' = ?';ans=a+b;}else{q=a+' - '+b+' = ?';ans=a-b;}}
+else if(t==='intMulDiv'){const a=randInt(mx,Mx),b=randInt(1,Math.max(2,Math.floor(Mx/2)));if(Math.random()<.5){q=a+' × '+b+' = ?';ans=a*b;}else{const p=a*b;q=p+' ÷ '+b+' = ?';ans=a;}}
+else if(t==='decAddSub'){const d1=Math.random()<.5?1:2,d2=Math.random()<.5?1:2;const a=+(Math.random()*20).toFixed(d1),b=+(Math.random()*20).toFixed(d2);if(Math.random()<.5){q=a+' + '+b+' = ?';ans=+(a+b).toFixed(2);}else{q=a+' - '+b+' = ?';ans=+(a-b).toFixed(2);}}
+else if(t==='decMulDiv'){const a=+(Math.random()*20).toFixed(1),b=+(Math.random()*10+1).toFixed(1);if(Math.random()<.5){q=a+' × '+b+' = ?';ans=+(a*b).toFixed(2);}else{const p=+(a*b).toFixed(2);q=p+' ÷ '+b+' = ?';ans=+a.toFixed(2);}}
+return{q:q,answer:+ans};
+}
+function makeOptions(a){const s=new Set([a]);while(s.size<4){let d=randInt(1,5)*(Math.random()<.5?1:-1);let f=+(a+d).toFixed(2);if(f!==a)s.add(f);}return Array.from(s).sort(()=>Math.random()-.5);}
+function renderQuizQuestion(){
+if(quizIndex>=quizQuestions.length){showQuizResult();return;}
+const q=quizQuestions[quizIndex];
+document.getElementById('quizCurrent').textContent=quizIndex+1;
+document.getElementById('quizQuestion').textContent=q.q;
+const el=document.getElementById('quizOptions');el.innerHTML='';
+q.options.forEach(o=>{
+const b=document.createElement('button');b.className='option-btn';b.textContent=o;
+b.addEventListener('click',()=>{
+const ok=Math.abs(+o-q.answer)<.001;
+if(ok){quizCorrect++;document.getElementById('quizFeedback').textContent='✅ 答對了！';document.getElementById('quizFeedback').style.color='#7bffb0';}
+else{quizWrong.push({q:q.q,your:o,correct:q.answer});document.getElementById('quizFeedback').textContent='❌ 答錯了，正確答案是 '+q.answer;document.getElementById('quizFeedback').style.color='#ff7b7b';}
+el.querySelectorAll('button').forEach(x=>x.disabled=true);
+setTimeout(()=>{quizIndex++;document.getElementById('quizFeedback').textContent='';renderQuizQuestion();},900);
+});
+el.appendChild(b);
+});
+}
+function showQuizResult(){
+document.getElementById('quizPlay').style.display='none';
+document.getElementById('quizResult').style.display='block';
+document.getElementById('quizScore').textContent=quizCorrect+' / '+quizQuestions.length;
+const w=document.getElementById('quizWrongList');
+if(!quizWrong.length){w.innerHTML='<div style="color:#7bffb0;text-align:center;padding:16px;">🎉 全部答對！</div>';}
+else{let h='<div style="color:#ffd98a;font-size:.85rem;margin-bottom:8px;">錯誤分析：</div>';quizWrong.forEach((x,i)=>{h+='<div style="background:rgba(122,42,42,.2);border-radius:10px;padding:10px;margin-bottom:8px;font-size:.85rem;"><div style="color:#d4e9ff;font-family:monospace;">'+(i+1)+'. '+x.q+'</div><div style="color:#ff9b9b;margin-top:4px;">你的答案：'+x.your+'</div><div style="color:#7bffb0;">正確答案：'+x.correct+'</div></div>';});w.innerHTML=h;}
+}
+document.getElementById('quizStartBtn').addEventListener('click',()=>{
+const types=[];
+if(document.getElementById('qGcd').checked)types.push('gcd');
+if(document.getElementById('qLcm').checked)types.push('lcm');
+if(document.getElementById('qIntAddSub').checked)types.push('intAddSub');
+if(document.getElementById('qIntMulDiv').checked)types.push('intMulDiv');
+if(document.getElementById('qDecAddSub').checked)types.push('decAddSub');
+if(document.getElementById('qDecMulDiv').checked)types.push('decMulDiv');
+if(!types.length){document.getElementById('quizSetupError').textContent='請至少勾選一種題型';return;}
+document.getElementById('quizSetupError').textContent='';
+quizQuestions=[];
+for(let i=0;i<10;i++){const q=genQuestion(types);q.options=makeOptions(q.answer);quizQuestions.push(q);}
+quizIndex=0;quizCorrect=0;quizWrong=[];
+document.getElementById('quizSetup').style.display='none';
+document.getElementById('quizResult').style.display='none';
+document.getElementById('quizPlay').style.display='block';
+renderQuizQuestion();
+});
+document.getElementById('quizRetryBtn').addEventListener('click',()=>{
+document.getElementById('quizResult').style.display='none';
+document.getElementById('quizPlay').style.display='none';
+document.getElementById('quizSetup').style.display='block';
+});
 
 function validateNickname(n){n=(n||'').trim();if(!n)return{ok:false,msg:'請輸入暱稱'};if(n==='管理員')return{ok:false,msg:'暱稱不能叫「管理員」'};if(n.length>12)return{ok:false,msg:'暱稱不能超過12字'};return{ok:true,name:n};}
 async function checkRoomHasAdmin(id){const{data}=await sb.from('members').select('id,nickname,role,user_id').eq('room_id',id).eq('role','admin').neq('user_id',USER_ID).limit(1);return(data&&data.length>0)?data[0]:null;}
