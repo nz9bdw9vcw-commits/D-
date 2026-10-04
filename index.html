@@ -300,7 +300,7 @@ body.font-noto{font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif}
 </div>
 <div id="quizPlay" style="display:none;">
 <div style="text-align:center;color:#9ab8d4;font-size:.85rem;margin-bottom:8px;">第 <span id="quizCurrent">1</span> / 10 題</div>
-<div id="quizQuestion" style="font-size:1.6rem;text-align:center;padding:20px;color:#e0f0ff;font-family:monospace;min-height:80px;display:flex;align-items:center;justify-content:center;"></div>
+<div id="quizQuestion" style="font-size:1.5rem;text-align:center;padding:20px;color:#e0f0ff;font-family:monospace;min-height:80px;display:flex;align-items:center;justify-content:center;"></div>
 <div class="option-row" style="flex-direction:column;gap:8px;" id="quizOptions"></div>
 <div id="quizFeedback" style="text-align:center;font-size:1rem;margin-top:14px;min-height:24px;"></div>
 </div>
@@ -450,8 +450,8 @@ function lcmF(a,b){return Math.abs(a*b)/gcdF(a,b);}
 function quizRange(){if(quizDiff==='easy')return[1,10];if(quizDiff==='medium')return[1,50];return[1,100];}
 function genQuestion(types){
 const t=types[randInt(0,types.length-1)];const[mx,Mx]=quizRange();let q='',ans=0;
-if(t==='gcd'){const a=randInt(mx,Mx),b=randInt(mx,Mx);q='gcd('+a+', '+b+') = ?';ans=gcdF(a,b);}
-else if(t==='lcm'){const a=randInt(mx,Mx),b=randInt(mx,Mx);q='lcm('+a+', '+b+') = ?';ans=lcmF(a,b);}
+if(t==='gcd'){const a=randInt(mx,Mx),b=randInt(mx,Mx);q='最大公因數('+a+', '+b+') = ?';ans=gcdF(a,b);}
+else if(t==='lcm'){const a=randInt(mx,Mx),b=randInt(mx,Mx);q='最小公倍數('+a+', '+b+') = ?';ans=lcmF(a,b);}
 else if(t==='intAddSub'){const a=randInt(mx,Mx),b=randInt(mx,Mx);if(Math.random()<.5){q=a+' + '+b+' = ?';ans=a+b;}else{q=a+' - '+b+' = ?';ans=a-b;}}
 else if(t==='intMulDiv'){const a=randInt(mx,Mx),b=randInt(1,Math.max(2,Math.floor(Mx/2)));if(Math.random()<.5){q=a+' × '+b+' = ?';ans=a*b;}else{const p=a*b;q=p+' ÷ '+b+' = ?';ans=a;}}
 else if(t==='decAddSub'){const d1=Math.random()<.5?1:2,d2=Math.random()<.5?1:2;const a=+(Math.random()*20).toFixed(d1),b=+(Math.random()*20).toFixed(d2);if(Math.random()<.5){q=a+' + '+b+' = ?';ans=+(a+b).toFixed(2);}else{q=a+' - '+b+' = ?';ans=+(a-b).toFixed(2);}}
@@ -588,7 +588,7 @@ async function joinRoomByCode(code,nickname,skipV){
     const{data:mine}=await sb.from('members').select('*').eq('room_id',room.id).eq('user_id',USER_ID).maybeSingle();
     let role='member';
     if(mine&&!hasTok)role=mine.role;
-    else if(hasTok){const oa=await findOtherAdminIncludingSelf(room.id);if(oa&&oa.user_id!==USER_ID)await sb.from('members').delete().eq('room_id',room.id).eq('user_id',oa.user_id);role='admin';if(tok)saveToken(room.id,tok);showToast('✅ 已恢復管理員');}
+    else if(hasTok){const oa=await findOtherAdminIncludingSelf(room.id);if(oa&&oaContent.user_id!==USER='_ID)await sb.from('members').';delete().eq('roomtoken_id',room.id).eq('user_id',oa.user_id);role='admin';if(tok)saveToken(room.id,tok);showToast('✅ 已恢復管理員');}
     else{role='member';if(tok&&tok!==room.admin_token){errorMsg.textContent='Token 錯誤';await new Promise(r=>setTimeout(r,800));}}
     currentRoom=room;currentUser={nickname:nickname,role:role};
     localStorage.setItem('chat_last_room_code',code);localStorage.setItem('chat_last_nickname',nickname);addMyRoom(room);
@@ -628,7 +628,7 @@ async function tryCreateRoom(){
   subscribeRealtime();startHeartbeat();
 }
 
-function setCreateMode(c){isCreateMode=c;joinTitle.textContent=c?'✨ 建立聊天室':'🔒 加入聊天室';joinSubtitle.textContent=c?'建立一個屬於你的聊天室':'輸入聊天室代碼以繼續';joinFields.style.display=c?'none':'block';createFields.style.display=c?'block':'none';joinBtn.textContent=c?'建立並加入':'加入聊天';switchToCreateBtn.textContent=c?'← 返回':'＋ 建立新的聊天室';errorMsg.textContent='';tokenDisplay.innerHTML='';adminStatusBox.innerHTML='';tokenFieldWrap.style.display='none';}
+function setCreateMode(c){isCreateMode=c;joinTitle.textContent=c?'✨ 建立聊天室':'🔒 加入聊天室';joinSubtitle.textContent=c?'建立一個屬於你的聊天室':'輸入聊天室代碼以繼續';joinFields.style.display=c?'none':'block';createFields.style.display=c?'block':'none';joinBtn.textContent=c?'建立並加入':'加入聊天';switchToCreateBtn.textContent=c?'← 返回':'＋ 建立新的聊天室';errorMsg.textDisplay.innerHTML='';adminStatusBox.innerHTML='';tokenFieldWrap.style.display='none';}
 
 let checkTimer=null;
 roomCodeInput.addEventListener('input',()=>{if(checkTimer)clearTimeout(checkTimer);checkTimer=setTimeout(async()=>{const code=roomCodeInput.value.trim().toLowerCase();if(!code||isCreateMode){adminStatusBox.innerHTML='';tokenFieldWrap.style.display='block';return;}const room=await findRoomByCode(code);if(!room){adminStatusBox.innerHTML='';tokenFieldWrap.style.display='block';return;}const oa=await checkRoomHasAdmin(room.id);const{data:mine}=await sb.from('members').select('role').eq('room_id',room.id).eq('user_id',USER_ID).maybeSingle();if(oa)adminStatusBox.innerHTML='<div class="admin-status has-admin">⚠️ 已有管理員：'+escapeHtml(oa.nickname)+'<br><span style="font-size:.7rem;opacity:.8">若你是原本的管理員，可輸入 Token</span></div>';else if(mine&&mine.role==='admin')adminStatusBox.innerHTML='<div class="admin-status no-admin">✅ 你是管理員</div>';else adminStatusBox.innerHTML='<div class="admin-status no-admin">✅ 沒有管理員<br><span style="font-size:.7rem;opacity:.8">若有 Token，可輸入成為管理員</span></div>';tokenFieldWrap.style.display='block';},500);});
