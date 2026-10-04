@@ -588,7 +588,7 @@ async function joinRoomByCode(code,nickname,skipV){
     const{data:mine}=await sb.from('members').select('*').eq('room_id',room.id).eq('user_id',USER_ID).maybeSingle();
     let role='member';
     if(mine&&!hasTok)role=mine.role;
-    else if(hasTok){const oa=await findOtherAdminIncludingSelf(room.id);if(oa&&oaContent.user_id!==USER='_ID)await sb.from('members').';delete().eq('roomtoken_id',room.id).eq('user_id',oa.user_id);role='admin';if(tok)saveToken(room.id,tok);showToast('✅ 已恢復管理員');}
+    else if(hasTok){const oa=await findOtherAdminIncludingSelf(room.id);if(oa&&oa.user_id!==USER_ID)await sb.from('members').delete().eq('room_id',room.id).eq('user_id',oa.user_id);role='admin';if(tok)saveToken(room.id,tok);showToast('✅ 已恢復管理員');}
     else{role='member';if(tok&&tok!==room.admin_token){errorMsg.textContent='Token 錯誤';await new Promise(r=>setTimeout(r,800));}}
     currentRoom=room;currentUser={nickname:nickname,role:role};
     localStorage.setItem('chat_last_room_code',code);localStorage.setItem('chat_last_nickname',nickname);addMyRoom(room);
@@ -628,7 +628,7 @@ async function tryCreateRoom(){
   subscribeRealtime();startHeartbeat();
 }
 
-function setCreateMode(c){isCreateMode=c;joinTitle.textContent=c?'✨ 建立聊天室':'🔒 加入聊天室';joinSubtitle.textContent=c?'建立一個屬於你的聊天室':'輸入聊天室代碼以繼續';joinFields.style.display=c?'none':'block';createFields.style.display=c?'block':'none';joinBtn.textContent=c?'建立並加入':'加入聊天';switchToCreateBtn.textContent=c?'← 返回':'＋ 建立新的聊天室';errorMsg.textDisplay.innerHTML='';adminStatusBox.innerHTML='';tokenFieldWrap.style.display='none';}
+function setCreateMode(c){isCreateMode=c;joinTitle.textContent=c?'✨ 建立聊天室':'🔒 加入聊天室';joinSubtitle.textContent=c?'建立一個屬於你的聊天室':'輸入聊天室代碼以繼續';joinFields.style.display=c?'none':'block';createFields.style.display=c?'block':'none';joinBtn.textContent=c?'建立並加入':'加入聊天';switchToCreateBtn.textContent=c?'← 返回':'＋ 建立新的聊天室';errorMsg.textContent='';tokenDisplay.innerHTML='';adminStatusBox.innerHTML='';tokenFieldWrap.style.display='none';}
 
 let checkTimer=null;
 roomCodeInput.addEventListener('input',()=>{if(checkTimer)clearTimeout(checkTimer);checkTimer=setTimeout(async()=>{const code=roomCodeInput.value.trim().toLowerCase();if(!code||isCreateMode){adminStatusBox.innerHTML='';tokenFieldWrap.style.display='block';return;}const room=await findRoomByCode(code);if(!room){adminStatusBox.innerHTML='';tokenFieldWrap.style.display='block';return;}const oa=await checkRoomHasAdmin(room.id);const{data:mine}=await sb.from('members').select('role').eq('room_id',room.id).eq('user_id',USER_ID).maybeSingle();if(oa)adminStatusBox.innerHTML='<div class="admin-status has-admin">⚠️ 已有管理員：'+escapeHtml(oa.nickname)+'<br><span style="font-size:.7rem;opacity:.8">若你是原本的管理員，可輸入 Token</span></div>';else if(mine&&mine.role==='admin')adminStatusBox.innerHTML='<div class="admin-status no-admin">✅ 你是管理員</div>';else adminStatusBox.innerHTML='<div class="admin-status no-admin">✅ 沒有管理員<br><span style="font-size:.7rem;opacity:.8">若有 Token，可輸入成為管理員</span></div>';tokenFieldWrap.style.display='block';},500);});
@@ -701,32 +701,36 @@ manageBtnsBtn.addEventListener('click',openBtnsModal);
 closeBtnsBtn.addEventListener('click',closeBtnsModal);
 addBtnBtn.addEventListener('click',addBtn);
 addRoomBtn.addEventListener('click',()=>{closeDrawer();joinOverlay.classList.remove('hidden');setCreateMode(false);roomCodeInput.value='';roomCodeInput.focus();});
+
 async function init(){
   renderMyRooms();
   const lastCode = localStorage.getItem('chat_last_room_code');
   const lastNick = localStorage.getItem('chat_last_nickname');
   if (lastCode && lastNick) {
     try {
-      const room = await findRoomByCode(lastCode);
-      if (room) {
+      const autoLogin = (async () => {
+        const room = await findRoomByCode(lastCode);
+        if (!room) return null;
         const { data: mine } = await sb.from('members')
           .select('*').eq('room_id', room.id).eq('user_id', USER_ID).maybeSingle();
-        if (mine) {
-          currentUser.nickname = mine.nickname || lastNick;
-          await joinRoomByCode(lastCode, currentUser.nickname, true);
-          loadingScreen.classList.add('hidden');
-          return;
-        } else {
-          localStorage.removeItem('chat_last_room_code');
-          localStorage.removeItem('chat_last_nickname');
-        }
-      } else {
-        localStorage.removeItem('chat_last_room_code');
-        localStorage.removeItem('chat_last_nickname');
+        if (!mine) return null;
+        currentUser.nickname = mine.nickname || lastNick;
+        await joinRoomByCode(lastCode, currentUser.nickname, true);
+        return true;
+      })();
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('自動登入超時')), 10000)
+      );
+      const ok = await Promise.race([autoLogin, timeout]);
+      if (ok) {
+        loadingScreen.classList.add('hidden');
+        return;
       }
     } catch (e) {
       console.warn('自動登入失敗:', e);
     }
+    localStorage.removeItem('chat_last_room_code');
+    localStorage.removeItem('chat_last_nickname');
   }
   loadingScreen.classList.add('hidden');
   joinOverlay.classList.remove('hidden');
