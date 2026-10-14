@@ -247,6 +247,7 @@
         <option>學校</option>
         <option>生活</option>
         <option>其他</option>
+        <option>八卦</option>
       </select>
       <input id="author" value="小編" placeholder="作者">
     </div>
@@ -271,8 +272,23 @@
 
   const $ = id => document.getElementById(id)
   const CATS = ['全部', '考試', '學校', '生活', '其他']
+  const GOSSIP_PASSWORD = '葡萄架倒了'
   let currentCat = '全部'
   let isLoggedIn = false
+  let gossipUnlocked = false
+
+  // 檢查網址是否帶有正確的 gossip 參數
+  function checkGossipUrl() {
+    const params = new URLSearchParams(location.search)
+    const g = params.get('gossip')
+    if (g && g === GOSSIP_PASSWORD) {
+      gossipUnlocked = true
+      return true
+    }
+    return false
+  }
+
+  checkGossipUrl()
 
   function applyTheme(theme) {
     if (theme === 'dark') {
@@ -308,7 +324,13 @@
     return id ? parseInt(id, 10) : null
   }
   function setUrlId(id) {
-    const url = id ? `${location.pathname}?id=${id}` : location.pathname
+    const params = new URLSearchParams(location.search)
+    // 保留 gossip 參數
+    if (gossipUnlocked) params.set('gossip', GOSSIP_PASSWORD)
+    if (id) params.set('id', id)
+    else params.delete('id')
+    const qs = params.toString()
+    const url = qs ? `${location.pathname}?${qs}` : location.pathname
     history.pushState({ id }, '', url)
   }
 
@@ -361,6 +383,13 @@
   async function openPost(id, push = true) {
     const { data, error } = await supabase.from('posts').select('*').eq('id', id).single()
     if (error || !data) {
+      $('listView').innerHTML = '<div class="empty">找不到這篇文章。</div>'
+      $('listView').classList.remove('hidden')
+      $('detailView').classList.add('hidden')
+      return
+    }
+    // 如果文章是八卦，且未解鎖，不顯示
+    if (data.category === '八卦' && !gossipUnlocked && !isLoggedIn) {
       $('listView').innerHTML = '<div class="empty">找不到這篇文章。</div>'
       $('listView').classList.remove('hidden')
       $('detailView').classList.add('hidden')
@@ -469,6 +498,7 @@
     await supabase.auth.signOut()
     document.title = '小編日報'
     currentCat = '全部'
+    gossipUnlocked = false
     renderCats()
     setUrlId(null)
     refreshAuth()
@@ -511,12 +541,26 @@
 
   async function loadList() {
     let q = supabase.from('posts').select('*').order('created_at', { ascending: false })
-    if (currentCat !== '全部') q = q.eq('category', currentCat)
+
+    if (currentCat === '全部') {
+      // 「全部」永遠不顯示八卦
+      q = q.neq('category', '八卦')
+    } else {
+      q = q.eq('category', currentCat)
+    }
+
     const { data, error } = await q
     const listView = $('listView')
     if (error) { listView.innerHTML = '<div class="empty">載入失敗：' + esc(error.message) + '</div>'; return }
-    if (!data.length) { listView.innerHTML = '<div class="empty">這個分類還沒有文章。</div>'; return }
-    listView.innerHTML = data.map(p => `
+
+    // 過濾：如果沒解鎖，就不顯示八卦
+    const filtered = (data || []).filter(p => {
+      if (p.category === '八卦' && !gossipUnlocked && !isLoggedIn) return false
+      return true
+    })
+
+    if (!filtered.length) { listView.innerHTML = '<div class="empty">這個分類還沒有文章。</div>'; return }
+    listView.innerHTML = filtered.map(p => `
       <div class="card" onclick="openPost(${p.id})">
         <span class="cat">${esc(p.category || '未分類')}</span>
         <h2>${esc(p.title)}</h2>
@@ -532,16 +576,19 @@
     const el = $('adminList')
     if (!data || !data.length) { el.innerHTML = '<div class="empty">還沒有文章。</div>'; return }
     const baseUrl = location.origin + location.pathname
-    el.innerHTML = data.map(p => `
+    el.innerHTML = data.map(p => {
+      const gossipParam = p.category === '八卦' ? `&gossip=${encodeURIComponent(GOSSIP_PASSWORD)}` : ''
+      return `
       <div class="admin-item">
         <div class="info">
           <h3>${esc(p.title)}</h3>
           <div class="meta">${esc(p.category || '')} · ${esc(p.author || '')} · ${new Date(p.created_at).toLocaleString('zh-TW')}</div>
-          <a href="${baseUrl}?id=${p.id}" target="_blank">查看文章 ↗</a>
+          <a href="${baseUrl}?id=${p.id}${gossipParam}" target="_blank">查看文章 ↗</a>
         </div>
         <button class="btn-del" onclick="del(${p.id})">刪除</button>
       </div>
-    `).join('')
+      `
+    }).join('')
   }
 
   function esc(s) {
