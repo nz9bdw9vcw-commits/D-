@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>小編日報</title>
   <style>
-    /* ============ 顏色變數：亮色系（預設） ============ */
     :root {
       --bg: #fafafa;
       --card: #ffffff;
@@ -26,7 +25,6 @@
       --shadow-lg: rgba(0,0,0,.08);
     }
 
-    /* ============ 顏色變數：暗色系（純黑） ============ */
     html.dark {
       --bg: #000000;
       --card: #0d0d0d;
@@ -167,6 +165,44 @@
     }
     .empty { color: var(--text-meta); padding: 20px; text-align: center; }
     .hidden { display: none !important; }
+
+    .comments-section {
+      margin-top: 40px; padding-top: 24px;
+      border-top: 2px solid var(--border);
+    }
+    .comments-section h3 {
+      font-size: 18px; margin: 0 0 16px; color: var(--text);
+    }
+    .comment-form {
+      background: var(--card); padding: 16px; border-radius: 8px;
+      border: 1px solid var(--border); margin-bottom: 24px;
+    }
+    .comment-form textarea { height: 80px; }
+    .comment-form button {
+      background: var(--accent); color: #fff; border: none;
+      padding: 10px 20px; border-radius: 6px; cursor: pointer;
+      font-size: 14px; width: auto;
+    }
+    .comment-form button:hover { background: var(--accent-dark); }
+    .comment-item {
+      padding: 14px 0; border-bottom: 1px solid var(--border);
+    }
+    .comment-item .nick {
+      font-weight: 700; color: var(--accent); font-size: 14px;
+    }
+    .comment-item .time {
+      color: var(--text-meta); font-size: 12px; margin-left: 8px;
+    }
+    .comment-item .text {
+      margin-top: 6px; color: var(--text-soft);
+      white-space: pre-wrap; font-size: 15px;
+    }
+    .comment-item .del-btn {
+      background: none; border: none; color: var(--text-meta);
+      font-size: 12px; cursor: pointer; padding: 0; margin-top: 4px;
+    }
+    .comment-item .del-btn:hover { color: var(--danger-text); }
+    .no-comment { color: var(--text-meta); font-size: 14px; padding: 12px 0; }
   </style>
 </head>
 <body>
@@ -238,7 +274,6 @@
   let currentCat = '全部'
   let isLoggedIn = false
 
-  // ============ 主題切換 ============
   function applyTheme(theme) {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark')
@@ -251,9 +286,8 @@
 
   function initTheme() {
     const saved = localStorage.getItem('theme')
-    if (saved) {
-      applyTheme(saved)
-    } else {
+    if (saved) applyTheme(saved)
+    else {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
       applyTheme(prefersDark ? 'dark' : 'light')
     }
@@ -268,7 +302,6 @@
 
   initTheme()
 
-  // ============ 網址參數工具 ============
   function getIdFromUrl() {
     const params = new URLSearchParams(location.search)
     const id = params.get('id')
@@ -279,7 +312,6 @@
     history.pushState({ id }, '', url)
   }
 
-  // ============ 分類導覽 ============
   function renderCats() {
     $('catInner').innerHTML = CATS.map(c =>
       `<button data-cat="${c}" class="${c === currentCat ? 'active' : ''}">${c}</button>`
@@ -289,7 +321,6 @@
     })
   }
 
-  // ============ 登入狀態 ============
   async function refreshAuth() {
     const { data: { session } } = await supabase.auth.getSession()
     isLoggedIn = !!session
@@ -311,7 +342,6 @@
     }
   }
 
-  // ============ 路由 ============
   function route() {
     if (isLoggedIn) return
     const id = getIdFromUrl()
@@ -328,7 +358,6 @@
     loadList()
   }
 
-  // ============ 文章內頁 ============
   async function openPost(id, push = true) {
     const { data, error } = await supabase.from('posts').select('*').eq('id', id).single()
     if (error || !data) {
@@ -353,12 +382,22 @@
         <button onclick="copyLink()">複製連結</button>
         <button onclick="shareNative()">分享…</button>
       </div>
+      <div class="comments-section">
+        <h3>留言</h3>
+        <div class="comment-form">
+          <input id="cNick" placeholder="你的暱稱" maxlength="20">
+          <textarea id="cText" placeholder="想說點什麼..." maxlength="500"></textarea>
+          <button onclick="submitComment(${data.id})">送出留言</button>
+          <div class="msg" id="cMsg" style="text-align:left"></div>
+        </div>
+        <div id="commentList">載入留言中...</div>
+      </div>
     `
     window.scrollTo(0, 0)
+    loadComments(id)
   }
   window.openPost = openPost
 
-  // ============ 分享 ============
   window.copyLink = async () => {
     try {
       await navigator.clipboard.writeText(location.href)
@@ -375,11 +414,52 @@
     }
   }
 
+  window.submitComment = async (postId) => {
+    const nick = $('cNick').value.trim()
+    const text = $('cText').value.trim()
+    const msg = $('cMsg')
+    if (!nick) { msg.textContent = '請填暱稱'; return }
+    if (!text) { msg.textContent = '請填留言內容'; return }
+    const { error } = await supabase.from('comments').insert({
+      post_id: postId, nickname: nick, content: text
+    })
+    if (error) {
+      msg.textContent = '留言失敗：' + error.message
+    } else {
+      $('cText').value = ''
+      msg.textContent = ''
+      loadComments(postId)
+    }
+  }
+
+  async function loadComments(postId) {
+    const { data, error } = await supabase
+      .from('comments').select('*')
+      .eq('post_id', postId)
+      .order('created_at', { ascending: true })
+    const el = $('commentList')
+    if (error) { el.innerHTML = '<div class="no-comment">留言載入失敗</div>'; return }
+    if (!data.length) { el.innerHTML = '<div class="no-comment">還沒有人留言，當第一個吧！</div>'; return }
+    el.innerHTML = data.map(c => `
+      <div class="comment-item">
+        <span class="nick">${esc(c.nickname)}</span>
+        <span class="time">${new Date(c.created_at).toLocaleString('zh-TW')}</span>
+        <div class="text">${esc(c.content)}</div>
+        ${isLoggedIn ? `<button class="del-btn" onclick="delComment(${c.id}, ${postId})">刪除</button>` : ''}
+      </div>
+    `).join('')
+  }
+
+  window.delComment = async (commentId, postId) => {
+    if (!confirm('刪除這則留言？')) return
+    await supabase.from('comments').delete().eq('id', commentId)
+    loadComments(postId)
+  }
+
   $('back').onclick = () => showList(true)
   $('logoBtn').onclick = () => showList(true)
   window.addEventListener('popstate', route)
 
-  // ============ 登入 / 登出 ============
   $('btnLogin').onclick = () => {
     $('listView').classList.add('hidden')
     $('detailView').classList.add('hidden')
@@ -406,7 +486,6 @@
   }
   $('password').addEventListener('keydown', e => { if (e.key === 'Enter') $('btnDoLogin').click() })
 
-  // ============ 發布 ============
   $('btnAdd').onclick = async () => {
     const title = $('title').value.trim()
     const content = $('content').value.trim()
@@ -430,7 +509,6 @@
     loadAdmin()
   }
 
-  // ============ 載入列表 ============
   async function loadList() {
     let q = supabase.from('posts').select('*').order('created_at', { ascending: false })
     if (currentCat !== '全部') q = q.eq('category', currentCat)
@@ -449,7 +527,6 @@
     `).join('')
   }
 
-  // ============ 後台列表 ============
   async function loadAdmin() {
     const { data } = await supabase.from('posts').select('*').order('created_at', { ascending: false })
     const el = $('adminList')
