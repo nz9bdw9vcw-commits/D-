@@ -37,7 +37,7 @@
       --accent-dark: #ff8080;
       --btn-bg: #1a1a1a;
       --btn-text: #e0e0e0;
-      --input-bg: #141414;
+     : --input-bg: #141414;
       --input-border: #2a2a2a;
       --danger-bg: #2a1010;
       --danger-text: #ff8080;
@@ -191,7 +191,7 @@
       font-weight: 700; color: var(--accent); font-size: 14px;
     }
     .comment-item .time {
-      color: var(--text-meta); font-size: 12px; margin-left: 8px;
+      color: var(--text-meta); font-size: 12px; margin-left 8px;
     }
     .comment-item .text {
       margin-top: 6px; color: var(--text-soft);
@@ -272,12 +272,11 @@
 
   const $ = id => document.getElementById(id)
   const CATS = ['全部', '考試', '學校', '生活', '其他']
-  const GOSSIP_PASSWORD = '葡萄架倒了'
+  const GOSSIP_PASSWORD = 'qazwsxedcrfvtgbyhnujmikolp'
   let currentCat = '全部'
   let isLoggedIn = false
   let gossipUnlocked = false
 
-  // 檢查網址是否帶有正確的 gossip 參數
   function checkGossipUrl() {
     const params = new URLSearchParams(location.search)
     const g = params.get('gossip')
@@ -325,7 +324,6 @@
   }
   function setUrlId(id) {
     const params = new URLSearchParams(location.search)
-    // 保留 gossip 參數
     if (gossipUnlocked) params.set('gossip', GOSSIP_PASSWORD)
     if (id) params.set('id', id)
     else params.delete('id')
@@ -388,7 +386,6 @@
       $('detailView').classList.add('hidden')
       return
     }
-    // 如果文章是八卦，且未解鎖，不顯示
     if (data.category === '八卦' && !gossipUnlocked && !isLoggedIn) {
       $('listView').innerHTML = '<div class="empty">找不到這篇文章。</div>'
       $('listView').classList.remove('hidden')
@@ -543,7 +540,6 @@
     let q = supabase.from('posts').select('*').order('created_at', { ascending: false })
 
     if (currentCat === '全部') {
-      // 「全部」永遠不顯示八卦
       q = q.neq('category', '八卦')
     } else {
       q = q.eq('category', currentCat)
@@ -553,7 +549,6 @@
     const listView = $('listView')
     if (error) { listView.innerHTML = '<div class="empty">載入失敗：' + esc(error.message) + '</div>'; return }
 
-    // 過濾：如果沒解鎖，就不顯示八卦
     const filtered = (data || []).filter(p => {
       if (p.category === '八卦' && !gossipUnlocked && !isLoggedIn) return false
       return true
