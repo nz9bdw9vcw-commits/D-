@@ -37,7 +37,7 @@
       --accent-dark: #ff8080;
       --btn-bg: #1a1a1a;
       --btn-text: #e0e0e0;
-     : --input-bg: #141414;
+      --input-bg: #141414;
       --input-border: #2a2a2a;
       --danger-bg: #2a1010;
       --danger-text: #ff8080;
@@ -191,7 +191,7 @@
       font-weight: 700; color: var(--accent); font-size: 14px;
     }
     .comment-item .time {
-      color: var(--text-meta); font-size: 12px; margin-left 8px;
+      color: var(--text-meta); font-size: 12px; margin-left: 8px;
     }
     .comment-item .text {
       margin-top: 6px; color: var(--text-soft);
@@ -344,7 +344,8 @@
   async function refreshAuth() {
     const { data: { session } } = await supabase.auth.getSession()
     isLoggedIn = !!session
-    if (isLoggedIn) {
+    const hasIdParam = getIdFromUrl() !== null
+    if (isLoggedIn && !hasIdParam) {
       $('btnLogin').classList.add('hidden')
       $('btnLogout').classList.remove('hidden')
       $('loginView').classList.add('hidden')
@@ -354,8 +355,13 @@
       $('catNav').classList.add('hidden')
       loadAdmin()
     } else {
-      $('btnLogin').classList.remove('hidden')
-      $('btnLogout').classList.add('hidden')
+      if (isLoggedIn) {
+        $('btnLogin').classList.add('hidden')
+        $('btnLogout').classList.remove('hidden')
+      } else {
+        $('btnLogin').classList.remove('hidden')
+        $('btnLogout').classList.add('hidden')
+      }
       $('editorView').classList.add('hidden')
       $('catNav').classList.remove('hidden')
       route()
@@ -363,17 +369,16 @@
   }
 
   function route() {
-    if (isLoggedIn) return
     const id = getIdFromUrl()
     if (id) openPost(id, false)
     else showList(false)
   }
 
   function showList(push) {
-    if (isLoggedIn) return
     if (push !== false) setUrlId(null)
     $('detailView').classList.add('hidden')
     $('loginView').classList.add('hidden')
+    $('editorView').classList.add('hidden')
     $('listView').classList.remove('hidden')
     loadList()
   }
@@ -489,6 +494,7 @@
   $('btnLogin').onclick = () => {
     $('listView').classList.add('hidden')
     $('detailView').classList.add('hidden')
+    $('editorView').classList.add('hidden')
     $('loginView').classList.remove('hidden')
   }
   $('btnLogout').onclick = async () => {
