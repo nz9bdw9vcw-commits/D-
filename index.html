@@ -1,744 +1,194 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#1a2a3a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MDHS|ADMIN">
-<meta name="mobile-web-app-capable" content="yes">
-<title>MDHS|ADMIN</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden}
-body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:#0f1a24;color:#e0f0ff;--accent:#1e5a86;--accent-hover:#2872a6;--bubble-user:#1f5a87;--border-accent:#3d8fd9}
-body.theme-purple{--accent:#7a4dbf;--accent-hover:#9261d4;--bubble-user:#6a3fb0;--border-accent:#a06be0}
-body.theme-green{--accent:#2d8a5c;--accent-hover:#36a06d;--bubble-user:#257a4f;--border-accent:#4ac088}
-body.theme-red{--accent:#c0392b;--accent-hover:#d94b3d;--bubble-user:#a5301f;--border-accent:#e05a4a}
-body.theme-pink{--accent:#c94b8c;--accent-hover:#d9609d;--bubble-user:#b03d7a;--border-accent:#e075a5}
-body.font-small .message .bubble{font-size:.82rem}
-body.font-medium .message .bubble{font-size:.92rem}
-body.font-large .message .bubble{font-size:1.05rem}
-body.font-xlarge .message .bubble{font-size:1.2rem}
-body.font-jhenghei{font-family:'Microsoft JhengHei','PingFang TC',sans-serif}
-body.font-pingfang{font-family:'PingFang TC','Microsoft JhengHei',sans-serif}
-body.font-noto{font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif}
-.app-container{width:100%;height:100vh;height:100dvh;background:#14202e;display:flex;position:relative;overflow:hidden}
-.overlay{position:absolute;inset:0;background:linear-gradient(160deg,#0f1a24,#1a2a3a);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:100;padding:20px;overflow-y:auto}
-.overlay.hidden{display:none}
-.card{background:rgba(30,45,60,.95);padding:28px 22px;border-radius:22px;box-shadow:0 15px 30px rgba(0,0,0,.5);width:100%;max-width:420px;border:1px solid rgba(100,180,255,.3)}
-.card h2{color:#b8e2ff;font-weight:500;margin-bottom:6px;font-size:1.5rem;text-align:center}
-.card p{color:#9ab8d4;margin-bottom:18px;font-size:.85rem;text-align:center}
-.card label{display:block;color:#8dc9ff;font-size:.8rem;margin-bottom:6px;margin-top:12px}
-.card input,.card select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #2d4b66;background:#0f1a24;color:#e0f0ff;font-size:1rem;outline:none}
-.card button{width:100%;padding:14px;border-radius:50px;border:none;background:linear-gradient(135deg,#2b6c9e,#1e4b70);color:#fff;font-weight:600;font-size:1rem;cursor:pointer;margin-top:20px}
-.card button.secondary{background:transparent;border:1px solid #2f6d9e;color:#8dc9ff;margin-top:10px;padding:12px;font-size:.9rem}
-.error-msg{color:#ff7b7b;font-size:.82rem;margin-top:10px;min-height:18px;text-align:center}
-.hint-text{font-size:.72rem;color:#587b99;margin-top:12px;text-align:center;line-height:1.5}
-.token-display{background:#0a1520;border:1px dashed #4f9eff;padding:10px;border-radius:10px;color:#7bffb0;font-size:.78rem;word-break:break-all;text-align:center;margin-top:10px;font-family:monospace;user-select:all}
-.admin-status{padding:10px 12px;border-radius:10px;font-size:.8rem;margin-top:10px;text-align:center}
-.admin-status.has-admin{background:rgba(255,200,100,.1);color:#ffd98a;border:1px solid #8a5a1e}
-.admin-status.no-admin{background:rgba(123,255,176,.1);color:#7bffb0;border:1px solid #2d7a4d}
-.loading-screen{position:fixed;inset:0;background:#0f1a24;display:flex;justify-content:center;align-items:center;z-index:999;color:#8dc9ff;text-align:center;padding:20px}
-.loading-screen.hidden{display:none}
-.drawer-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:90;opacity:0;pointer-events:none;transition:opacity .25s}
-.drawer-backdrop.open{opacity:1;pointer-events:auto}
-.sidebar{position:absolute;top:0;left:0;bottom:0;width:290px;background:#0e1820;border-right:1px solid rgba(70,130,200,.2);display:flex;flex-direction:column;z-index:95;transform:translateX(-100%);transition:transform .25s ease}
-.sidebar.open{transform:translateX(0)}
-.sidebar-header{padding:60px 16px 14px;border-bottom:1px solid rgba(70,130,200,.15);color:#b8e2ff;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;position:relative;flex-shrink:0}
-.sidebar-close{position:absolute;top:14px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:#b8e2ff;font-size:1.2rem;cursor:pointer}
-.room-name{font-size:1rem;color:#e0f0ff;text-transform:none;letter-spacing:0;margin-top:4px;font-weight:500;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.role-badge{font-size:.62rem;background:var(--accent);padding:2px 8px;border-radius:20px;color:#cce8ff}
-.role-badge.admin{background:#8a5a1e;color:#ffe1b0}
-.my-rooms-section{border-bottom:1px solid rgba(70,130,200,.15);flex-shrink:0;max-height:40%;display:flex;flex-direction:column}
-.my-rooms-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 6px;font-size:.68rem;color:#5f87a8;letter-spacing:1px;text-transform:uppercase}
-.my-rooms-header button{background:var(--accent);border:none;color:#cce8ff;font-size:.75rem;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:600}
-.my-rooms-list{overflow-y:auto;padding:0 8px 10px}
-.my-room-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;color:#b8d4ec;cursor:pointer;font-size:.85rem;margin-bottom:3px;word-break:break-all}
-.my-room-item.active{background:var(--accent);color:#fff;font-weight:500}
-.my-room-item .info{flex:1;min-width:0}
-.my-room-item .rname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.my-room-item .rcode{font-size:.7rem;color:#7fa0bd;margin-top:1px}
-.my-rooms-empty{padding:16px;text-align:center;color:#587b99;font-size:.78rem}
-.channel-list{flex:1;overflow-y:auto;padding:10px}
-.channel-section-title{font-size:.68rem;color:#5f87a8;padding:10px 8px 6px;letter-spacing:1px;text-transform:uppercase}
-.channel-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;color:#b8d4ec;cursor:pointer;font-size:.92rem;margin-bottom:2px}
-.channel-item.active{background:var(--accent);color:#fff;font-weight:500}
-.channel-item .del-btn{margin-left:auto;font-size:.75rem;color:#ff9b9b;opacity:.7;padding:4px 8px;border-radius:8px;background:transparent;border:none;cursor:pointer}
-.sidebar-footer{padding:12px;border-top:1px solid rgba(70,130,200,.15);display:flex;flex-direction:column;gap:8px;flex-shrink:0}
-.sidebar-footer button{width:100%;padding:11px;border-radius:12px;border:1px dashed #2f6d9e;background:transparent;color:#8dc9ff;font-size:.85rem;cursor:pointer}
-.sidebar-footer button.danger{border-color:#7a2a2a;color:#ff9b9b}
-.chat-main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%;position:relative}
-.chat-header{padding:calc(env(safe-area-inset-top) + 12px) 12px 12px;background:#0e1820;border-bottom:1px solid rgba(70,130,200,.2);display:flex;align-items:center;gap:8px;color:#c6e2ff;flex-shrink:0}
-.menu-btn{width:38px;height:38px;border-radius:10px;background:rgba(47,109,158,.25);border:none;color:#c6e2ff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.chat-header h3{font-weight:500;font-size:1rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chat-header .bot-badge{background:#1e3f5a;border-radius:16px;padding:4px 10px;font-size:.68rem;color:#8dc9ff;border:1px solid #2f6d9e;flex-shrink:0}
-.quick-buttons{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;background:rgba(15,25,35,.5);border-bottom:1px solid rgba(70,130,200,.15)}
-.quick-buttons:empty{display:none}
-.quick-btn{padding:7px 12px;border-radius:20px;background:var(--accent);color:#e0f0ff;border:1px solid var(--border-accent);font-size:.8rem;cursor:pointer}
-.messages-area{flex:1;overflow-y:auto;padding:14px 12px 8px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
-.message{display:flex;flex-direction:column;max-width:85%}
-.message.user{align-self:flex-end}
-.message.bot{align-self:flex-start}
-.message.system{align-self:center;max-width:92%}
-.message .bubble{padding:9px 14px;border-radius:18px;font-size:.92rem;line-height:1.45;word-break:break-word}
-.message.user .bubble{background:var(--bubble-user);color:#e7f3ff;border-bottom-right-radius:4px}
-.message.bot .bubble{background:#142e40;color:#d4e9ff;border:1px solid #2a4b62;border-left:3px solid #3d8fd9;border-bottom-left-radius:4px}
-.message.system .bubble{background:rgba(40,60,80,.6);color:#9dbdd8;font-size:.78rem;padding:6px 12px;border-radius:18px}
-.message .sender{font-size:.68rem;color:#7f9db8;margin-bottom:3px;padding-left:6px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-.message.user .sender{justify-content:flex-end;padding-right:6px;padding-left:0}
-.message .sender .role-tag{color:#ffd98a}
-.message .sender .role-tag.member{color:#8dc9ff}
-.message .sender .edit-btn{background:transparent;border:none;color:#7fa0bd;font-size:.7rem;padding:0 4px;cursor:pointer;text-decoration:underline}
-.message .sender .edited-tag{font-size:.62rem;color:#7fa0bd;margin-left:2px}
-.message img.chat-image{max-width:100%;border-radius:12px;margin-top:4px;cursor:pointer;display:block}
-.hint{font-size:.68rem;color:#6c8ca5;text-align:center;padding:2px 0 4px}
-.input-area{padding:8px 10px calc(env(safe-area-inset-bottom) + 10px);background:#0e1820;border-top:1px solid rgba(70,130,200,.2);display:flex;gap:6px;flex-shrink:0;align-items:center}
-.input-area input[type="text"]{flex:1;padding:12px 16px;border-radius:50px;border:1px solid #244a64;background:#14202e;color:#ecf5ff;font-size:1rem;outline:none;min-width:0}
-.input-area button{background:var(--accent);border:none;color:#fff;padding:0 18px;border-radius:50px;font-weight:600;cursor:pointer;font-size:.95rem;flex-shrink:0;height:44px}
-.input-area button:disabled{background:#2a3f4f;color:#6d8aa0}
-.icon-btn{background:rgba(47,109,158,.35) !important;padding:0 14px !important;font-size:1.2rem !important}
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;justify-content:center;align-items:center;z-index:110;padding:16px}
-.modal-backdrop.hidden{display:none}
-.modal{background:#162635;padding:22px;border-radius:20px;width:100%;max-width:440px;border:1px solid #2f6d9e;max-height:85vh;overflow-y:auto}
-.modal h3{color:#b8e2ff;font-weight:500;margin-bottom:14px;font-size:1.15rem}
-.modal label{display:block;color:#8dc9ff;font-size:.78rem;margin-bottom:6px;margin-top:12px}
-.modal input,.modal select,.modal textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #2d4b66;background:#0f1a24;color:#e0f0ff;font-size:1rem;outline:none;font-family:inherit}
-.modal textarea{min-height:80px;resize:vertical}
-.modal-actions{display:flex;gap:10px;margin-top:20px}
-.modal-actions button{flex:1;padding:12px;border-radius:40px;border:none;font-weight:600;cursor:pointer;font-size:.9rem}
-.modal-actions .confirm{background:var(--accent);color:#fff}
-.modal-actions .cancel{background:transparent;border:1px solid #3d5f7a;color:#9dbdd8}
-.empty-state{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#5f87a8;gap:10px;font-size:.9rem;padding:40px 20px;text-align:center}
-.empty-state .big{font-size:2.5rem;opacity:.5}
-.member-item,.cmd-item,.btn-item{display:flex;align-items:center;gap:8px;padding:9px 10px;background:rgba(15,25,35,.6);border-radius:10px;font-size:.85rem;margin-bottom:6px}
-.member-item .name{flex:1;color:#d4e9ff}
-.member-item .badge{font-size:.62rem;padding:2px 6px;border-radius:8px;background:var(--accent);color:#cce8ff}
-.member-item .badge.admin{background:#8a5a1e;color:#ffe1b0}
-.member-item .kick-btn{font-size:.7rem;padding:5px 10px;background:#7a2a2a;color:#ffc5c5;border:none;border-radius:8px;cursor:pointer}
-.member-item.self{background:rgba(31,90,135,.4)}
-.cmd-item .cmd-name{color:#7bffb0;font-family:monospace;min-width:70px}
-.cmd-item .cmd-resp{flex:1;color:#d4e9ff;font-size:.8rem;word-break:break-all}
-.cmd-item .del-btn,.btn-item .del-btn{font-size:.7rem;padding:5px 10px;background:#7a2a2a;color:#ffc5c5;border:none;border-radius:8px;cursor:pointer}
-.btn-item .btn-label{flex:1;color:#d4e9ff}
-.btn-item .btn-type{font-size:.62rem;padding:2px 6px;border-radius:8px;background:var(--accent);color:#cce8ff}
-.room-code-box{padding:16px;background:#0a1520;border:1px dashed var(--border-accent);border-radius:12px;color:#7bffb0;font-size:1.5rem;font-family:monospace;text-align:center;letter-spacing:3px;user-select:all;margin-top:4px}
-.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 80px);left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:12px 22px;border-radius:30px;font-size:.9rem;z-index:800;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90%;text-align:center}
-.toast.show{opacity:1}
-.uploading-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;justify-content:center;align-items:center;z-index:300;color:#b8e2ff}
-.uploading-overlay.hidden{display:none}
-.toolbox-overlay{position:fixed;inset:0;background:linear-gradient(160deg,#0f1a24,#1a2a3a);z-index:500;display:none;flex-direction:column}
-.toolbox-overlay.open{display:flex}
-.toolbox-header{padding:calc(env(safe-area-inset-top) + 14px) 16px 14px;background:#0e1820;border-bottom:1px solid rgba(70,130,200,.2);display:flex;align-items:center;gap:12px;flex-shrink:0}
-.toolbox-header h2{flex:1;color:#b8e2ff;font-weight:500;font-size:1.15rem}
-.toolbox-close{width:38px;height:38px;border-radius:10px;background:rgba(47,109,158,.25);border:none;color:#c6e2ff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.toolbox-tabs{display:flex;gap:6px;padding:10px 12px;background:rgba(15,25,35,.5);overflow-x:auto;flex-shrink:0;border-bottom:1px solid rgba(70,130,200,.15)}
-.toolbox-tab{padding:8px 14px;border-radius:20px;background:rgba(47,109,158,.2);color:#b8d4ec;border:1px solid transparent;font-size:.85rem;cursor:pointer;white-space:nowrap}
-.toolbox-tab.active{background:var(--accent);color:#fff;border-color:var(--border-accent)}
-.toolbox-content{flex:1;overflow-y:auto;padding:16px}
-.toolbox-panel{display:none}
-.toolbox-panel.active{display:block}
-.timer-display{font-size:3rem;font-family:monospace;text-align:center;color:#e0f0ff;padding:20px;letter-spacing:2px}
-.timer-switch{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
-.timer-switch button{padding:8px 16px;border-radius:20px;border:1px solid #2d4b66;background:transparent;color:#8dc9ff;cursor:pointer;font-size:.9rem}
-.timer-switch button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.timer-input-row{display:flex;gap:8px;margin-bottom:12px}
-.timer-input-row input{flex:1;padding:10px 14px;border-radius:10px;border:1px solid #2d4b66;background:#0f1a24;color:#e0f0ff;font-size:1rem;outline:none}
-.timer-actions{display:flex;gap:8px}
-.timer-actions button{flex:1;padding:12px;border-radius:12px;border:none;font-weight:600;cursor:pointer;font-size:.9rem}
-.timer-actions .primary{background:var(--accent);color:#fff}
-.timer-actions .secondary{background:rgba(47,109,158,.3);color:#cce8ff;border:1px solid #2f6d9e}
-.timer-actions .danger{background:#7a2a2a;color:#ffc5c5}
-.notes-area{width:100%;min-height:60vh;padding:14px;border-radius:12px;border:1px solid #2d4b66;background:#0f1a24;color:#e0f0ff;font-size:1rem;font-family:inherit;outline:none;resize:vertical;line-height:1.5}
-.notes-info{font-size:.75rem;color:#587b99;text-align:right;margin-top:6px}
-.calc-display{padding:16px;background:#0a1520;border-radius:12px;text-align:right;font-size:2rem;font-family:monospace;color:#e0f0ff;margin-bottom:12px;word-break:break-all;min-height:70px;display:flex;align-items:center;justify-content:flex-end}
-.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.calc-grid button{padding:18px 0;border-radius:14px;border:none;background:rgba(47,109,158,.3);color:#e0f0ff;font-size:1.2rem;cursor:pointer;font-weight:500}
-.calc-grid .op{background:rgba(138,90,30,.5);color:#ffe1b0}
-.calc-grid .eq{background:var(--accent);color:#fff}
-.calc-grid .clear{background:rgba(122,42,42,.5);color:#ffc5c5}
-.countdown-input{display:flex;gap:8px;margin-bottom:14px}
-.countdown-input input{flex:1;padding:12px 14px;border-radius:10px;border:1px solid #2d4b66;background:#0f1a24;color:#e0f0ff;font-size:1rem;outline:none}
-.countdown-result{text-align:center;padding:24px;background:rgba(15,25,35,.7);border-radius:16px;margin-bottom:12px}
-.countdown-result .days{font-size:3rem;font-weight:600;color:#7bffb0;font-family:monospace}
-.countdown-result .label{color:#9ab8d4;font-size:.9rem;margin-top:6px}
-.countdown-result .target-date{color:#587b99;font-size:.8rem;margin-top:8px}
-.theme-picker{display:flex;gap:10px;margin-top:8px;justify-content:space-between}
-.theme-swatch{width:44px;height:44px;border-radius:12px;cursor:pointer;border:3px solid transparent;flex-shrink:0}
-.theme-swatch.active{border-color:#fff;box-shadow:0 0 0 2px #4f9eff}
-.option-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-.option-btn{flex:1;min-width:60px;padding:10px 8px;border-radius:10px;border:1px solid #2d4b66;background:transparent;color:#8dc9ff;font-size:.85rem;cursor:pointer}
-.option-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-@media(min-width:768px){.drawer-backdrop{display:none}.sidebar{position:relative;transform:none;width:290px;flex-shrink:0}.sidebar-close{display:none}.sidebar-header{padding:18px}.menu-btn{display:none}.chat-header{padding:16px 22px}.messages-area{padding:20px 18px 10px}.input-area{padding:14px 20px 18px}.toast{bottom:30px}.app-container{max-width:1250px;margin:auto}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>我的小站</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 720px; margin: 0 auto; padding: 20px; line-height: 1.7; color: #222; }
+    h1 { font-size: 22px; margin: 0; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #222; padding-bottom: 12px; margin-bottom: 20px; }
+    .topbar .actions button { font-size: 13px; padding: 6px 12px; }
+    input, textarea { width: 100%; padding: 12px; margin: 6px 0; font-family: inherit; font-size: 15px; border: 1px solid #ccc; border-radius: 6px; }
+    textarea { height: 140px; resize: vertical; }
+    button { padding: 10px 18px; cursor: pointer; border: none; border-radius: 6px; font-size: 14px; background: #eee; }
+    button.primary { background: #222; color: #fff; }
+    button.primary:hover { background: #444; }
+    button.danger { background: #fee; color: #c00; }
+    article { border-bottom: 1px solid #eee; padding: 20px 0; }
+    .time { color: #999; font-size: 13px; margin: 4px 0 8px; }
+    .content { white-space: pre-wrap; }
+    .msg { color: #c00; margin-top: 8px; font-size: 14px; }
+    .empty { color: #999; padding: 20px 0; }
+    .hidden { display: none; }
+    .login-box { max-width: 340px; margin: 60px auto; }
+    .login-box h2 { text-align: center; }
+  </style>
 </head>
 <body>
-<div class="loading-screen" id="loadingScreen">載入中...</div>
-<div class="app-container">
-<div class="overlay hidden" id="joinOverlay">
-<div class="card">
-<h2 id="joinTitle">🔒 加入聊天室</h2>
-<p id="joinSubtitle">輸入聊天室代碼以繼續</p>
-<div id="joinFields">
-<label>聊天室代碼</label>
-<input type="text" id="roomCodeInput" placeholder="例如: 123456" autocomplete="off">
-<label>你的暱稱</label>
-<input type="text" id="nicknameInput" placeholder="輸入暱稱（不能用「管理員」）" autocomplete="off">
-<div id="adminStatusBox"></div>
-<div id="tokenFieldWrap">
-<label>管理員 Token（選填）</label>
-<input type="text" id="tokenInput" placeholder="若你是管理員，請輸入 Token" autocomplete="off">
-</div>
-</div>
-<div id="createFields" style="display:none">
-<label>聊天室名稱</label>
-<input type="text" id="newRoomName" placeholder="例如: 我的討論區">
-<label>聊天室代碼</label>
-<input type="text" id="newRoomCode" placeholder="設定一組代碼">
-<label>你的暱稱</label>
-<input type="text" id="newRoomNickname" placeholder="輸入暱稱" autocomplete="off">
-<p class="hint-text">建立後系統會給您一組管理員 Token，請務必保存！</p>
-</div>
-<button id="joinBtn">加入聊天</button>
-<button class="secondary" id="switchToCreateBtn">＋ 建立新的聊天室</button>
-<div class="error-msg" id="errorMsg"></div>
-<div id="tokenDisplay"></div>
-</div>
-</div>
-<div class="drawer-backdrop" id="drawerBackdrop"></div>
-<aside class="sidebar" id="sidebar">
-<div class="sidebar-header">
-<button class="sidebar-close" id="closeSidebarBtn">✕</button>
-目前聊天室
-<div class="room-name"><span id="currentRoomName">未加入</span><span class="role-badge" id="roleBadge">成員</span></div>
-</div>
-<div class="my-rooms-section">
-<div class="my-rooms-header"><span>我的聊天室</span><button id="addRoomBtn">＋ 加入 / 新增</button></div>
-<div class="my-rooms-list" id="myRoomsList"><div class="my-rooms-empty">還沒有加入任何聊天室</div></div>
-</div>
-<div class="channel-list" id="channelList"></div>
-<div class="sidebar-footer">
-<button id="addChannelBtn">＋ 新增頻道</button>
-<button id="viewMembersBtn">👥 成員列表</button>
-<button id="manageCmdsBtn">🤖 管理指令</button>
-<button id="manageBtnsBtn">🔘 管理按鈕</button>
-<button id="showCodeSideBtn">🔑 顯示代碼</button>
-<button id="toolboxBtn">🧰 工具箱</button>
-<button id="settingsBtn">⚙️ 設定</button>
-<button id="leaveRoomBtn" class="danger" style="display:none">🚪 退出聊天室</button>
-</div>
-</aside>
-<main class="chat-main">
-<div class="chat-header">
-<button class="menu-btn" id="openSidebarBtn">☰</button>
-<h3 id="channelTitle"># 請選擇頻道</h3>
-<button class="menu-btn" id="showCodeBtn" style="font-size:1rem">🔑</button>
-<span class="bot-badge">🤖</span>
-</div>
-<div class="quick-buttons" id="quickButtons"></div>
-<div class="messages-area" id="messagesArea">
-<div class="empty-state"><div class="big">💬</div><div>加入聊天室後即可開始對話</div></div>
-</div>
-<div class="hint">輸入 /help 查看指令</div>
-<div class="input-area">
-<button class="icon-btn" id="uploadImageBtn" disabled>📷</button>
-<input type="text" id="messageInput" placeholder="請先加入聊天室..." autocomplete="off" disabled>
-<button id="sendBtn" disabled>傳送</button>
-<input type="file" id="imageFileInput" accept="image/*" style="display:none">
-</div>
-</main>
-<div class="modal-backdrop hidden" id="roomCodeModal"><div class="modal" style="max-width:360px"><h3>🔑 聊天室資訊</h3><label>名稱</label><div id="roomNameDisplay" style="padding:12px;background:rgba(15,25,35,.6);border-radius:10px;color:#d4e9ff"></div><label>代碼</label><div class="room-code-box" id="roomCodeDisplay"></div><div class="modal-actions"><button class="cancel" id="closeCodeBtn">關閉</button><button class="confirm" id="copyCodeBtn">複製代碼</button></div><div class="error-msg" id="codeError"></div></div></div>
-<div class="modal-backdrop hidden" id="channelModal"><div class="modal"><h3>新增頻道</h3><label>頻道名稱</label><input type="text" id="channelNameInput" placeholder="例如: 討論區"><label>頻道類型</label><select id="channelTypeSelect"><option value="text">💬 文字頻道</option><option value="announcement">📢 公告頻道</option><option value="forum">🗂️ 討論區</option></select><div class="modal-actions"><button class="cancel" id="cancelChannelBtn">取消</button><button class="confirm" id="confirmChannelBtn">建立</button></div><div class="error-msg" id="channelError"></div></div></div>
-<div class="modal-backdrop hidden" id="membersModal"><div class="modal"><h3>👥 成員列表</h3><div id="memberList"></div><div class="modal-actions"><button class="cancel" id="closeMembersBtn">關閉</button></div></div></div>
-<div class="modal-backdrop hidden" id="cmdsModal"><div class="modal"><h3>🤖 管理指令</h3><div id="cmdList"></div><label>新增指令</label><input type="text" id="newCmdName" placeholder="/抽獎"><label>回應內容</label><input type="text" id="newCmdResp" placeholder="恭喜中獎！"><div class="modal-actions"><button class="cancel" id="closeCmdsBtn">關閉</button><button class="confirm" id="addCmdBtn">新增指令</button></div><div class="error-msg" id="cmdError"></div></div></div>
-<div class="modal-backdrop hidden" id="btnsModal"><div class="modal"><h3>🔘 管理按鈕</h3><div id="btnList"></div><label>按鈕文字</label><input type="text" id="newBtnLabel" placeholder="官方網站"><label>動作類型</label><select id="newBtnType"><option value="link">🔗 連結</option><option value="copy">📋 複製</option></select><label>動作內容</label><input type="text" id="newBtnValue" placeholder="https://... 或文字"><div class="modal-actions"><button class="cancel" id="closeBtnsBtn">關閉</button><button class="confirm" id="addBtnBtn">新增按鈕</button></div><div class="error-msg" id="btnError"></div></div></div>
-<div class="modal-backdrop hidden" id="editMsgModal"><div class="modal"><h3>📝 編輯訊息</h3><textarea id="editMsgInput" placeholder="修改訊息內容..."></textarea><div class="modal-actions"><button class="cancel" id="cancelEditMsgBtn">取消</button><button class="confirm" id="saveEditMsgBtn">儲存</button></div><div class="error-msg" id="editMsgError"></div></div></div>
-<div class="modal-backdrop hidden" id="settingsModal"><div class="modal"><h3>⚙️ 設定</h3><label>🎨 主題顏色</label><div class="theme-picker" id="themePicker"><div class="theme-swatch" data-theme="default" style="background:#1e5a86"></div><div class="theme-swatch" data-theme="purple" style="background:#7a4dbf"></div><div class="theme-swatch" data-theme="green" style="background:#2d8a5c"></div><div class="theme-swatch" data-theme="red" style="background:#c0392b"></div><div class="theme-swatch" data-theme="pink" style="background:#c94b8c"></div></div><label>🔤 字體大小</label><div class="option-row" id="fontSizeRow"><button class="option-btn" data-size="small">小</button><button class="option-btn" data-size="medium">中</button><button class="option-btn" data-size="large">大</button><button class="option-btn" data-size="xlarge">特大</button></div><label>📝 字體</label><div class="option-row" id="fontFamilyRow"><button class="option-btn" data-font="system">系統</button><button class="option-btn" data-font="jhenghei">正黑體</button><button class="option-btn" data-font="pingfang">蘋方</button><button class="option-btn" data-font="noto">思源</button></div><div class="modal-actions"><button class="cancel" id="closeSettingsBtn">關閉</button></div></div></div>
-</div>
-<div class="toast" id="toast"></div>
-<div class="uploading-overlay hidden" id="uploadingOverlay">📤 圖片上傳中...</div>
-<div class="toolbox-overlay" id="toolboxOverlay">
-<div class="toolbox-header"><h2>🧰 工具箱</h2><button class="toolbox-close" id="closeToolboxBtn">✕</button></div>
-<div class="toolbox-tabs">
-<button class="toolbox-tab active" data-tab="timer">⏱️ 計時器</button>
-<button class="toolbox-tab" data-tab="notes">📝 筆記</button>
-<button class="toolbox-tab" data-tab="calc">🧮 計算機</button>
-<button class="toolbox-tab" data-tab="countdown">📅 倒數日</button>
-<button class="toolbox-tab" data-tab="quiz">📝 數學測驗</button>
-</div>
-<div class="toolbox-content">
-<div class="toolbox-panel active" id="panel-timer">
-<div class="timer-switch"><button id="timerModeCountdown" class="active">倒數計時</button><button id="timerModeStopwatch">碼錶</button></div>
-<div class="timer-display" id="timerDisplay">00:00:00</div>
-<div class="timer-input-row" id="countdownInputRow"><input type="number" id="countdownMin" placeholder="分鐘" min="0"><input type="number" id="countdownSec" placeholder="秒" min="0" max="59"></div>
-<div class="timer-actions"><button class="primary" id="timerStartBtn">▶ 開始</button><button class="secondary" id="timerPauseBtn">⏸ 暫停</button><button class="danger" id="timerResetBtn">↺ 重置</button></div>
-</div>
-<div class="toolbox-panel" id="panel-notes"><textarea class="notes-area" id="notesArea" placeholder="在這裡寫筆記...（自動儲存）"></textarea><div class="notes-info" id="notesInfo">已自動儲存</div></div>
-<div class="toolbox-panel" id="panel-calc"><div class="calc-display" id="calcDisplay">0</div><div class="calc-grid"><button class="clear" data-calc="C">C</button><button class="clear" data-calc="⌫">⌫</button><button class="op" data-calc="%">%</button><button class="op" data-calc="/">÷</button><button data-calc="7">7</button><button data-calc="8">8</button><button data-calc="9">9</button><button class="op" data-calc="*">×</button><button data-calc="4">4</button><button data-calc="5">5</button><button data-calc="6">6</button><button class="op" data-calc="-">−</button><button data-calc="1">1</button><button data-calc="2">2</button><button data-calc="3">3</button><button class="op" data-calc="+">+</button><button data-calc="0">0</button><button data-calc=".">.</button><button class="eq" data-calc="=" style="grid-column:span 2">=</button></div></div>
-<div class="toolbox-panel" id="panel-countdown"><div class="countdown-input"><input type="date" id="countdownDate"></div><div class="countdown-result"><div class="days" id="countdownDays">--</div><div class="label">天</div><div class="target-date" id="countdownTarget">請選擇日期</div></div></div>
-<div class="toolbox-panel" id="panel-quiz">
-<div id="quizSetup">
-<label style="color:#8dc9ff;font-size:.85rem;display:block;margin-bottom:8px;">選擇題型</label>
-<div class="option-row" style="margin-bottom:12px;">
-<label class="option-btn" style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="qGcd" checked> 最大公因數</label>
-<label class="option-btn" style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="qLcm" checked> 最小公倍數</label>
-<label class="option-btn" style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="qIntAddSub" checked> 整數加減</label>
-<label class="option-btn" style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="qIntMulDiv" checked> 整數乘除</label>
-<label class="option-btn" style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="qDecAddSub"> 小數加減</label>
-<label class="option-btn" style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="qDecMulDiv"> 小數乘除</label>
-</div>
-<label style="color:#8dc9ff;font-size:.85rem;display:block;margin-bottom:8px;">難度</label>
-<div class="option-row" id="quizDiffRow" style="margin-bottom:16px;">
-<button class="option-btn active" data-diff="easy">簡單</button>
-<button class="option-btn" data-diff="medium">中等</button>
-<button class="option-btn" data-diff="hard">困難</button>
-</div>
-<div class="timer-actions"><button class="primary" id="quizStartBtn">▶ 開始測驗</button></div>
-<div id="quizSetupError" style="color:#ff7b7b;font-size:.8rem;margin-top:10px;text-align:center;"></div>
-</div>
-<div id="quizPlay" style="display:none;">
-<div style="text-align:center;color:#9ab8d4;font-size:.85rem;margin-bottom:8px;">第 <span id="quizCurrent">1</span> / 10 題</div>
-<div id="quizQuestion" style="font-size:1.5rem;text-align:center;padding:20px;color:#e0f0ff;font-family:monospace;min-height:80px;display:flex;align-items:center;justify-content:center;"></div>
-<div class="option-row" style="flex-direction:column;gap:8px;" id="quizOptions"></div>
-<div id="quizFeedback" style="text-align:center;font-size:1rem;margin-top:14px;min-height:24px;"></div>
-</div>
-<div id="quizResult" style="display:none;">
-<div class="countdown-result" style="margin-bottom:16px;">
-<div class="days" id="quizScore" style="font-size:2.5rem;">0 / 10</div>
-<div class="label">答對題數</div>
-</div>
-<div id="quizWrongList" style="margin-bottom:16px;"></div>
-<div class="timer-actions"><button class="primary" id="quizRetryBtn">↺ 重新測驗</button></div>
-</div>
-</div>
-</div>
-</div>
-<script>
-(function(){
-'use strict';
 
-const SB_URL='https://ixmkbqpdugazdxbqogxw.supabase.co';
-const SB_KEY='sb_publishable_LuHQhy3xbv4b0ko02AZAyA_zCf7mB59';
-const sb=window.supabase.createClient(SB_URL,SB_KEY);
+  <!-- 上方標題列 -->
+  <div class="topbar">
+    <h1>我的小站</h1>
+    <div class="actions">
+      <button id="btnLogin" class="primary">小編登入</button>
+      <button id="btnLogout" class="danger hidden">登出</button>
+    </div>
+  </div>
 
-function getUserId(){let uid=localStorage.getItem('chat_user_id');if(!uid){uid='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('chat_user_id',uid);}return uid;}
-const USER_ID=getUserId();
+  <!-- 登入畫面（未登入時顯示） -->
+  <div id="loginView" class="login-box hidden">
+    <h2>小編登入</h2>
+    <input id="email" type="email" placeholder="Email" autocomplete="username">
+    <input id="password" type="password" placeholder="密碼" autocomplete="current-password">
+    <button id="btnDoLogin" class="primary" style="width:100%">登入</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
 
-function getMyTokens(){try{return JSON.parse(localStorage.getItem('chat_tokens')||'{}');}catch(e){return {};}}
-function saveToken(id,t){const a=getMyTokens();a[id]=t;localStorage.setItem('chat_tokens',JSON.stringify(a));}
-function removeToken(id){const a=getMyTokens();delete a[id];localStorage.setItem('chat_tokens',JSON.stringify(a));}
-function getMyRooms(){try{return JSON.parse(localStorage.getItem('chat_my_rooms')||'[]');}catch(e){return [];}}
-function addMyRoom(r){const a=getMyRooms();const i=a.findIndex(x=>x.id===r.id);if(i>=0){a[i].name=r.name;a[i].code=r.code;}else a.push({id:r.id,name:r.name,code:r.code});localStorage.setItem('chat_my_rooms',JSON.stringify(a));}
-function removeMyRoom(id){const a=getMyRooms().filter(x=>x.id!==id);localStorage.setItem('chat_my_rooms',JSON.stringify(a));}
+  <!-- 編輯區（登入後顯示） -->
+  <div id="editorView" class="hidden">
+    <h2>新增文章</h2>
+    <input id="title" placeholder="標題">
+    <textarea id="content" placeholder="內容..."></textarea>
+    <button id="btnAdd" class="primary">發布</button>
+    <div class="msg" id="editMsg"></div>
+    <h2 style="margin-top:32px">已發布</h2>
+    <div id="adminList"></div>
+  </div>
 
-let currentRoom=null,currentChannel=null;
-let currentUser={nickname:'訪客',role:'member'};
-let channels=[],messages=[],members=[],customCmds=[],customBtns=[];
-let rtMessages=null,rtMembers=null,rtCmds=null,rtBtns=null,heartbeatTimer=null;
-let isCreateMode=false,isJoining=false;
+  <!-- 文章列表（所有人可見） -->
+  <div id="list">載入中...</div>
 
-const $=id=>document.getElementById(id);
-const loadingScreen=$('loadingScreen');
-const joinOverlay=$('joinOverlay'),joinTitle=$('joinTitle'),joinSubtitle=$('joinSubtitle');
-const joinFields=$('joinFields'),createFields=$('createFields');
-const roomCodeInput=$('roomCodeInput'),nicknameInput=$('nicknameInput'),tokenInput=$('tokenInput');
-const adminStatusBox=$('adminStatusBox'),tokenFieldWrap=$('tokenFieldWrap');
-const newRoomName=$('newRoomName'),newRoomCode=$('newRoomCode'),newRoomNickname=$('newRoomNickname');
-const joinBtn=$('joinBtn'),switchToCreateBtn=$('switchToCreateBtn'),errorMsg=$('errorMsg');
-const tokenDisplay=$('tokenDisplay');
-const currentRoomNameEl=$('currentRoomName'),roleBadge=$('roleBadge');
-const myRoomsListEl=$('myRoomsList'),addRoomBtn=$('addRoomBtn');
-const channelListEl=$('channelList'),addChannelBtn=$('addChannelBtn'),viewMembersBtn=$('viewMembersBtn');
-const manageCmdsBtn=$('manageCmdsBtn'),manageBtnsBtn=$('manageBtnsBtn');
-const channelTitle=$('channelTitle'),messagesArea=$('messagesArea');
-const messageInput=$('messageInput'),sendBtn=$('sendBtn'),quickButtons=$('quickButtons');
-const uploadImageBtn=$('uploadImageBtn'),imageFileInput=$('imageFileInput'),uploadingOverlay=$('uploadingOverlay');
-const channelModal=$('channelModal'),channelNameInput=$('channelNameInput');
-const channelTypeSelect=$('channelTypeSelect'),cancelChannelBtn=$('cancelChannelBtn');
-const confirmChannelBtn=$('confirmChannelBtn'),channelError=$('channelError');
-const membersModal=$('membersModal'),memberList=$('memberList'),closeMembersBtn=$('closeMembersBtn');
-const cmdsModal=$('cmdsModal'),cmdList=$('cmdList'),closeCmdsBtn=$('closeCmdsBtn');
-const newCmdName=$('newCmdName'),newCmdResp=$('newCmdResp'),addCmdBtn=$('addCmdBtn'),cmdError=$('cmdError');
-const btnsModal=$('btnsModal'),btnList=$('btnList'),closeBtnsBtn=$('closeBtnsBtn');
-const newBtnLabel=$('newBtnLabel'),newBtnType=$('newBtnType'),newBtnValue=$('newBtnValue');
-const addBtnBtn=$('addBtnBtn'),btnError=$('btnError');
-const toast=$('toast');
-const sidebar=$('sidebar'),drawerBackdrop=$('drawerBackdrop');
-const openSidebarBtn=$('openSidebarBtn'),closeSidebarBtn=$('closeSidebarBtn');
-const showCodeBtn=$('showCodeBtn'),showCodeSideBtn=$('showCodeSideBtn');
-const roomCodeModal=$('roomCodeModal'),roomCodeDisplay=$('roomCodeDisplay');
-const roomNameDisplay=$('roomNameDisplay'),closeCodeBtn=$('closeCodeBtn');
-const copyCodeBtn=$('copyCodeBtn'),codeError=$('codeError');
-const leaveRoomBtn=$('leaveRoomBtn'),toolboxBtn=$('toolboxBtn');
-const settingsBtn=$('settingsBtn'),settingsModal=$('settingsModal'),closeSettingsBtn=$('closeSettingsBtn');
-const editMsgModal=$('editMsgModal'),editMsgInput=$('editMsgInput');
-const cancelEditMsgBtn=$('cancelEditMsgBtn'),saveEditMsgBtn=$('saveEditMsgBtn'),editMsgError=$('editMsgError');
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
-const isAdmin=()=>currentUser.role==='admin';
-const escapeHtml=t=>{const d=document.createElement('div');d.textContent=t;return d.innerHTML;};
-const channelIcon=t=>t==='announcement'?'📢':t==='forum'?'🗂️':'💬';
-const IMG_PREFIX='[IMG]';
+    const supabase = createClient(
+      'https://cfxwbghnwwtvuyodrrlj.supabase.co',
+      'sb_publishable_iUkJIhqt_P8cu8WZdswqmw_59R0ZJ-_'
+    )
 
-function showToast(m){toast.textContent=m;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2500);}
-function openDrawer(){sidebar.classList.add('open');drawerBackdrop.classList.add('open');}
-function closeDrawer(){sidebar.classList.remove('open');drawerBackdrop.classList.remove('open');}
-openSidebarBtn.addEventListener('click',openDrawer);
-closeSidebarBtn.addEventListener('click',closeDrawer);
-drawerBackdrop.addEventListener('click',closeDrawer);
+    // DOM
+    const $ = id => document.getElementById(id)
+    const loginView = $('loginView')
+    const editorView = $('editorView')
+    const listEl = $('list')
+    const adminList = $('adminList')
+    const btnLogin = $('btnLogin')
+    const btnLogout = $('btnLogout')
 
-function applyTheme(t){document.body.classList.remove('theme-purple','theme-green','theme-red','theme-pink');if(t&&t!=='default')document.body.classList.add('theme-'+t);document.querySelectorAll('#themePicker .theme-swatch').forEach(e=>e.classList.toggle('active',e.dataset.theme===t));localStorage.setItem('chat_theme',t||'default');}
-function applyFontSize(s){document.body.classList.remove('font-small','font-medium','font-large','font-xlarge');document.body.classList.add('font-'+s);document.querySelectorAll('#fontSizeRow .option-btn').forEach(e=>e.classList.toggle('active',e.dataset.size===s));localStorage.setItem('chat_font_size',s);}
-function applyFontFamily(f){document.body.classList.remove('font-jhenghei','font-pingfang','font-noto');if(f&&f!=='system')document.body.classList.add('font-'+f);document.querySelectorAll('#fontFamilyRow .option-btn').forEach(e=>e.classList.toggle('active',e.dataset.font===f));localStorage.setItem('chat_font_family',f||'system');}
-applyTheme(localStorage.getItem('chat_theme')||'default');
-applyFontSize(localStorage.getItem('chat_font_size')||'medium');
-applyFontFamily(localStorage.getItem('chat_font_family')||'system');
-document.querySelectorAll('#themePicker .theme-swatch').forEach(e=>e.addEventListener('click',()=>applyTheme(e.dataset.theme)));
-document.querySelectorAll('#fontSizeRow .option-btn').forEach(e=>e.addEventListener('click',()=>applyFontSize(e.dataset.size)));
-document.querySelectorAll('#fontFamilyRow .option-btn').forEach(e=>e.addEventListener('click',()=>applyFontFamily(e.dataset.font)));
-settingsBtn.addEventListener('click',()=>{closeDrawer();settingsModal.classList.remove('hidden');});
-closeSettingsBtn.addEventListener('click',()=>settingsModal.classList.add('hidden'));
-
-let editingMsgId=null;
-function openEditMsgModal(id){const m=messages.find(x=>x.id===id);if(!m)return;if(m.sender!==currentUser.nickname){showToast('只能編輯自己的訊息');return;}if(m.text&&m.text.startsWith(IMG_PREFIX)){showToast('圖片訊息無法編輯');return;}editingMsgId=id;editMsgInput.value=m.text;editMsgError.textContent='';editMsgModal.classList.remove('hidden');editMsgInput.focus();}
-function closeEditMsgModal(){editMsgModal.classList.add('hidden');editingMsgId=null;editMsgInput.value='';}
-async function saveEditMsg(){if(!editingMsgId)return;const t=editMsgInput.value.trim();if(!t){editMsgError.textContent='訊息不能為空';return;}editMsgError.textContent='儲存中...';const {error}=await sb.from('messages').update({text:escapeHtml(t),edited:true,edited_at:new Date().toISOString()}).eq('id',editingMsgId);if(error){editMsgError.textContent='❌ 失敗：'+error.message;return;}const i=messages.findIndex(m=>m.id===editingMsgId);if(i>=0){messages[i].text=escapeHtml(t);messages[i].edited=true;messages[i].edited_at=new Date().toISOString();}renderMessages();closeEditMsgModal();showToast('✅ 已更新');}
-cancelEditMsgBtn.addEventListener('click',closeEditMsgModal);
-saveEditMsgBtn.addEventListener('click',saveEditMsg);
-editMsgInput.addEventListener('keypress',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();saveEditMsg();}});
-
-const toolboxOverlay=$('toolboxOverlay'),closeToolboxBtn=$('closeToolboxBtn');
-const toolboxTabs=document.querySelectorAll('.toolbox-tab'),toolboxPanels=document.querySelectorAll('.toolbox-panel');
-toolboxBtn.addEventListener('click',()=>{closeDrawer();toolboxOverlay.classList.add('open');});
-closeToolboxBtn.addEventListener('click',()=>toolboxOverlay.classList.remove('open'));
-toolboxTabs.forEach(tab=>tab.addEventListener('click',()=>{toolboxTabs.forEach(t=>t.classList.remove('active'));tab.classList.add('active');toolboxPanels.forEach(p=>p.classList.remove('active'));const p=$('panel-'+tab.dataset.tab);if(p)p.classList.add('active');}));
-
-let timerMode='countdown',timerInterval=null,timerRemaining=0,stopwatchElapsed=0;
-const timerDisplay=$('timerDisplay'),timerStartBtn=$('timerStartBtn'),timerPauseBtn=$('timerPauseBtn'),timerResetBtn=$('timerResetBtn');
-const countdownInputRow=$('countdownInputRow'),timerModeCountdown=$('timerModeCountdown'),timerModeStopwatch=$('timerModeStopwatch');
-const countdownMin=$('countdownMin'),countdownSec=$('countdownSec');
-function formatTime(ms){if(ms<0)ms=0;const s=Math.floor(ms/1000);return String(Math.floor(s/3600)).padStart(2,'0')+':'+String(Math.floor((s%3600)/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
-function renderTimer(){timerDisplay.textContent=timerMode==='countdown'?formatTime(timerRemaining):formatTime(stopwatchElapsed);}
-function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
-timerModeCountdown.addEventListener('click',()=>{timerMode='countdown';timerModeCountdown.classList.add('active');timerModeStopwatch.classList.remove('active');countdownInputRow.style.display='flex';stopTimer();timerRemaining=0;renderTimer();});
-timerModeStopwatch.addEventListener('click',()=>{timerMode='stopwatch';timerModeStopwatch.classList.add('active');timerModeCountdown.classList.remove('active');countdownInputRow.style.display='none';stopTimer();stopwatchElapsed=0;renderTimer();});
-timerStartBtn.addEventListener('click',()=>{if(timerMode==='countdown'){if(timerRemaining<=0){const m=parseInt(countdownMin.value)||0,s=parseInt(countdownSec.value)||0;timerRemaining=(m*60+s)*1000;if(timerRemaining<=0){alert('請輸入時間');return;}}if(timerInterval)return;const st=Date.now(),init=timerRemaining;timerInterval=setInterval(()=>{timerRemaining=init-(Date.now()-st);if(timerRemaining<=0){timerRemaining=0;stopTimer();renderTimer();try{if(navigator.vibrate)navigator.vibrate([300,150,300,150,300]);}catch(e){}alert('⏰ 時間到！');}else renderTimer();},100);}else{if(timerInterval)return;const st=Date.now()-stopwatchElapsed;timerInterval=setInterval(()=>{stopwatchElapsed=Date.now()-st;renderTimer();},50);}});
-timerPauseBtn.addEventListener('click',stopTimer);
-timerResetBtn.addEventListener('click',()=>{stopTimer();timerRemaining=0;stopwatchElapsed=0;countdownMin.value='';countdownSec.value='';renderTimer();});
-renderTimer();
-
-const notesArea=$('notesArea'),notesInfo=$('notesInfo');
-notesArea.value=localStorage.getItem('toolbox_notes')||'';
-let notesTimer=null;
-notesArea.addEventListener('input',()=>{notesInfo.textContent='儲存中...';if(notesTimer)clearTimeout(notesTimer);notesTimer=setTimeout(()=>{localStorage.setItem('toolbox_notes',notesArea.value);notesInfo.textContent='✅ 已自動儲存';},500);});
-
-let calcExpr='';
-const calcDisplay=$('calcDisplay');
-document.querySelectorAll('.calc-grid button').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.calc;if(v==='C')calcExpr='';else if(v==='⌫')calcExpr=calcExpr.slice(0,-1);else if(v==='='){try{if(!calcExpr)return;if(!/^[\d+\-*/.%() ]+$/.test(calcExpr))throw 0;const r=Function('"use strict";return ('+calcExpr.replace(/%/g,'/100')+')')();if(!isFinite(r))throw 0;calcExpr=String(r);}catch(e){calcExpr='錯誤';}}else{if(calcExpr==='錯誤')calcExpr='';calcExpr+=v;}calcDisplay.textContent=calcExpr||'0';}));
-
-const countdownDate=$('countdownDate'),countdownDays=$('countdownDays'),countdownTarget=$('countdownTarget');
-function updateCountdown(){if(!countdownDate.value){countdownDays.textContent='--';countdownTarget.textContent='請選擇日期';return;}const t=new Date(countdownDate.value+'T00:00:00'),td=new Date();td.setHours(0,0,0,0);countdownDays.textContent=Math.round((t-td)/86400000);countdownTarget.textContent='目標：'+countdownDate.value;}
-const savedDate=localStorage.getItem('toolbox_countdown_date');if(savedDate)countdownDate.value=savedDate;updateCountdown();
-countdownDate.addEventListener('change',()=>{localStorage.setItem('toolbox_countdown_date',countdownDate.value);updateCountdown();});
-
-let quizQuestions=[],quizIndex=0,quizCorrect=0,quizWrong=[],quizDiff='easy';
-document.querySelectorAll('#quizDiffRow .option-btn').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('#quizDiffRow .option-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');quizDiff=b.dataset.diff;});});
-function randInt(m,n){return Math.floor(Math.random()*(n-m+1))+m;}
-function gcdF(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;}
-function lcmF(a,b){return Math.abs(a*b)/gcdF(a,b);}
-function quizRange(){if(quizDiff==='easy')return[1,10];if(quizDiff==='medium')return[1,50];return[1,100];}
-function genQuestion(types){
-const t=types[randInt(0,types.length-1)];const[mx,Mx]=quizRange();let q='',ans=0;
-if(t==='gcd'){const a=randInt(mx,Mx),b=randInt(mx,Mx);q='最大公因數('+a+', '+b+') = ?';ans=gcdF(a,b);}
-else if(t==='lcm'){const a=randInt(mx,Mx),b=randInt(mx,Mx);q='最小公倍數('+a+', '+b+') = ?';ans=lcmF(a,b);}
-else if(t==='intAddSub'){const a=randInt(mx,Mx),b=randInt(mx,Mx);if(Math.random()<.5){q=a+' + '+b+' = ?';ans=a+b;}else{q=a+' - '+b+' = ?';ans=a-b;}}
-else if(t==='intMulDiv'){const a=randInt(mx,Mx),b=randInt(1,Math.max(2,Math.floor(Mx/2)));if(Math.random()<.5){q=a+' × '+b+' = ?';ans=a*b;}else{const p=a*b;q=p+' ÷ '+b+' = ?';ans=a;}}
-else if(t==='decAddSub'){const d1=Math.random()<.5?1:2,d2=Math.random()<.5?1:2;const a=+(Math.random()*20).toFixed(d1),b=+(Math.random()*20).toFixed(d2);if(Math.random()<.5){q=a+' + '+b+' = ?';ans=+(a+b).toFixed(2);}else{q=a+' - '+b+' = ?';ans=+(a-b).toFixed(2);}}
-else if(t==='decMulDiv'){const a=+(Math.random()*20).toFixed(1),b=+(Math.random()*10+1).toFixed(1);if(Math.random()<.5){q=a+' × '+b+' = ?';ans=+(a*b).toFixed(2);}else{const p=+(a*b).toFixed(2);q=p+' ÷ '+b+' = ?';ans=+a.toFixed(2);}}
-return{q:q,answer:+ans};
-}
-function makeOptions(a){const s=new Set([a]);while(s.size<4){let d=randInt(1,5)*(Math.random()<.5?1:-1);let f=+(a+d).toFixed(2);if(f!==a)s.add(f);}return Array.from(s).sort(()=>Math.random()-.5);}
-function renderQuizQuestion(){
-if(quizIndex>=quizQuestions.length){showQuizResult();return;}
-const q=quizQuestions[quizIndex];
-document.getElementById('quizCurrent').textContent=quizIndex+1;
-document.getElementById('quizQuestion').textContent=q.q;
-const el=document.getElementById('quizOptions');el.innerHTML='';
-q.options.forEach(o=>{
-const b=document.createElement('button');b.className='option-btn';b.textContent=o;
-b.addEventListener('click',()=>{
-const ok=Math.abs(+o-q.answer)<.001;
-if(ok){quizCorrect++;document.getElementById('quizFeedback').textContent='✅ 答對了！';document.getElementById('quizFeedback').style.color='#7bffb0';}
-else{quizWrong.push({q:q.q,your:o,correct:q.answer});document.getElementById('quizFeedback').textContent='❌ 答錯了，正確答案是 '+q.answer;document.getElementById('quizFeedback').style.color='#ff7b7b';}
-el.querySelectorAll('button').forEach(x=>x.disabled=true);
-setTimeout(()=>{quizIndex++;document.getElementById('quizFeedback').textContent='';renderQuizQuestion();},900);
-});
-el.appendChild(b);
-});
-}
-function showQuizResult(){
-document.getElementById('quizPlay').style.display='none';
-document.getElementById('quizResult').style.display='block';
-document.getElementById('quizScore').textContent=quizCorrect+' / '+quizQuestions.length;
-const w=document.getElementById('quizWrongList');
-if(!quizWrong.length){w.innerHTML='<div style="color:#7bffb0;text-align:center;padding:16px;">🎉 全部答對！</div>';}
-else{let h='<div style="color:#ffd98a;font-size:.85rem;margin-bottom:8px;">錯誤分析：</div>';quizWrong.forEach((x,i)=>{h+='<div style="background:rgba(122,42,42,.2);border-radius:10px;padding:10px;margin-bottom:8px;font-size:.85rem;"><div style="color:#d4e9ff;font-family:monospace;">'+(i+1)+'. '+x.q+'</div><div style="color:#ff9b9b;margin-top:4px;">你的答案：'+x.your+'</div><div style="color:#7bffb0;">正確答案：'+x.correct+'</div></div>';});w.innerHTML=h;}
-}
-document.getElementById('quizStartBtn').addEventListener('click',()=>{
-const types=[];
-if(document.getElementById('qGcd').checked)types.push('gcd');
-if(document.getElementById('qLcm').checked)types.push('lcm');
-if(document.getElementById('qIntAddSub').checked)types.push('intAddSub');
-if(document.getElementById('qIntMulDiv').checked)types.push('intMulDiv');
-if(document.getElementById('qDecAddSub').checked)types.push('decAddSub');
-if(document.getElementById('qDecMulDiv').checked)types.push('decMulDiv');
-if(!types.length){document.getElementById('quizSetupError').textContent='請至少勾選一種題型';return;}
-document.getElementById('quizSetupError').textContent='';
-quizQuestions=[];
-for(let i=0;i<10;i++){const q=genQuestion(types);q.options=makeOptions(q.answer);quizQuestions.push(q);}
-quizIndex=0;quizCorrect=0;quizWrong=[];
-document.getElementById('quizSetup').style.display='none';
-document.getElementById('quizResult').style.display='none';
-document.getElementById('quizPlay').style.display='block';
-renderQuizQuestion();
-});
-document.getElementById('quizRetryBtn').addEventListener('click',()=>{
-document.getElementById('quizResult').style.display='none';
-document.getElementById('quizPlay').style.display='none';
-document.getElementById('quizSetup').style.display='block';
-});
-
-function validateNickname(n){n=(n||'').trim();if(!n)return{ok:false,msg:'請輸入暱稱'};if(n==='管理員')return{ok:false,msg:'暱稱不能叫「管理員」'};if(n.length>12)return{ok:false,msg:'暱稱不能超過12字'};return{ok:true,name:n};}
-async function checkRoomHasAdmin(id){const{data}=await sb.from('members').select('id,nickname,role,user_id').eq('room_id',id).eq('role','admin').neq('user_id',USER_ID).limit(1);return(data&&data.length>0)?data[0]:null;}
-async function findOtherAdminIncludingSelf(id){const{data}=await sb.from('members').select('id,nickname,role,user_id').eq('room_id',id).eq('role','admin').limit(1);return(data&&data.length>0)?data[0]:null;}
-
-function openCodeModal(){if(!currentRoom){showToast('尚未加入');return;}roomNameDisplay.textContent=currentRoom.name;roomCodeDisplay.textContent=currentRoom.code;codeError.textContent='';roomCodeModal.classList.remove('hidden');closeDrawer();}
-showCodeBtn.addEventListener('click',openCodeModal);
-showCodeSideBtn.addEventListener('click',openCodeModal);
-closeCodeBtn.addEventListener('click',()=>roomCodeModal.classList.add('hidden'));
-copyCodeBtn.addEventListener('click',async()=>{if(!currentRoom)return;try{await navigator.clipboard.writeText(currentRoom.code);codeError.textContent='✅ 已複製！';codeError.style.color='#7bffb0';setTimeout(()=>codeError.textContent='',1500);}catch(e){const ta=document.createElement('textarea');ta.value=currentRoom.code;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);codeError.textContent='✅ 已複製！';codeError.style.color='#7bffb0';setTimeout(()=>codeError.textContent='',1500);}});
-
-leaveRoomBtn.addEventListener('click',async()=>{if(!currentRoom)return;const isA=isAdmin();if(!confirm(isA?'⚠️ 你是管理員，退出後管理員位置會釋放。\n\n確定嗎？':'確定要退出？'))return;try{await sendSystemMessage(currentUser.nickname+' 退出了聊天室'+(isA?'（管理員位置已釋放）':''));await sb.from('members').delete().eq('room_id',currentRoom.id).eq('user_id',USER_ID);removeMyRoom(currentRoom.id);removeToken(currentRoom.id);localStorage.removeItem('chat_last_room_code');localStorage.removeItem('chat_last_nickname');}catch(e){}alert('已退出');location.reload();});
-
-async function sendSystemMessage(text){if(!currentRoom)return;let c=channels.find(x=>x.name==='加入')||channels[0];if(!c)return;await sb.from('messages').insert({channel_id:c.id,text:text,sender:'system',is_system:true});}
-async function cleanupExpiredRooms(){const d=new Date(Date.now()-7*86400000).toISOString();const{data}=await sb.from('rooms').select('id').lt('last_active',d);if(!data)return;for(const r of data)await sb.from('rooms').delete().eq('id',r.id);}
-async function touchRoom(){if(!currentRoom)return;await sb.from('rooms').update({last_active:new Date().toISOString()}).eq('id',currentRoom.id);}
-
-async function loadChannels(id){const{data}=await sb.from('channels').select('*').eq('room_id',id).order('created_at');channels=data||[];renderChannelList();}
-async function loadMessages(id){const{data}=await sb.from('messages').select('*').eq('channel_id',id).order('created_at');messages=data||[];renderMessages();}
-async function loadMembers(id){const{data}=await sb.from('members').select('*').eq('room_id',id).order('created_at');members=data||[];renderMembers();}
-async function loadCmds(id){const{data}=await sb.from('custom_commands').select('*').eq('room_id',id).order('created_at');customCmds=data||[];renderCmds();}
-async function loadBtns(id){const{data}=await sb.from('custom_buttons').select('*').eq('room_id',id).order('created_at');customBtns=data||[];renderQuickButtons();renderBtns();}
-async function findRoomByCode(code){const{data}=await sb.from('rooms').select('*').eq('code',code.toLowerCase()).maybeSingle();return data;}
-
-function renderMyRooms(){const rooms=getMyRooms();if(!rooms.length){myRoomsListEl.innerHTML='<div class="my-rooms-empty">還沒有加入任何聊天室</div>';return;}let h='';rooms.forEach(r=>{h+='<div class="my-room-item '+(currentRoom&&currentRoom.id===r.id?'active':'')+'" data-room-id="'+r.id+'"><span>🔒</span><div class="info"><div class="rname">'+escapeHtml(r.name)+'</div><div class="rcode">#'+escapeHtml(r.code)+'</div></div></div>';});myRoomsListEl.innerHTML=h;myRoomsListEl.querySelectorAll('.my-room-item').forEach(e=>e.addEventListener('click',()=>switchToRoom(e.dataset.roomId)));}
-async function switchToRoom(id){if(currentRoom&&currentRoom.id===id){closeDrawer();return;}const t=getMyRooms().find(r=>r.id===id);if(!t)return;closeDrawer();await joinRoomByCode(t.code,currentUser.nickname,true);}
-
-function renderChannelList(){if(!channels.length){channelListEl.innerHTML='';return;}let h='';const n=channels.filter(c=>c.type!=='forum'),f=channels.filter(c=>c.type==='forum');if(n.length){h+='<div class="channel-section-title">頻道</div>';n.forEach(c=>h+=channelItemHtml(c));}if(f.length){h+='<div class="channel-section-title">討論區</div>';f.forEach(c=>h+=channelItemHtml(c));}channelListEl.innerHTML=h;channelListEl.querySelectorAll('.channel-item').forEach(e=>e.addEventListener('click',ev=>{if(ev.target.classList.contains('del-btn'))return;switchChannel(e.dataset.channelId);closeDrawer();}));channelListEl.querySelectorAll('.del-btn').forEach(b=>b.addEventListener('click',async ev=>{ev.stopPropagation();const ch=channels.find(c=>c.id===b.dataset.channelId);if(!ch)return;if(!isAdmin()){alert('只有管理員');return;}if(ch.name==='加入'){alert('無法刪除');return;}if(!confirm('確定刪除？'))return;await sb.from('channels').delete().eq('id',b.dataset.channelId);await loadChannels(currentRoom.id);if(!channels.find(c=>c.id===currentChannel?.id)){if(channels.length)switchChannel(channels[0].id);else{currentChannel=null;renderMessages();}}}));}
-function channelItemHtml(ch){const canDel=isAdmin()&&ch.name!=='加入';return'<div class="channel-item '+(ch.id===currentChannel?.id?'active':'')+'" data-channel-id="'+ch.id+'"><span>'+channelIcon(ch.type)+'</span><span>'+escapeHtml(ch.name)+'</span>'+(canDel?'<button class="del-btn" data-channel-id="'+ch.id+'">✕</button>':'')+'</div>';}
-function getRoleOfSender(n){const m=members.find(x=>x.nickname===n);return m?m.role:'member';}
-
-function renderMessages(){
-  if(!currentChannel){messagesArea.innerHTML='<div class="empty-state"><div class="big">💬</div><div>請選擇一個頻道</div></div>';return;}
-  if(!messages.length){messagesArea.innerHTML='<div class="empty-state"><div class="big">✨</div><div>這個頻道還沒有訊息</div></div>';return;}
-  let h='';
-  messages.forEach(m=>{
-    if(m.is_system){h+='<div class="message system"><div class="bubble">'+escapeHtml(m.text)+'</div></div>';}
-    else{
-      const cls=m.is_bot?'bot':'user',isMine=!m.is_bot&&m.sender===currentUser.nickname,isImg=m.text&&m.text.startsWith(IMG_PREFIX);
-      let lbl='';
-      if(m.is_bot)lbl='🤖 小幫手';
-      else{const r=getRoleOfSender(m.sender);lbl=escapeHtml(m.sender)+' '+(r==='admin'?'<span class="role-tag">[管理員]</span>':'<span class="role-tag member">[成員]</span>');}
-      const eTag=m.edited?'<span class="edited-tag">（已編輯）</span>':'';
-      const eBtn=(isMine&&!isImg)?'<button class="edit-btn" data-msg-id="'+m.id+'">✏️ 編輯</button>':'';
-      let ch='';
-      if(isImg){const u=m.text.substring(IMG_PREFIX.length);ch='<img class="chat-image" src="'+escapeHtml(u)+'" onclick="window.open(\''+escapeHtml(u)+'\',\'_blank\')">';}
-      else ch=escapeHtml(m.text).replace(/\n/g,'<br>');
-      h+='<div class="message '+cls+'" data-msg-id="'+m.id+'"><div class="sender">'+lbl+eTag+eBtn+'</div><div class="bubble">'+ch+'</div></div>';
-    }
-  });
-  messagesArea.innerHTML=h;
-  messagesArea.scrollTop=messagesArea.scrollHeight;
-  messagesArea.querySelectorAll('.edit-btn').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();openEditMsgModal(b.dataset.msgId);}));
-}
-
-function renderMembers(){if(!members.length){memberList.innerHTML='<div style="color:#7f9db8;text-align:center;padding:20px">目前沒有成員</div>';return;}let h='';members.forEach(m=>{const isSelf=m.user_id===USER_ID,isA=m.role==='admin';const kb=(isAdmin()&&!isSelf&&!isA)?'<button class="kick-btn" data-user-id="'+m.user_id+'">踢出</button>':'';h+='<div class="member-item '+(isSelf?'self':'')+'"><span class="name">'+escapeHtml(m.nickname)+(isSelf?' <span style="color:#7bffb0;font-size:.7rem">(你)</span>':'')+'</span><span class="badge '+(isA?'admin':'')+'">'+(isA?'管理員':'成員')+'</span>'+kb+'</div>';});memberList.innerHTML=h;memberList.querySelectorAll('.kick-btn').forEach(b=>b.addEventListener('click',async()=>{if(!confirm('確定踢出？'))return;await sb.from('members').delete().eq('room_id',currentRoom.id).eq('user_id',b.dataset.userId);await sendSystemMessage('一位成員被管理員踢出聊天室');await loadMembers(currentRoom.id);showToast('已踢出');}));}
-
-function renderCmds(){if(!customCmds.length){cmdList.innerHTML='<div style="color:#7f9db8;text-align:center;padding:20px">尚未設定任何指令</div>';return;}let h='';customCmds.forEach(c=>{h+='<div class="cmd-item"><span class="cmd-name">'+escapeHtml(c.command)+'</span><span class="cmd-resp">'+escapeHtml(c.response)+'</span><button class="del-btn" data-cmd-id="'+c.id+'">✕</button></div>';});cmdList.innerHTML=h;cmdList.querySelectorAll('.del-btn').forEach(b=>b.addEventListener('click',async()=>{if(!isAdmin()){alert('只有管理員');return;}if(!confirm('刪除？'))return;await sb.from('custom_commands').delete().eq('id',b.dataset.cmdId);await loadCmds(currentRoom.id);}));}
-
-function renderBtns(){if(!btnList)return;if(!customBtns.length){btnList.innerHTML='<div style="color:#7f9db8;text-align:center;padding:20px">尚未設定任何按鈕</div>';return;}let h='';customBtns.forEach(b=>{h+='<div class="btn-item"><span class="btn-label">'+escapeHtml(b.label)+'</span><span class="btn-type">'+(b.action_type==='link'?'🔗 連結':'📋 複製')+'</span><button class="del-btn" data-btn-id="'+b.id+'">✕</button></div>';});btnList.innerHTML=h;btnList.querySelectorAll('.del-btn').forEach(b=>b.addEventListener('click',async()=>{if(!isAdmin()){alert('只有管理員');return;}if(!confirm('刪除？'))return;await sb.from('custom_buttons').delete().eq('id',b.dataset.btnId);await loadBtns(currentRoom.id);}));}
-function renderQuickButtons(){if(!customBtns.length){quickButtons.innerHTML='';return;}let h='';customBtns.forEach(b=>{h+='<button class="quick-btn" data-btn-id="'+b.id+'">'+escapeHtml(b.label)+'</button>';});quickButtons.innerHTML=h;quickButtons.querySelectorAll('.quick-btn').forEach(b=>b.addEventListener('click',()=>{const x=customBtns.find(y=>y.id===b.dataset.btnId);if(!x)return;if(x.action_type==='link')window.open(x.action_value,'_blank');else if(x.action_type==='copy'){navigator.clipboard.writeText(x.action_value).then(()=>showToast('✅ 已複製')).catch(()=>{const ta=document.createElement('textarea');ta.value=x.action_value;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('✅ 已複製');});}}));}
-
-function switchChannel(id){currentChannel=channels.find(c=>c.id===id);if(!currentChannel)return;channelTitle.textContent=channelIcon(currentChannel.type)+' '+currentChannel.name;renderChannelList();loadMessages(id);messageInput.focus();}
-function updateRoomUI(){if(!currentRoom)return;currentRoomNameEl.textContent=currentRoom.name;roleBadge.textContent=isAdmin()?'管理員':'成員';roleBadge.className='role-badge'+(isAdmin()?' admin':'');leaveRoomBtn.style.display='block';}
-
-async function joinRoomByCode(code,nickname,skipV){
-  if(isJoining)return;isJoining=true;
-  try{
-    code=(code||'').trim().toLowerCase();
-    if(!code){errorMsg.textContent='請輸入代碼';return;}
-    if(!skipV){const v=validateNickname(nickname);if(!v.ok){errorMsg.textContent=v.msg;return;}nickname=v.name;}
-    errorMsg.textContent='載入中...';
-    await cleanupExpiredRooms();
-    const room=await findRoomByCode(code);
-    if(!room){errorMsg.textContent='找不到此聊天室';return;}
-    const tok=tokenInput.value.trim(),saved=getMyTokens()[room.id];
-    const hasTok=(tok&&tok===room.admin_token)||(saved&&saved===room.admin_token);
-    const{data:mine}=await sb.from('members').select('*').eq('room_id',room.id).eq('user_id',USER_ID).maybeSingle();
-    let role='member';
-    if(mine&&!hasTok)role=mine.role;
-    else if(hasTok){const oa=await findOtherAdminIncludingSelf(room.id);if(oa&&oa.user_id!==USER_ID)await sb.from('members').delete().eq('room_id',room.id).eq('user_id',oa.user_id);role='admin';if(tok)saveToken(room.id,tok);showToast('✅ 已恢復管理員');}
-    else{role='member';if(tok&&tok!==room.admin_token){errorMsg.textContent='Token 錯誤';await new Promise(r=>setTimeout(r,800));}}
-    currentRoom=room;currentUser={nickname:nickname,role:role};
-    localStorage.setItem('chat_last_room_code',code);localStorage.setItem('chat_last_nickname',nickname);addMyRoom(room);
-    joinOverlay.classList.add('hidden');updateRoomUI();renderMyRooms();
-    await touchRoom();await loadChannels(room.id);await loadMembers(room.id);await loadCmds(room.id);await loadBtns(room.id);
-    await sb.from('members').upsert({room_id:room.id,user_id:USER_ID,nickname:nickname,role:role,last_seen:new Date().toISOString()},{onConflict:'room_id,user_id'});
-    if(channels.length){switchChannel(channels[0].id);await sendSystemMessage(nickname+' 加入了聊天室');}
-    else{const{data}=await sb.from('channels').insert({room_id:room.id,name:'一般',type:'text'}).select().single();if(data){await loadChannels(room.id);switchChannel(data.id);}}
-    messageInput.disabled=false;sendBtn.disabled=false;uploadImageBtn.disabled=false;messageInput.placeholder='輸入訊息...';
-    subscribeRealtime();startHeartbeat();
-  }catch(e){console.error(e);errorMsg.textContent='載入失敗：'+(e.message||'');}
-  finally{isJoining=false;}
-}
-
-async function tryCreateRoom(){
-  const name=newRoomName.value.trim(),code=newRoomCode.value.trim().toLowerCase(),nick=newRoomNickname.value.trim();
-  if(!name||!code){errorMsg.textContent='請填寫名稱與代碼';return;}
-  const v=validateNickname(nick);if(!v.ok){errorMsg.textContent=v.msg;return;}
-  errorMsg.textContent='建立中...';
-  await cleanupExpiredRooms();
-  const ex=await findRoomByCode(code);
-  if(ex){errorMsg.textContent='此代碼已被使用';return;}
-  const aTok='adm_'+Math.random().toString(36).slice(2,12)+Math.random().toString(36).slice(2,8);
-  const{data:room,error}=await sb.from('rooms').insert({name:name,code:code,admin_token:aTok}).select().single();
-  if(error||!room){errorMsg.textContent='建立失敗：'+(error?.message||'');return;}
-  await sb.from('channels').insert([{room_id:room.id,name:'加入',type:'announcement'},{room_id:room.id,name:'一般',type:'text'},{room_id:room.id,name:'討論區',type:'forum'}]);
-  currentRoom=room;currentUser={nickname:v.name,role:'admin'};
-  saveToken(room.id,aTok);localStorage.setItem('chat_last_room_code',code);localStorage.setItem('chat_last_nickname',v.name);addMyRoom(room);
-  joinOverlay.classList.add('hidden');updateRoomUI();renderMyRooms();
-  await loadChannels(room.id);await loadMembers(room.id);await loadCmds(room.id);await loadBtns(room.id);
-  await sb.from('members').upsert({room_id:room.id,user_id:USER_ID,nickname:v.name,role:'admin',last_seen:new Date().toISOString()},{onConflict:'room_id,user_id'});
-  switchChannel(channels[0].id);
-  await sendSystemMessage('聊天室「'+name+'」已建立！'+v.name+' 是管理員。');
-  tokenDisplay.innerHTML='<div class="token-display">🔑 Token（請保存）：<br>'+aTok+'</div>';
-  alert('🎉 聊天室已建立！\n\n管理員 Token：\n'+aTok+'\n\n請保存好！');
-  messageInput.disabled=false;sendBtn.disabled=false;uploadImageBtn.disabled=false;messageInput.placeholder='輸入訊息...';
-  subscribeRealtime();startHeartbeat();
-}
-
-function setCreateMode(c){isCreateMode=c;joinTitle.textContent=c?'✨ 建立聊天室':'🔒 加入聊天室';joinSubtitle.textContent=c?'建立一個屬於你的聊天室':'輸入聊天室代碼以繼續';joinFields.style.display=c?'none':'block';createFields.style.display=c?'block':'none';joinBtn.textContent=c?'建立並加入':'加入聊天';switchToCreateBtn.textContent=c?'← 返回':'＋ 建立新的聊天室';errorMsg.textContent='';tokenDisplay.innerHTML='';adminStatusBox.innerHTML='';tokenFieldWrap.style.display='none';}
-
-let checkTimer=null;
-roomCodeInput.addEventListener('input',()=>{if(checkTimer)clearTimeout(checkTimer);checkTimer=setTimeout(async()=>{const code=roomCodeInput.value.trim().toLowerCase();if(!code||isCreateMode){adminStatusBox.innerHTML='';tokenFieldWrap.style.display='block';return;}const room=await findRoomByCode(code);if(!room){adminStatusBox.innerHTML='';tokenFieldWrap.style.display='block';return;}const oa=await checkRoomHasAdmin(room.id);const{data:mine}=await sb.from('members').select('role').eq('room_id',room.id).eq('user_id',USER_ID).maybeSingle();if(oa)adminStatusBox.innerHTML='<div class="admin-status has-admin">⚠️ 已有管理員：'+escapeHtml(oa.nickname)+'<br><span style="font-size:.7rem;opacity:.8">若你是原本的管理員，可輸入 Token</span></div>';else if(mine&&mine.role==='admin')adminStatusBox.innerHTML='<div class="admin-status no-admin">✅ 你是管理員</div>';else adminStatusBox.innerHTML='<div class="admin-status no-admin">✅ 沒有管理員<br><span style="font-size:.7rem;opacity:.8">若有 Token，可輸入成為管理員</span></div>';tokenFieldWrap.style.display='block';},500);});
-
-function subscribeRealtime(){
-  if(rtMessages)sb.removeChannel(rtMessages);if(rtMembers)sb.removeChannel(rtMembers);if(rtCmds)sb.removeChannel(rtCmds);if(rtBtns)sb.removeChannel(rtBtns);
-  rtMessages=sb.channel('rt-messages-'+currentRoom.id)
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},p=>{const m=p.new;if(currentChannel&&m.channel_id===currentChannel.id){messages.push(m);renderMessages();}})
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'messages'},p=>{const m=p.new;if(currentChannel&&m.channel_id===currentChannel.id){const i=messages.findIndex(x=>x.id===m.id);if(i>=0){messages[i]=m;renderMessages();}}})
-    .on('postgres_changes',{event:'DELETE',schema:'public',table:'channels'},async()=>{if(currentRoom){await loadChannels(currentRoom.id);if(!channels.length){currentChannel=null;renderMessages();}else if(!channels.find(c=>c.id===currentChannel?.id))switchChannel(channels[0].id);}})
-    .subscribe();
-  rtMembers=sb.channel('rt-members-'+currentRoom.id).on('postgres_changes',{event:'*',schema:'public',table:'members'},async p=>{if(p.eventType==='DELETE'&&p.old&&p.old.user_id===USER_ID){alert('您已被踢出此聊天室');removeMyRoom(currentRoom.id);localStorage.removeItem('chat_last_room_code');localStorage.removeItem('chat_last_nickname');location.reload();return;}if(currentRoom)await loadMembers(currentRoom.id);}).subscribe();
-  rtCmds=sb.channel('rt-cmds-'+currentRoom.id).on('postgres_changes',{event:'*',schema:'public',table:'custom_commands'},async()=>{if(currentRoom)await loadCmds(currentRoom.id);}).subscribe();
-  rtBtns=sb.channel('rt-btns-'+currentRoom.id).on('postgres_changes',{event:'*',schema:'public',table:'custom_buttons'},async()=>{if(currentRoom)await loadBtns(currentRoom.id);}).subscribe();
-}
-
-function startHeartbeat(){if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=setInterval(async()=>{if(!currentRoom||!currentUser.nickname)return;await sb.from('members').update({last_seen:new Date().toISOString()}).eq('room_id',currentRoom.id).eq('user_id',USER_ID);await touchRoom();},30000);}
-
-uploadImageBtn.addEventListener('click',()=>{if(!currentChannel){showToast('請先選擇頻道');return;}imageFileInput.click();});
-imageFileInput.addEventListener('change',async e=>{const f=e.target.files[0];if(!f||!currentChannel)return;if(f.size>5242880){showToast('圖片不能超過 5MB');imageFileInput.value='';return;}uploadingOverlay.classList.remove('hidden');try{const ext=f.name.split('.').pop()||'jpg',fn=USER_ID+'_'+Date.now()+'.'+ext;const{error}=await sb.storage.from('chat-images').upload(fn,f,{cacheControl:'3600',upsert:false});if(error)throw error;const{data:ud}=sb.storage.from('chat-images').getPublicUrl(fn);await sb.from('messages').insert({channel_id:currentChannel.id,text:IMG_PREFIX+ud.publicUrl,sender:currentUser.nickname,is_bot:false,is_system:false});await touchRoom();showToast('✅ 圖片已傳送');}catch(e){showToast('❌ 上傳失敗：'+(e.message||''));}finally{uploadingOverlay.classList.add('hidden');imageFileInput.value='';}});
-
-function openChannelModal(){if(!isAdmin()){alert('只有管理員');return;}channelNameInput.value='';channelTypeSelect.value='text';channelError.textContent='';channelModal.classList.remove('hidden');closeDrawer();}
-function closeChannelModal(){channelModal.classList.add('hidden');}
-async function confirmAddChannel(){const n=channelNameInput.value.trim(),t=channelTypeSelect.value;if(!n){channelError.textContent='請輸入名稱';return;}if(channels.some(c=>c.name===n)){channelError.textContent='名稱已存在';return;}await sb.from('channels').insert({room_id:currentRoom.id,name:n,type:t});await loadChannels(currentRoom.id);const c=channels.find(x=>x.name===n);if(c)switchChannel(c.id);closeChannelModal();}
-function openMembersModal(){membersModal.classList.remove('hidden');loadMembers(currentRoom.id);closeDrawer();}
-function closeMembersModal(){membersModal.classList.add('hidden');}
-function openCmdsModal(){if(!isAdmin()){alert('只有管理員');return;}cmdsModal.classList.remove('hidden');cmdError.textContent='';newCmdName.value='';newCmdResp.value='';loadCmds(currentRoom.id);closeDrawer();}
-function closeCmdsModal(){cmdsModal.classList.add('hidden');}
-async function addCmd(){let n=newCmdName.value.trim(),r=newCmdResp.value.trim();if(!n){cmdError.textContent='請輸入名稱';return;}if(!r){cmdError.textContent='請輸入回應';return;}if(!n.startsWith('/'))n='/'+n;if(customCmds.some(c=>c.command===n)){cmdError.textContent='已存在';return;}await sb.from('custom_commands').insert({room_id:currentRoom.id,command:n,response:r});newCmdName.value='';newCmdResp.value='';cmdError.textContent='✅ 已新增';setTimeout(()=>cmdError.textContent='',1500);await loadCmds(currentRoom.id);}
-function openBtnsModal(){if(!isAdmin()){alert('只有管理員');return;}btnsModal.classList.remove('hidden');btnError.textContent='';newBtnLabel.value='';newBtnValue.value='';newBtnType.value='link';loadBtns(currentRoom.id);closeDrawer();}
-function closeBtnsModal(){btnsModal.classList.add('hidden');}
-async function addBtn(){const l=newBtnLabel.value.trim(),t=newBtnType.value,v=newBtnValue.value.trim();if(!l){btnError.textContent='請輸入文字';return;}if(!v){btnError.textContent='請輸入內容';return;}if(t==='link'&&!/^https?:\/\//i.test(v)){btnError.textContent='連結需以 http:// 或 https:// 開頭';return;}await sb.from('custom_buttons').insert({room_id:currentRoom.id,label:l,action_type:t,action_value:v});newBtnLabel.value='';newBtnValue.value='';btnError.textContent='✅ 已新增';setTimeout(()=>btnError.textContent='',1500);await loadBtns(currentRoom.id);}
-
-function handleBotCommand(cmd,full){
-  const c=cmd.trim().toLowerCase();
-  const cu=customCmds.find(x=>x.command.toLowerCase()===c);
-  if(cu)return cu.response;
-  if(c==='/規則'||c==='/rule')return'📋 規則：\n1. 尊重\n2. 禁廣告\n3. 友善\n4. /help 查看';
-  if(c==='/help'||c==='/幫助'){let h='🤖 指令：\n/規則\n/help\n/時間\n/問候\n/頻道';if(isAdmin())h+='\n\n👑 管理員：\n/set /名稱 回應\n/del /名稱';if(customCmds.length)h+='\n\n📝 自訂：\n'+customCmds.map(x=>x.command).join(', ');return h;}
-  if(c==='/時間'||c==='/time')return'🕒 '+new Date().toLocaleTimeString('zh-TW',{hour12:false});
-  if(c==='/問候'||c==='/hello')return'你好 '+escapeHtml(currentUser.nickname)+'！';
-  if(c==='/頻道'||c==='/channels')return'📁 頻道：\n'+channels.map(ch=>channelIcon(ch.type)+' '+ch.name).join('\n');
-  if(c.startsWith('/'))return'❓ 未知指令「'+full+'」，輸入 /help 查看。';
-  return null;
-}
-
-async function sendUserMessage(){
-  const t=messageInput.value.trim();if(!t||!currentChannel)return;
-  if(isAdmin()&&t.startsWith('/set ')){const r=t.substring(5).trim(),i=r.indexOf(' ');if(i===-1){showToast('格式：/set /名稱 回應');return;}let n=r.substring(0,i).trim(),v=r.substring(i+1).trim();if(!n.startsWith('/'))n='/'+n;await sb.from('custom_commands').upsert({room_id:currentRoom.id,command:n,response:v},{onConflict:'room_id,command'});await loadCmds(currentRoom.id);messageInput.value='';showToast('✅ 已設定 '+n);return;}
-  if(isAdmin()&&t.startsWith('/del ')){let n=t.substring(5).trim();if(!n.startsWith('/'))n='/'+n;await sb.from('custom_commands').delete().eq('room_id',currentRoom.id).eq('command',n);await loadCmds(currentRoom.id);messageInput.value='';showToast('✅ 已刪除 '+n);return;}
-  await sb.from('messages').insert({channel_id:currentChannel.id,text:escapeHtml(t),sender:currentUser.nickname,is_bot:false,is_system:false});
-  await touchRoom();messageInput.value='';
-  if(t.startsWith('/')){const r=handleBotCommand(t,t);if(r)setTimeout(async()=>{await sb.from('messages').insert({channel_id:currentChannel.id,text:escapeHtml(r),sender:'小幫手',is_bot:true,is_system:false});},200);}
-}
-
-joinBtn.addEventListener('click',()=>{if(isCreateMode)tryCreateRoom();else joinRoomByCode(roomCodeInput.value,nicknameInput.value);});
-switchToCreateBtn.addEventListener('click',()=>setCreateMode(!isCreateMode));
-[roomCodeInput,nicknameInput,tokenInput,newRoomName,newRoomCode,newRoomNickname].forEach(i=>{if(i)i.addEventListener('keypress',e=>{if(e.key==='Enter'){e.preventDefault();joinBtn.click();}});});
-sendBtn.addEventListener('click',sendUserMessage);
-messageInput.addEventListener('keypress',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendUserMessage();}});
-addChannelBtn.addEventListener('click',openChannelModal);
-cancelChannelBtn.addEventListener('click',closeChannelModal);
-confirmChannelBtn.addEventListener('click',confirmAddChannel);
-viewMembersBtn.addEventListener('click',openMembersModal);
-closeMembersBtn.addEventListener('click',closeMembersModal);
-manageCmdsBtn.addEventListener('click',openCmdsModal);
-closeCmdsBtn.addEventListener('click',closeCmdsModal);
-addCmdBtn.addEventListener('click',addCmd);
-manageBtnsBtn.addEventListener('click',openBtnsModal);
-closeBtnsBtn.addEventListener('click',closeBtnsModal);
-addBtnBtn.addEventListener('click',addBtn);
-addRoomBtn.addEventListener('click',()=>{closeDrawer();joinOverlay.classList.remove('hidden');setCreateMode(false);roomCodeInput.value='';roomCodeInput.focus();});
-
-async function init(){
-  renderMyRooms();
-  const lastCode = localStorage.getItem('chat_last_room_code');
-  const lastNick = localStorage.getItem('chat_last_nickname');
-  if (lastCode && lastNick) {
-    try {
-      const autoLogin = (async () => {
-        const room = await findRoomByCode(lastCode);
-        if (!room) return null;
-        const { data: mine } = await sb.from('members')
-          .select('*').eq('room_id', room.id).eq('user_id', USER_ID).maybeSingle();
-        if (!mine) return null;
-        currentUser.nickname = mine.nickname || lastNick;
-        await joinRoomByCode(lastCode, currentUser.nickname, true);
-        return true;
-      })();
-      const timeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('自動登入超時')), 10000)
-      );
-      const ok = await Promise.race([autoLogin, timeout]);
-      if (ok) {
-        loadingScreen.classList.add('hidden');
-        return;
+    // 檢查登入狀態並切換 UI
+    async function refreshAuth() {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        loginView.classList.add('hidden')
+        editorView.classList.remove('hidden')
+        btnLogin.classList.add('hidden')
+        btnLogout.classList.remove('hidden')
+        loadAdmin()
+      } else {
+        loginView.classList.add('hidden')
+        editorView.classList.add('hidden')
+        btnLogin.classList.remove('hidden')
+        btnLogout.classList.add('hidden')
       }
-    } catch (e) {
-      console.warn('自動登入失敗:', e);
+      loadPublic()
     }
-    localStorage.removeItem('chat_last_room_code');
-    localStorage.removeItem('chat_last_nickname');
-  }
-  loadingScreen.classList.add('hidden');
-  joinOverlay.classList.remove('hidden');
-  roomCodeInput.focus();
-}
 
-init();
-})();
-</script>
+    // 顯示登入框
+    btnLogin.onclick = () => {
+      loginView.classList.toggle('hidden')
+      editorView.classList.add('hidden')
+    }
+
+    // 登出
+    btnLogout.onclick = async () => {
+      await supabase.auth.signOut()
+      refreshAuth()
+    }
+
+    // 執行登入
+    $('btnDoLogin').onclick = async () => {
+      const email = $('email').value.trim()
+      const password = $('password').value
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        $('loginMsg').textContent = error.message
+      } else {
+        $('loginMsg').textContent = ''
+        $('email').value = ''
+        $('password').value = ''
+        refreshAuth()
+      }
+    }
+    $('password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') $('btnDoLogin').click()
+    })
+
+    // 新增文章
+    $('btnAdd').onclick = async () => {
+      const title = $('title').value.trim()
+      const content = $('content').value.trim()
+      if (!title) { $('editMsg').textContent = '標題不能空白'; return }
+      const { error } = await supabase.from('posts').insert({ title, content })
+      if (error) {
+        $('editMsg').textContent = '發布失敗：' + error.message
+      } else {
+        $('title').value = ''
+        $('content').value = ''
+        $('editMsg').textContent = ''
+        loadAdmin()
+        loadPublic()
+      }
+    }
+
+    // 刪除
+    window.del = async (id) => {
+      if (!confirm('確定要刪除這篇文章嗎？')) return
+      await supabase.from('posts').delete().eq('id', id)
+      loadAdmin()
+      loadPublic()
+    }
+
+    // 載入公開列表
+    async function loadPublic() {
+      const { data, error } = await supabase
+        .from('posts').select('*')
+        .order('created_at', { ascending: false })
+      if (error) { listEl.innerHTML = '<div class="empty">載入失敗：' + esc(error.message) + '</div>'; return }
+      if (!data.length) { listEl.innerHTML = '<div class="empty">還沒有文章。</div>'; return }
+      listEl.innerHTML = data.map(p => `
+        <article>
+          <h2 style="margin:0 0 4px; font-size:18px">${esc(p.title)}</h2>
+          <div class="time">${new Date(p.created_at).toLocaleString('zh-TW')}</div>
+          <div class="content">${esc(p.content || '')}</div>
+        </article>
+      `).join('')
+    }
+
+    // 載入後台列表（含刪除按鈕）
+    async function loadAdmin() {
+      const { data } = await supabase
+        .from('posts').select('*')
+        .order('created_at', { ascending: false })
+      if (!data || !data.length) { adminList.innerHTML = '<div class="empty">還沒有文章。</div>'; return }
+      adminList.innerHTML = data.map(p => `
+        <article>
+          <h3 style="margin:0 0 4px; font-size:16px">${esc(p.title)}</h3>
+          <div class="time">${new Date(p.created_at).toLocaleString('zh-TW')}</div>
+          <div class="content">${esc(p.content || '')}</div>
+          <button class="danger" onclick="del(${p.id})">刪除</button>
+        </article>
+      `).join('')
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]))
+    }
+
+    refreshAuth()
+  </script>
 </body>
 </html>
