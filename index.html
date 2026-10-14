@@ -3,192 +3,347 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>我的小站</title>
+  <title>小編日報</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; max-width: 720px; margin: 0 auto; padding: 20px; line-height: 1.7; color: #222; }
-    h1 { font-size: 22px; margin: 0; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #222; padding-bottom: 12px; margin-bottom: 20px; }
-    .topbar .actions button { font-size: 13px; padding: 6px 12px; }
-    input, textarea { width: 100%; padding: 12px; margin: 6px 0; font-family: inherit; font-size: 15px; border: 1px solid #ccc; border-radius: 6px; }
-    textarea { height: 140px; resize: vertical; }
-    button { padding: 10px 18px; cursor: pointer; border: none; border-radius: 6px; font-size: 14px; background: #eee; }
-    button.primary { background: #222; color: #fff; }
-    button.primary:hover { background: #444; }
-    button.danger { background: #fee; color: #c00; }
-    article { border-bottom: 1px solid #eee; padding: 20px 0; }
-    .time { color: #999; font-size: 13px; margin: 4px 0 8px; }
-    .content { white-space: pre-wrap; }
-    .msg { color: #c00; margin-top: 8px; font-size: 14px; }
-    .empty { color: #999; padding: 20px 0; }
-    .hidden { display: none; }
-    .login-box { max-width: 340px; margin: 60px auto; }
-    .login-box h2 { text-align: center; }
+    body { font-family: system-ui, -apple-system, "PingFang TC", sans-serif; max-width: 780px; margin: 0 auto; padding: 0 16px 60px; line-height: 1.7; color: #1a1a1a; background: #fafafa; }
+    header { background: #fff; border-bottom: 3px solid #c00; padding: 16px 0 12px; margin-bottom: 24px; position: sticky; top: 0; z-index: 10; }
+    .head-inner { max-width: 780px; margin: 0 auto; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 26px; font-weight: 900; color: #c00; letter-spacing: 2px; cursor: pointer; }
+    .logo span { color: #222; }
+    .head-actions button { font-size: 13px; padding: 6px 14px; border: none; border-radius: 4px; cursor: pointer; }
+    .btn-login { background: #c00; color: #fff; }
+    .btn-logout { background: #eee; color: #c00; }
+    nav.cats { background: #fff; border-bottom: 1px solid #eee; margin-bottom: 20px; overflow-x: auto; white-space: nowrap; }
+    nav.cats .inner { max-width: 780px; margin: 0 auto; padding: 0 16px; }
+    nav.cats button { background: none; border: none; padding: 14px 16px; font-size: 15px; cursor: pointer; color: #666; border-bottom: 3px solid transparent; }
+    nav.cats button.active { color: #c00; border-bottom-color: #c00; font-weight: 700; }
+
+    .card { background: #fff; border-bottom: 1px solid #eee; padding: 20px; margin-bottom: 12px; border-radius: 6px; cursor: pointer; transition: box-shadow .15s; }
+    .card:hover { box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+    .card .cat { display: inline-block; font-size: 12px; color: #c00; border: 1px solid #c00; padding: 1px 6px; border-radius: 3px; margin-bottom: 8px; }
+    .card h2 { margin: 0 0 8px; font-size: 20px; line-height: 1.4; }
+    .card .meta { color: #999; font-size: 13px; margin-bottom: 10px; }
+    .card .summary { color: #444; font-size: 15px; }
+    .card .thumb-hint { color: #c00; font-size: 13px; margin-top: 8px; }
+
+    #detail { background: #fff; padding: 24px; border-radius: 6px; }
+    #detail h1 { font-size: 26px; line-height: 1.35; margin: 0 0 12px; }
+    #detail .meta { color: #888; font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 12px; margin-bottom: 20px; }
+    #detail .body { font-size: 16px; white-space: pre-wrap; line-height: 1.9; }
+    #back { display: inline-block; margin-bottom: 16px; color: #c00; cursor: pointer; font-size: 14px; }
+    #back:hover { text-decoration: underline; }
+
+    .share-bar { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; display: flex; gap: 8px; align-items: center; }
+    .share-bar button { background: #eee; color: #333; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+    .share-bar button:hover { background: #ddd; }
+
+    .login-box { max-width: 340px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+    .login-box h2 { text-align: center; margin: 0 0 16px; }
+    input, textarea, select { width: 100%; padding: 12px; margin: 6px 0; font-family: inherit; font-size: 15px; border: 1px solid #ccc; border-radius: 6px; background: #fff; }
+    textarea { height: 160px; resize: vertical; }
+    button.primary { background: #c00; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; font-size: 15px; cursor: pointer; width: 100%; }
+    button.primary:hover { background: #a00; }
+    .msg { color: #c00; margin-top: 8px; font-size: 14px; text-align: center; }
+
+    .editor-box { background: #fff; padding: 24px; border-radius: 8px; margin-bottom: 20px; }
+    .editor-box h2 { margin-top: 0; }
+    .row { display: flex; gap: 10px; }
+    .row > * { flex: 1; }
+    .admin-item { border-bottom: 1px solid #eee; padding: 14px 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .admin-item .info { flex: 1; }
+    .admin-item h3 { margin: 0 0 4px; font-size: 16px; }
+    .admin-item .meta { color: #999; font-size: 12px; }
+    .admin-item a { color: #c00; font-size: 12px; text-decoration: none; }
+    .admin-item a:hover { text-decoration: underline; }
+    .btn-del { background: #fee; color: #c00; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+    .empty { color: #999; padding: 20px; text-align: center; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <!-- 上方標題列 -->
-  <div class="topbar">
-    <h1>我的小站</h1>
-    <div class="actions">
-      <button id="btnLogin" class="primary">小編登入</button>
-      <button id="btnLogout" class="danger hidden">登出</button>
+<header>
+  <div class="head-inner">
+    <div class="logo" id="logoBtn">小編<span>日報</span></div>
+    <div class="head-actions">
+      <button id="btnLogin" class="btn-login">小編登入</button>
+      <button id="btnLogout" class="btn-logout hidden">登出</button>
     </div>
   </div>
+</header>
 
-  <!-- 登入畫面（未登入時顯示） -->
-  <div id="loginView" class="login-box hidden">
-    <h2>小編登入</h2>
-    <input id="email" type="email" placeholder="Email" autocomplete="username">
-    <input id="password" type="password" placeholder="密碼" autocomplete="current-password">
-    <button id="btnDoLogin" class="primary" style="width:100%">登入</button>
-    <div class="msg" id="loginMsg"></div>
-  </div>
+<nav class="cats" id="catNav">
+  <div class="inner" id="catInner"></div>
+</nav>
 
-  <!-- 編輯區（登入後顯示） -->
-  <div id="editorView" class="hidden">
-    <h2>新增文章</h2>
+<div id="listView"></div>
+
+<div id="detailView" class="hidden">
+  <span id="back">← 返回列表</span>
+  <div id="detail"></div>
+</div>
+
+<div id="loginView" class="login-box hidden">
+  <h2>小編登入</h2>
+  <input id="email" type="email" placeholder="Email" autocomplete="username">
+  <input id="password" type="password" placeholder="密碼" autocomplete="current-password">
+  <button id="btnDoLogin" class="primary">登入</button>
+  <div class="msg" id="loginMsg"></div>
+</div>
+
+<div id="editorView" class="hidden">
+  <div class="editor-box">
+    <h2>發布新文章</h2>
     <input id="title" placeholder="標題">
-    <textarea id="content" placeholder="內容..."></textarea>
+    <div class="row">
+      <select id="category">
+        <option>考試</option>
+        <option>學校</option>
+        <option>生活</option>
+        <option>其他</option>
+      </select>
+      <input id="author" value="小編" placeholder="作者">
+    </div>
+    <input id="summary" placeholder="摘要（選填，列表會顯示這段）">
+    <textarea id="content" placeholder="內文..."></textarea>
     <button id="btnAdd" class="primary">發布</button>
     <div class="msg" id="editMsg"></div>
-    <h2 style="margin-top:32px">已發布</h2>
+  </div>
+  <div class="editor-box">
+    <h2>已發布文章</h2>
     <div id="adminList"></div>
   </div>
+</div>
 
-  <!-- 文章列表（所有人可見） -->
-  <div id="list">載入中...</div>
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+  const supabase = createClient(
+    'https://cfxwbghnwwtvuyodrrlj.supabase.co',
+    'sb_publishable_iUkJIhqt_P8cu8WZdswqmw_59R0ZJ-_'
+  )
 
-    const supabase = createClient(
-      'https://cfxwbghnwwtvuyodrrlj.supabase.co',
-      'sb_publishable_iUkJIhqt_P8cu8WZdswqmw_59R0ZJ-_'
-    )
+  const $ = id => document.getElementById(id)
+  const CATS = ['全部', '考試', '學校', '生活', '其他']
+  let currentCat = '全部'
+  let isLoggedIn = false
 
-    // DOM
-    const $ = id => document.getElementById(id)
-    const loginView = $('loginView')
-    const editorView = $('editorView')
-    const listEl = $('list')
-    const adminList = $('adminList')
-    const btnLogin = $('btnLogin')
-    const btnLogout = $('btnLogout')
+  // ============ 網址參數工具 ============
+  function getIdFromUrl() {
+    const params = new URLSearchParams(location.search)
+    const id = params.get('id')
+    return id ? parseInt(id, 10) : null
+  }
+  function setUrlId(id) {
+    const url = id ? `${location.pathname}?id=${id}` : location.pathname
+    history.pushState({ id }, '', url)
+  }
 
-    // 檢查登入狀態並切換 UI
-    async function refreshAuth() {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        loginView.classList.add('hidden')
-        editorView.classList.remove('hidden')
-        btnLogin.classList.add('hidden')
-        btnLogout.classList.remove('hidden')
-        loadAdmin()
-      } else {
-        loginView.classList.add('hidden')
-        editorView.classList.add('hidden')
-        btnLogin.classList.remove('hidden')
-        btnLogout.classList.add('hidden')
-      }
-      loadPublic()
+  // ============ 分類導覽 ============
+  function renderCats() {
+    $('catInner').innerHTML = CATS.map(c =>
+      `<button data-cat="${c}" class="${c === currentCat ? 'active' : ''}">${c}</button>`
+    ).join('')
+    $('catInner').querySelectorAll('button').forEach(b => {
+      b.onclick = () => { currentCat = b.dataset.cat; renderCats(); showList(true) }
+    })
+  }
+
+  // ============ 登入狀態 ============
+  async function refreshAuth() {
+    const { data: { session } } = await supabase.auth.getSession()
+    isLoggedIn = !!session
+    if (isLoggedIn) {
+      $('btnLogin').classList.add('hidden')
+      $('btnLogout').classList.remove('hidden')
+      $('loginView').classList.add('hidden')
+      $('editorView').classList.remove('hidden')
+      $('listView').classList.add('hidden')
+      $('detailView').classList.add('hidden')
+      $('catNav').classList.add('hidden')
+      loadAdmin()
+    } else {
+      $('btnLogin').classList.remove('hidden')
+      $('btnLogout').classList.add('hidden')
+      $('editorView').classList.add('hidden')
+      $('catNav').classList.remove('hidden')
+      route()
     }
+  }
 
-    // 顯示登入框
-    btnLogin.onclick = () => {
-      loginView.classList.toggle('hidden')
-      editorView.classList.add('hidden')
+  // ============ 路由 ============
+  function route() {
+    if (isLoggedIn) return
+    const id = getIdFromUrl()
+    if (id) {
+      openPost(id, false)
+    } else {
+      showList(false)
     }
+  }
 
-    // 登出
-    btnLogout.onclick = async () => {
-      await supabase.auth.signOut()
+  function showList(push) {
+    if (isLoggedIn) return
+    if (push !== false) setUrlId(null)
+    $('detailView').classList.add('hidden')
+    $('loginView').classList.add('hidden')
+    $('listView').classList.remove('hidden')
+    loadList()
+  }
+
+  // ============ 文章內頁 ============
+  async function openPost(id, push = true) {
+    const { data, error } = await supabase.from('posts').select('*').eq('id', id).single()
+    if (error || !data) {
+      $('listView').innerHTML = '<div class="empty">找不到這篇文章。</div>'
+      $('listView').classList.remove('hidden')
+      $('detailView').classList.add('hidden')
+      return
+    }
+    if (push) setUrlId(id)
+    $('listView').classList.add('hidden')
+    $('loginView').classList.add('hidden')
+    $('editorView').classList.add('hidden')
+    $('detailView').classList.remove('hidden')
+    document.title = data.title + ' - 小編日報'
+    $('detail').innerHTML = `
+      <span class="cat" style="display:inline-block;font-size:12px;color:#c00;border:1px solid #c00;padding:1px 6px;border-radius:3px;margin-bottom:10px">${esc(data.category || '未分類')}</span>
+      <h1>${esc(data.title)}</h1>
+      <div class="meta">${esc(data.author || '小編')} · ${new Date(data.created_at).toLocaleString('zh-TW')}</div>
+      <div class="body">${esc(data.content || '')}</div>
+      <div class="share-bar">
+        <span style="color:#999;font-size:13px">分享：</span>
+        <button onclick="copyLink()">複製連結</button>
+        <button onclick="shareNative()">分享…</button>
+      </div>
+    `
+    window.scrollTo(0, 0)
+  }
+  window.openPost = openPost
+
+  // ============ 分享功能 ============
+  window.copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(location.href)
+      alert('已複製連結！')
+    } catch {
+      prompt('複製這個連結：', location.href)
+    }
+  }
+
+  window.shareNative = async () => {
+    if (navigator.share) {
+      try { await navigator.share({ title: document.title, url: location.href }) } catch {}
+    } else {
+      copyLink()
+    }
+  }
+
+  $('back').onclick = () => showList(true)
+  $('logoBtn').onclick = () => showList(true)
+
+  // 瀏覽器上一頁 / 下一頁
+  window.addEventListener('popstate', route)
+
+  // ============ 登入 / 登出 ============
+  $('btnLogin').onclick = () => {
+    $('listView').classList.add('hidden')
+    $('detailView').classList.add('hidden')
+    $('loginView').classList.remove('hidden')
+  }
+
+  $('btnLogout').onclick = async () => {
+    await supabase.auth.signOut()
+    document.title = '小編日報'
+    currentCat = '全部'
+    renderCats()
+    setUrlId(null)
+    refreshAuth()
+  }
+
+  $('btnDoLogin').onclick = async () => {
+    const email = $('email').value.trim()
+    const password = $('password').value
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) {
+      $('loginMsg').textContent = error.message
+    } else {
+      $('email').value = ''; $('password').value = ''; $('loginMsg').textContent = ''
       refreshAuth()
     }
+  }
+  $('password').addEventListener('keydown', e => { if (e.key === 'Enter') $('btnDoLogin').click() })
 
-    // 執行登入
-    $('btnDoLogin').onclick = async () => {
-      const email = $('email').value.trim()
-      const password = $('password').value
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) {
-        $('loginMsg').textContent = error.message
-      } else {
-        $('loginMsg').textContent = ''
-        $('email').value = ''
-        $('password').value = ''
-        refreshAuth()
-      }
-    }
-    $('password').addEventListener('keydown', e => {
-      if (e.key === 'Enter') $('btnDoLogin').click()
-    })
-
-    // 新增文章
-    $('btnAdd').onclick = async () => {
-      const title = $('title').value.trim()
-      const content = $('content').value.trim()
-      if (!title) { $('editMsg').textContent = '標題不能空白'; return }
-      const { error } = await supabase.from('posts').insert({ title, content })
-      if (error) {
-        $('editMsg').textContent = '發布失敗：' + error.message
-      } else {
-        $('title').value = ''
-        $('content').value = ''
-        $('editMsg').textContent = ''
-        loadAdmin()
-        loadPublic()
-      }
-    }
-
-    // 刪除
-    window.del = async (id) => {
-      if (!confirm('確定要刪除這篇文章嗎？')) return
-      await supabase.from('posts').delete().eq('id', id)
+  // ============ 發布 ============
+  $('btnAdd').onclick = async () => {
+    const title = $('title').value.trim()
+    const content = $('content').value.trim()
+    const summary = $('summary').value.trim()
+    const category = $('category').value
+    const author = $('author').value.trim() || '小編'
+    if (!title) { $('editMsg').textContent = '標題不能空白'; return }
+    const { error } = await supabase.from('posts').insert({ title, content, summary, category, author })
+    if (error) {
+      $('editMsg').textContent = '發布失敗：' + error.message
+    } else {
+      $('title').value = ''; $('content').value = ''; $('summary').value = ''
+      $('editMsg').textContent = ''
       loadAdmin()
-      loadPublic()
     }
+  }
 
-    // 載入公開列表
-    async function loadPublic() {
-      const { data, error } = await supabase
-        .from('posts').select('*')
-        .order('created_at', { ascending: false })
-      if (error) { listEl.innerHTML = '<div class="empty">載入失敗：' + esc(error.message) + '</div>'; return }
-      if (!data.length) { listEl.innerHTML = '<div class="empty">還沒有文章。</div>'; return }
-      listEl.innerHTML = data.map(p => `
-        <article>
-          <h2 style="margin:0 0 4px; font-size:18px">${esc(p.title)}</h2>
-          <div class="time">${new Date(p.created_at).toLocaleString('zh-TW')}</div>
-          <div class="content">${esc(p.content || '')}</div>
-        </article>
-      `).join('')
-    }
+  window.del = async (id) => {
+    if (!confirm('確定刪除？')) return
+    await supabase.from('posts').delete().eq('id', id)
+    loadAdmin()
+  }
 
-    // 載入後台列表（含刪除按鈕）
-    async function loadAdmin() {
-      const { data } = await supabase
-        .from('posts').select('*')
-        .order('created_at', { ascending: false })
-      if (!data || !data.length) { adminList.innerHTML = '<div class="empty">還沒有文章。</div>'; return }
-      adminList.innerHTML = data.map(p => `
-        <article>
-          <h3 style="margin:0 0 4px; font-size:16px">${esc(p.title)}</h3>
-          <div class="time">${new Date(p.created_at).toLocaleString('zh-TW')}</div>
-          <div class="content">${esc(p.content || '')}</div>
-          <button class="danger" onclick="del(${p.id})">刪除</button>
-        </article>
-      `).join('')
-    }
+  // ============ 載入列表 ============
+  async function loadList() {
+    let q = supabase.from('posts').select('*').order('created_at', { ascending: false })
+    if (currentCat !== '全部') q = q.eq('category', currentCat)
+    const { data, error } = await q
+    const listView = $('listView')
+    if (error) { listView.innerHTML = '<div class="empty">載入失敗：' + esc(error.message) + '</div>'; return }
+    if (!data.length) { listView.innerHTML = '<div class="empty">這個分類還沒有文章。</div>'; return }
+    listView.innerHTML = data.map(p => `
+      <div class="card" onclick="openPost(${p.id})">
+        <span class="cat">${esc(p.category || '未分類')}</span>
+        <h2>${esc(p.title)}</h2>
+        <div class="meta">${esc(p.author || '小編')} · ${new Date(p.created_at).toLocaleString('zh-TW')}</div>
+        <div class="summary">${esc(p.summary || (p.content || '').slice(0, 80) + ((p.content || '').length > 80 ? '...' : ''))}</div>
+        <div class="thumb-hint">閱讀全文 →</div>
+      </div>
+    `).join('')
+  }
 
-    function esc(s) {
-      return String(s).replace(/[&<>"']/g, c => ({
-        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-      }[c]))
-    }
+  // ============ 後台列表 ============
+  async function loadAdmin() {
+    const { data } = await supabase.from('posts').select('*').order('created_at', { ascending: false })
+    const el = $('adminList')
+    if (!data || !data.length) { el.innerHTML = '<div class="empty">還沒有文章。</div>'; return }
+    const baseUrl = location.origin + location.pathname
+    el.innerHTML = data.map(p => `
+      <div class="admin-item">
+        <div class="info">
+          <h3>${esc(p.title)}</h3>
+          <div class="meta">${esc(p.category || '')} · ${esc(p.author || '')} · ${new Date(p.created_at).toLocaleString('zh-TW')}</div>
+          <a href="${baseUrl}?id=${p.id}" target="_blank">查看文章 ↗</a>
+        </div>
+        <button class="btn-del" onclick="del(${p.id})">刪除</button>
+      </div>
+    `).join('')
+  }
 
-    refreshAuth()
-  </script>
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]))
+  }
+
+  renderCats()
+  refreshAuth()
+</script>
 </body>
 </html>
