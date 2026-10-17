@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>姓陳的女生長得漂亮？</title>
+    <title>姓陳和姓吳的女生長得漂亮？</title>
     <style>
         * {
             margin: 0;
@@ -201,7 +201,7 @@
 <body>
     <div class="card">
         <h1>
-            <span class="highlight">姓陳</span>的女生<br>長得漂亮？
+            <span class="highlight">姓陳</span>和<span class="highlight">姓吳</span>的女生<br>長得漂亮？
         </h1>
         <div class="sub-message">
             ✨ 這還用問嗎 ✨
@@ -225,29 +225,30 @@
             const yesBtn = document.getElementById('yesBtn');
             const smileBtn = document.getElementById('smileBtn');
 
-            // 預設訊息 (與 HTML 一致，但這裡稍作保留，用於重置)
-            const defaultMessage = '👩🏻‍🦰 你心裡已經有答案了～';
-
-            // 各種有趣的回應
+            // 各種有趣的回應（融合陳和吳）
             const responses = [
-                '💐 姓陳的女生自帶光芒，當然漂亮！',
-                '🌸 陳家女孩的顏值可是經過認證的～',
-                '✨ 美是一種主觀，但姓陳的女生常常是客觀的漂亮。',
-                '🌟 姓陳 + 女生 = 漂亮，這題是送分題吧！',
-                '🍀 我認識的陳姓女生個個都很有氣質呢！',
-                '💫 不用懷疑，姓陳的女生就是漂亮！',
-                '🎀 陳姓女孩舉手投足都是風景～',
-                '🌺 漂亮有很多種，而姓陳的女生剛好每一種都有。',
-                '💎 陳家出美女，這是公開的秘密🤫',
-                '🌷 根據不負責任統計，姓陳的女生漂亮率高達 99.9%～'
+                '💐 姓陳和姓吳的女生自帶光芒，當然漂亮！',
+                '🌸 陳家女孩和吳家女孩的顏值都是經過認證的～',
+                '✨ 美是一種主觀，但姓陳和姓吳的女生常常是客觀的漂亮。',
+                '🌟 姓陳 + 姓吳 + 女生 = 漂亮，這題是送分題吧！',
+                '🍀 我認識的陳姓和吳姓女生個個都很有氣質呢！',
+                '💫 不用懷疑，姓陳和姓吳的女生就是漂亮！',
+                '🎀 陳姓女孩和吳姓女孩舉手投足都是風景～',
+                '🌺 漂亮有很多種，而姓陳和姓吳的女生剛好每一種都有。',
+                '💎 陳吳出美女，這是公開的秘密🤫',
+                '🌷 根據不負責任統計，姓陳和姓吳的女生漂亮率高達 99.9%～',
+                '🌹 陳家有女初長成，吳家有女貌傾城！',
+                '🌻 不管是陳還是吳，漂亮這兩個字就是為她們發明的～'
             ];
 
             const extraSmiles = [
                 '😊 你笑起來也很漂亮呀！',
-                '🤗 不管姓什麼，自信就是漂亮！',
+                '🤗 不管姓陳還是姓吳，自信就是漂亮！',
                 '😍 你眼裡有光，這就足夠漂亮了。',
-                '🌼 會問這個問題的人，心裡一定住著一位漂亮的陳小姐。',
-                '💕 漂亮沒有定義，但善良和笑容永遠加分。'
+                '🌼 會問這個問題的人，心裡一定住著一位漂亮的陳小姐或吳小姐。',
+                '💕 漂亮沒有定義，但善良和笑容永遠加分。',
+                '🌷 陳也好，吳也好，會笑的眼睛最美。',
+                '✨ 姓陳的溫柔，姓吳的靈動，都很漂亮。'
             ];
 
             // 隨機取得陣列元素
@@ -257,7 +258,6 @@
 
             // 更新訊息，加上動畫
             function updateMessage(text) {
-                // 淡出效果再更新
                 messageBox.innerHTML = `<span>${text}</span>`;
             }
 
@@ -269,24 +269,21 @@
 
             // 「讓我看看」按鈕
             smileBtn.addEventListener('click', function() {
-                // 混合兩種回應，但主要是溫柔/微笑類型
                 let reply;
                 if (Math.random() < 0.6) {
                     reply = getRandomItem(extraSmiles);
                 } else {
                     reply = getRandomItem(responses);
                 }
-                // 加一點小變化
                 if (Math.random() < 0.3) {
                     reply = '🔍 ' + reply;
                 }
                 updateMessage(reply);
             });
 
-            // 滑鼠移過卡片時稍微變化 (額外趣味)
+            // 滑鼠移過卡片時稍微變化
             const card = document.querySelector('.card');
             card.addEventListener('mouseenter', () => {
-                // 不影響主要功能，只是讓邊框陰影稍微更亮
                 card.style.boxShadow = '0 25px 45px rgba(180, 100, 130, 0.35), 0 10px 25px rgba(150, 70, 100, 0.2), inset 0 1px 6px rgba(255, 255, 255, 0.9)';
             });
             card.addEventListener('mouseleave', () => {
